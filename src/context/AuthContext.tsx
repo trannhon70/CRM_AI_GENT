@@ -12,6 +12,7 @@ type IAuthContext = {
     setAuthenticated: (newState: boolean) => void;
     login: any;
     logout: () => void;
+    loginGoogle: any;
 }
 
 const initialValue = {
@@ -19,6 +20,7 @@ const initialValue = {
     setAuthenticated: () => { },
     login: () => { },
     logout: () => { },
+    loginGoogle: () => { },
 }
 
 const AuthContext = createContext<IAuthContext>(initialValue)
@@ -27,34 +29,43 @@ const AuthProvider = ({ children }: Props) => {
     const [authenticated, setAuthenticated] = useState<boolean>(() => !!localStorage.getItem('token'));
     const navigate = useNavigate();
 
-    const login = async (form: any) => {
+    const handleLogin = async (
+        apiCall: (data: any) => Promise<any>,
+        form: any
+    ) => {
         try {
-            const result = await userAPI.login(form)
-
+            const result = await apiCall(form);
             if (result?.data?.statusCode === 1) {
                 setAuthenticated(true);
-                toast.success(`${result?.data?.message}`)
-                localStorage.setItem('token', result?.data?.token);
-                localStorage.setItem('startTimeToken', result?.data?.startTime);
-                localStorage.setItem('endTimeToken', result?.data?.endTime);
+                toast.success(result.data.message);
+                localStorage.setItem('token', result.data.token);
+                localStorage.setItem('startTimeToken', result.data.startTime);
+                localStorage.setItem('endTimeToken', result.data.endTime);
                 navigate('/');
             }
-
         } catch (error: any) {
             console.log(error);
-            toast.error(`${error?.response?.data?.message}`)
-
+            toast.error(
+                error?.response?.data?.message || 'Đăng nhập thất bại'
+            );
         }
+    };
+
+    const login = async (form: any) => {
+        await handleLogin(userAPI.login, form);
+    }
+
+    const loginGoogle = async (form: any) => {
+        await handleLogin(userAPI.loginGoogle, form);
     }
 
     const logout = async () => {
-        // await userAPI.logout()
         localStorage.clear();
         window.location.reload();
     }
 
     return (
-        <AuthContext.Provider value={{ authenticated, setAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ authenticated, setAuthenticated, login, logout, loginGoogle }}>
             {children}
         </AuthContext.Provider>
     )

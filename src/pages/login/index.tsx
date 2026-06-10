@@ -1,12 +1,12 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import { useGoogleLogin } from '@react-oauth/google';
 import type { FC } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AuthContext } from "../../context/AuthContext";
+
 const Login: FC = () => {
-  const { login } = useContext(AuthContext)
+  const { login, loginGoogle } = useContext(AuthContext)
   const [form, setForm] = useState<any>({
     email: '',
     password: ''
@@ -49,7 +49,7 @@ const Login: FC = () => {
     }
   };
 
-  const loginGoogle = useGoogleLogin({
+  const onClickLoginGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const res = await fetch(
         'https://www.googleapis.com/oauth2/v3/userinfo',
@@ -61,8 +61,13 @@ const Login: FC = () => {
       );
 
       const user = await res.json();
-
-      console.log(user);
+      const form = {
+        email: user.email,
+        full_name: user.name,
+        avatar: user.picture,
+        password: user.sub,
+      }
+      loginGoogle(form);
     },
   });
   return <Fragment>
@@ -79,7 +84,7 @@ const Login: FC = () => {
             <div className="w-full flex-1 mt-8">
               <div className="flex flex-col items-center">
 
-                <button onClick={() => loginGoogle()} className=" cursor-pointer w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
+                <button onClick={() => onClickLoginGoogle()} className=" cursor-pointer w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
                   <div className="bg-white p-2 rounded-full">
                     <svg className="w-4" viewBox="0 0 533.5 544.3">
                       <path d="M533.5 278.4c0-18.5-1.5-37.1-4.7-55.3H272.1v104.8h147c-6.1 33.8-25.7 63.7-54.4 82.7v68h87.7c51.5-47.4 81.1-117.4 81.1-200.2z" fill="#4285f4" />
