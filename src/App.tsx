@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import LayoutComponentAdmin from './components/layout/layoutAdmin';
-import LayoutComponentUser from './components/layout/layoutUser';
+import LayoutComponenPage from './components/layout/layoutPage';
 import LoadingLayout from './components/loadingLayout';
 import Error from './pages/error';
 import Login from './pages/login';
@@ -12,8 +12,6 @@ import Friend from './pages/friends';
 
 const CreateUser = React.lazy(() => import('./pages/user/create'));
 const ManageUser = React.lazy(() => import('./pages/user/manager'));
-const Messages = React.lazy(() => import('./pages/messages/index'));
-const History = React.lazy(() => import('./pages/history/index'));
 const Profile = React.lazy(() => import('./pages/profile'));
 
 
@@ -26,9 +24,7 @@ function App() {
 
       {/* 👤 USER ROUTES */}
       <Route element={<ProtectedRoute allowedRoles={[CheckRole.ADMIN.toString(), CheckRole.QUANLY.toString(), CheckRole.TUVAN.toString(), CheckRole.GOOGLE.toString()]} />}>
-        <Route path="/" element={<LayoutComponentUser />}>
-          <Route index element={<Suspense fallback={<LoadingLayout />}> <Messages /></Suspense>} />
-          <Route path="history" element={<Suspense fallback={<LoadingLayout />}><History /></Suspense>} />
+        <Route path="/" element={<LayoutComponenPage />}>
           <Route path="ho-so-ca-nhan" element={<Suspense fallback={<LoadingLayout />}><Profile /></Suspense>} />
           <Route path="add-friend" element={<Suspense fallback={<LoadingLayout />}><Friend /></Suspense>} />
         </Route>
