@@ -13,6 +13,7 @@ type IAuthContext = {
     login: any;
     logout: () => void;
     loginGoogle: any;
+    loginFacebook: any
 }
 
 const initialValue = {
@@ -21,6 +22,7 @@ const initialValue = {
     login: () => { },
     logout: () => { },
     loginGoogle: () => { },
+    loginFacebook: () => { },
 }
 
 const AuthContext = createContext<IAuthContext>(initialValue)
@@ -59,13 +61,17 @@ const AuthProvider = ({ children }: Props) => {
         await handleLogin(userAPI.loginGoogle, form);
     }
 
+    const loginFacebook = async (form: any) => {
+        await handleLogin(userAPI.loginFacebook, form);
+    }
+
     const logout = async () => {
         localStorage.clear();
         window.location.reload();
     }
 
     return (
-        <AuthContext.Provider value={{ authenticated, setAuthenticated, login, logout, loginGoogle }}>
+        <AuthContext.Provider value={{ authenticated, setAuthenticated, login, logout, loginGoogle, loginFacebook }}>
             {children}
         </AuthContext.Provider>
     )

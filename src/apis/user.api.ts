@@ -2,7 +2,8 @@ import instance from "../helper/api.helper";
 
 export const userAPI = {
     login,
-    loginGoogle
+    loginGoogle,
+    loginFacebook
 };
 
 function login(data: any) {
@@ -13,4 +14,7 @@ function loginGoogle(data: any) {
     return instance.post("/users/login-google", data);
 }
 
+function loginFacebook(data: any) {
+    return instance.post("/users/login-facebook", data);
+}
 
