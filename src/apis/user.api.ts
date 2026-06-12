@@ -3,7 +3,8 @@ import instance from "../helper/api.helper";
 export const userAPI = {
     login,
     loginV1,
-    getByIdUser
+    getByIdUser,
+    logout
 };
 
 function login(data: any) {
@@ -18,3 +19,6 @@ function getByIdUser() {
     return instance.get("/users/get-by-id-user");
 }
 
+function logout() {
+    return instance.post("/users/logout");
+}

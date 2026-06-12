@@ -63,6 +63,7 @@ const AuthProvider = ({ children }: Props) => {
 
 
     const logout = async () => {
+        await userAPI.logout()
         localStorage.clear();
         window.location.reload();
     }

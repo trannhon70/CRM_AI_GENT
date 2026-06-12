@@ -9,13 +9,13 @@ const instance = axios.create({
 
 // Interceptor cho request
 instance.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => { 
+    (config: InternalAxiosRequestConfig) => {
         const token = localStorage.getItem('token');
-        
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-        
+
         return config;
     },
     (error) => {
@@ -33,13 +33,13 @@ instance.interceptors.response.use(
     async (error) => {
         console.log(error.response.data.message, 'error');
         // Kiểm tra nếu lỗi là 401 (Unauthorized) và token hết hạn
-        if (error.response.data && error.response.data.message === 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' || error.response.data.message === "Tài khoản đã được đăng nhập nơi khác!" || error.response.data.message === "Phiên đăng nhập đã hết hạn hoặc không tồn tại.") {
+        if (error.response.data && error.response.data.message === 'Phiên đăng nhập không tồn tại' || error.response.data.message === "Tài khoản đã đăng nhập nơi khác" || error.response.data.message === "Phiên đăng nhập đã hết hạn" || error.response.data.message === "Token đã hết hạn") {
             localStorage.clear();
             window.location.reload();
-            return Promise.reject(error); 
+            return Promise.reject(error);
         }
 
-        return Promise.reject(error); 
+        return Promise.reject(error);
     }
 );
 
