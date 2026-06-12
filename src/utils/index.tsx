@@ -3,10 +3,10 @@
 
 
 export const CheckRole = {
-  ADMIN: 1,
-  QUANLY: 2,
-  TUVAN: 3,
-  GOOGLE: 4,
+  OWNER: 1,
+  ADMIN_MANAGE: 2,
+  SALE: 3,
+  CSKH: 4,
 } as const;
 
 // staff là nhân viên phòng khám, customer là khách hàng

@@ -13,6 +13,7 @@ import Friend from './pages/friends';
 const CreateUser = React.lazy(() => import('./pages/user/create'));
 const ManageUser = React.lazy(() => import('./pages/user/manager'));
 const Profile = React.lazy(() => import('./pages/profile'));
+const Dashboard = React.lazy(() => import('./pages/dashboard'));
 
 
 
@@ -23,15 +24,16 @@ function App() {
       <Route path="/login" element={<Login />} />
 
       {/* 👤 USER ROUTES */}
-      <Route element={<ProtectedRoute allowedRoles={[CheckRole.ADMIN.toString(), CheckRole.QUANLY.toString(), CheckRole.TUVAN.toString(), CheckRole.GOOGLE.toString()]} />}>
+      <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString()]} />}>
         <Route path="/" element={<LayoutComponenPage />}>
-          <Route path="ho-so-ca-nhan" element={<Suspense fallback={<LoadingLayout />}><Profile /></Suspense>} />
-          <Route path="add-friend" element={<Suspense fallback={<LoadingLayout />}><Friend /></Suspense>} />
+          <Route path="account" element={<Suspense fallback={<LoadingLayout />}><Profile /></Suspense>} />
+
+          <Route path="/" element={<Suspense fallback={<LoadingLayout />}><Dashboard /></Suspense>} />
         </Route>
       </Route>
 
       {/* 🛠️ ADMIN ROUTES */}
-      <Route element={<ProtectedRoute allowedRoles={[CheckRole.ADMIN.toString()]} />}>
+      <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString()]} />}>
         <Route path="/admin" element={<LayoutComponentAdmin />}>
           <Route path="quan-ly-nguoi-dung" element={<Suspense fallback={<LoadingLayout />}><ManageUser /></Suspense>} />
           <Route path="quan-ly-nguoi-dung/them-moi" element={<Suspense fallback={<LoadingLayout />}> <CreateUser /> </Suspense>} />
