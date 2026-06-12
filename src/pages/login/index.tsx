@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 import { LoginSocialFacebook } from "reactjs-social-login";
+import { ProviderEnum } from '../../utils';
 const FB_APP_ID = import.meta.env.VITE_FB_APP_ID;
 
 const Login: FC = () => {
-  const { login, loginGoogle, loginFacebook } = useContext(AuthContext)
+  const { login, loginV1 } = useContext(AuthContext)
   const [form, setForm] = useState<any>({
     email: '',
     password: ''
@@ -67,8 +68,9 @@ const Login: FC = () => {
         email: user.email,
         full_name: user.name,
         avatar: user.picture,
+        provider: ProviderEnum.GOOGLE
       }
-      loginGoogle(form);
+      loginV1(form);
     },
   });
 
@@ -77,8 +79,9 @@ const Login: FC = () => {
       email: data.data.email,
       full_name: data.data.name,
       avatar: data.data.picture.data.url,
+      provider: ProviderEnum.FACEBOOK
     }
-    await loginFacebook(form)
+    await loginV1(form)
   }
   return <Fragment>
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
@@ -114,7 +117,7 @@ const Login: FC = () => {
                     onClickLoginFacebook(response)
                   }}
                   onReject={(error: any) => {
-                    console.log(error);
+                    // console.log(error);
                   }}
                 >
                   <button className="cursor-pointer w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-[#1877F2] text-white flex items-center justify-center transition-all duration-300 ease-in-out hover:shadow-lg mt-5">
