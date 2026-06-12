@@ -9,11 +9,10 @@ import Typography from '@mui/material/Typography';
 import { useContext, useEffect, useState, type FC } from "react";
 import { IoIosLogOut, IoMdNotifications } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../../../assets/images/logo.png";
+import { AuthContext } from '../../../context/AuthContext';
 import { fetchUserById } from "../../../features/usersSlice";
 import type { AppDispatch, RootState } from "../../../redux/store";
-import { AuthContext } from '../../../context/AuthContext';
 interface IProps {
 
 }
