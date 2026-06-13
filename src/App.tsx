@@ -8,6 +8,7 @@ import Login from './pages/login';
 import PrivacyPolicy from './pages/privacy_policy';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { CheckRole } from './utils';
+import DataDeletion from './pages/dataDeletion';
 
 
 const CreateUser = React.lazy(() => import('./pages/user/create'));
@@ -23,6 +24,10 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route
+        path="/data-deletion"
+        element={<DataDeletion />}
+      />
 
       {/* 👤 USER ROUTES */}
       <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString()]} />}>
