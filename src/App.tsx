@@ -5,16 +5,15 @@ import LayoutComponenPage from './components/layout/layoutPage';
 import LoadingLayout from './components/loadingLayout';
 import Error from './pages/error';
 import Login from './pages/login';
+import PrivacyPolicy from './pages/privacy_policy';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { CheckRole } from './utils';
-import Friend from './pages/friends';
 
 
 const CreateUser = React.lazy(() => import('./pages/user/create'));
 const ManageUser = React.lazy(() => import('./pages/user/manager'));
 const Profile = React.lazy(() => import('./pages/profile'));
 const Dashboard = React.lazy(() => import('./pages/dashboard'));
-const PrivacyPolicy = React.lazy(() => import('./pages/privacy_policy'));
 
 
 
