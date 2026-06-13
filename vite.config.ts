@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['tintuc24honline.com'],
+    allowedHosts: ['crm-ai-gent.vercel.app'],
     host: true, // Cho phép truy cập từ mọi host
 
   },
