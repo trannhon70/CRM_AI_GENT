@@ -2,8 +2,11 @@ import type { FC } from "react";
 import appCake from "../../../assets/images/appcake.png";
 import facebook from "../../../assets/images/facebook.png";
 import Button from "@mui/material/Button";
+const FB_APP_ID = import.meta.env.VITE_FB_APP_ID;
+import { LoginSocialFacebook } from "reactjs-social-login";
 
 const TabFaceBook: FC = () => {
+    console.log(FB_APP_ID);
     return <div className="flex flex-col h-[60vh]" >
         <div className="border-b p-3  border-[#F2F4F7] text-black font-medium text-lg shrink-0" >
             Thêm tài khoản Facebook
@@ -21,10 +24,22 @@ const TabFaceBook: FC = () => {
                 Sử dụng Pancake để mở khoá mục tiêu mua hàng qua <br /> tin nhắn trên Ads Manager, tự động tối ưu quảng cáo <br /> Facebook với CAPI
             </div>
             <div className="mt-4" >
-                <Button variant="outlined" className="flex items-center gap-2.5" >
-                    <img className="rounded-2xl shadow-[0px_3px_8px_0px_rgba(0,0,0,0.15)]" src={facebook} alt="..." width={20} height={20} />
-                    Kết nối lại với Facebook
-                </Button>
+                <LoginSocialFacebook
+                    className="flex items-center justify-center w-full"
+                    appId="76385f94b9bfd64c4957dcebf82ad598"
+                    scope="public_profile,email,pages_show_list"
+                    onResolve={(response: any) => {
+                        console.log(response);
+                    }}
+                    onReject={(error: any) => {
+                        console.log(error);
+                    }}
+                >
+                    <Button variant="outlined" className="flex items-center gap-2.5" >
+                        <img className="rounded-2xl shadow-[0px_3px_8px_0px_rgba(0,0,0,0.15)]" src={facebook} alt="..." width={20} height={20} />
+                        Kết nối lại với Facebook
+                    </Button>
+                </LoginSocialFacebook>
             </div>
         </div>
     </div>

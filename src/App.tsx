@@ -14,6 +14,7 @@ const CreateUser = React.lazy(() => import('./pages/user/create'));
 const ManageUser = React.lazy(() => import('./pages/user/manager'));
 const Profile = React.lazy(() => import('./pages/profile'));
 const Dashboard = React.lazy(() => import('./pages/dashboard'));
+const PrivacyPolicy = React.lazy(() => import('./pages/privacy_policy'));
 
 
 
@@ -22,6 +23,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
       {/* 👤 USER ROUTES */}
       <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString()]} />}>

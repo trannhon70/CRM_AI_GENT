@@ -104,7 +104,6 @@ const ModalConnect: React.FC<IProps> = (props) => {
                 Kết nối
             </Button>
             <Modal
-
                 aria-labelledby="spring-modal-title"
                 aria-describedby="spring-modal-description"
                 open={open}
