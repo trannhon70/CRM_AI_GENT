@@ -1,13 +1,18 @@
-import Button from "@mui/material/Button";
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from "@mui/material/TextField";
 import { useEffect, useState, type FC } from "react";
-import { IoMdAddCircle } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
+import { userPagesAPI } from "../../apis/userPages.api";
 import facebook from "../../assets/images/facebook-logo.png";
 import platform_all from "../../assets/images/platform_all.jpg";
 import ModalConnect from "../../components/modal/modalConnect";
-import { userPagesAPI } from "../../apis/userPages.api";
+import { ProviderEnum } from "../../utils";
+
+const providerIcons: Record<string, string> = {
+    all: platform_all,
+    facebook: facebook,
+
+};
 
 const Dashboard: FC = () => {
     const [data, setData] = useState<any>([]);
@@ -15,15 +20,25 @@ const Dashboard: FC = () => {
     const [pageSize, setPageSize] = useState<number>(100);
     const [search, setSearch] = useState<string>("");
     const [provider, setProvider] = useState<string>("");
+    const [dataProvider, setDataProvider] = useState<any>([]);
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [activeProvider, setActiveProvider] = useState('Tất cả');
 
     const getPagingUserPage = async () => {
-
         const result = await userPagesAPI.getpaging({ pageIndex, pageSize, search, provider });
-        console.log(result, 'result');
         setData(result.data)
     }
 
+    const getCountProviderUserPage = async () => {
+        const result = await userPagesAPI.getCountProvider();
+
+        setDataProvider(result)
+    }
+    console.log(dataProvider);
+
+    useEffect(() => {
+        getCountProviderUserPage()
+    }, [])
     useEffect(() => {
         const timer = setTimeout(() => {
             setDebouncedSearch(search);
@@ -69,23 +84,36 @@ const Dashboard: FC = () => {
                 </div>
 
                 {/* Platform tabs */}
-                <div className="px-4 py-3 bg-white rounded mt-4 flex items-center w-full overflow-x-auto shrink-0">
-                    <div className="relative flex items-center justify-between px-3 py-2 rounded cursor-pointer hover:bg-[#BAE0FF] after:content-[''] after:absolute after:right-[-8px] after:top-1/2 after:-translate-y-1/2 after:w-px after:h-8 after:bg-gray-300">
-                        <div className="flex items-center gap-2 w-[120px]">
-                            <img width={20} height={20} src={platform_all} alt="" />
-                            <span className="text-base font-medium text-black">Tất cả</span>
-                        </div>
-                        <span className="w-5 h-5 flex items-center justify-center rounded-full bg-gray-300 text-xs">1</span>
-                    </div>
-
-                    <div className="flex items-center justify-between px-3 py-2 rounded cursor-pointer hover:bg-[#BAE0FF] ml-4">
-                        <div className="flex items-center gap-2 w-[120px]">
-                            <img width={20} height={20} src={facebook} alt="" />
-                            <span className="text-base font-medium text-black">Facebook</span>
-                        </div>
-                        <span className="w-5 h-5 flex items-center justify-center rounded-full bg-gray-300 text-xs">1</span>
-                    </div>
-
+                <div className="px-4 py-3 bg-white rounded mt-4 flex items-center gap-1 w-full overflow-x-auto shrink-0">
+                    {
+                        dataProvider.map((item: any, index: number) => {
+                            return <div
+                                key={item.provider}
+                                onClick={() => {
+                                    setActiveProvider(item.provider);
+                                    setProvider(item.provider === 'Tất cả' ? '' : item.provider);
+                                }}
+                                className={`relative flex items-center justify-between px-3 py-2 rounded cursor-pointer
+                                    ${activeProvider === item.provider
+                                        ? ' bg-[#BAE0FF]'
+                                        : 'hover:bg-[#BAE0FF]'
+                                    }
+                                    ${index % 2 === 0
+                                        ? "after:content-[''] after:absolute after:right-[-8px] after:top-1/2 after:-translate-y-1/2 after:w-px after:h-8 after:bg-gray-300"
+                                        : ''
+                                    }
+                                `}
+                            >
+                                <div className="flex items-center gap-2 w-[120px]">
+                                    <img width={20} height={20} src={providerIcons[item.provider] || platform_all} alt="" />
+                                    <span className="text-base font-medium text-black">{item.provider}</span>
+                                </div>
+                                <span className="w-5 h-5 flex items-center justify-center rounded-full bg-gray-300 text-xs">
+                                    {item.count || 0}
+                                </span>
+                            </div>
+                        })
+                    }
                 </div>
 
                 {/* Main content - chiếm hết phần còn lại */}
