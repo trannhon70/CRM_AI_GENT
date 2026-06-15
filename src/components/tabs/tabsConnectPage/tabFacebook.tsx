@@ -2,11 +2,37 @@ import type { FC } from "react";
 import appCake from "../../../assets/images/appcake.png";
 import facebook from "../../../assets/images/facebook.png";
 import Button from "@mui/material/Button";
-const FB_APP_ID = import.meta.env.VITE_FB_APP_ID;
+const VITE_FB_APP_CONNECT = import.meta.env.VITE_FB_APP_CONNECT;
 import { LoginSocialFacebook } from "reactjs-social-login";
+import { fanPagesAPI } from "../../../apis/fanpage.api";
+import { toast } from "react-toastify";
 
 const TabFaceBook: FC = () => {
-    console.log(FB_APP_ID);
+
+    const handleConnectFacebook = async (response: any) => {
+
+        const res = await fetch(
+            'https://graph.facebook.com/v25.0/me/accounts?fields=id,name,category,category_list,tasks,picture.type(large),cover,access_token',
+            {
+                headers: {
+                    Authorization: `Bearer ${response.data.accessToken}`,
+                },
+            }
+        );
+        const fanpages = await res.json();
+        const pages = fanpages?.data?.map((item: any) => ({
+            id: item.id,
+            access_token: item.access_token,
+            name: item.name,
+            url: item.picture?.data?.url,
+        }));
+        fanPagesAPI.create(pages).then((_res: any) => {
+            toast.success('Kết nối thành công!')
+        }).catch((_err: any) => {
+            toast.error('Lỗi khi kết nối!')
+        })
+
+    }
     return <div className="flex flex-col h-[60vh]" >
         <div className="border-b p-3  border-[#F2F4F7] text-black font-medium text-lg shrink-0" >
             Thêm tài khoản Facebook
@@ -26,13 +52,13 @@ const TabFaceBook: FC = () => {
             <div className="mt-4" >
                 <LoginSocialFacebook
                     className="flex items-center justify-center w-full"
-                    appId="76385f94b9bfd64c4957dcebf82ad598"
-                    scope="public_profile,email,pages_show_list"
+                    appId={VITE_FB_APP_CONNECT}
+                    scope="public_profile,pages_show_list"
                     onResolve={(response: any) => {
-                        console.log(response);
+                        handleConnectFacebook(response)
                     }}
                     onReject={(error: any) => {
-                        console.log(error);
+                        // console.log(error);
                     }}
                 >
                     <Button variant="outlined" className="flex items-center gap-2.5" >

@@ -1,14 +1,44 @@
 import Button from "@mui/material/Button";
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from "@mui/material/TextField";
-import type { FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { IoMdAddCircle } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 import facebook from "../../assets/images/facebook-logo.png";
 import platform_all from "../../assets/images/platform_all.jpg";
 import ModalConnect from "../../components/modal/modalConnect";
+import { userPagesAPI } from "../../apis/userPages.api";
 
 const Dashboard: FC = () => {
+    const [data, setData] = useState<any>([]);
+    const [pageIndex, setPageIndex] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(100);
+    const [search, setSearch] = useState<string>("");
+    const [provider, setProvider] = useState<string>("");
+    const [debouncedSearch, setDebouncedSearch] = useState('');
+
+    const getPagingUserPage = async () => {
+
+        const result = await userPagesAPI.getpaging({ pageIndex, pageSize, search, provider });
+        console.log(result, 'result');
+        setData(result.data)
+    }
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    useEffect(() => {
+        getPagingUserPage()
+    }, [pageSize, pageIndex, debouncedSearch, provider])
+
+    const onChangeSearch = (event: any) => {
+        setSearch(event.target.value)
+    }
     return (
         <div className="bg-[#ECEDF4] h-[95vh] w-full flex flex-col">
             <div className="w-[1000px] m-auto py-4 flex flex-col flex-1 min-h-0">
@@ -17,6 +47,7 @@ const Dashboard: FC = () => {
                     <div className="text-lg font-bold text-black">Bảng điều khiển</div>
                     <div className="mt-2 flex items-center justify-between">
                         <TextField
+                            onChange={onChangeSearch}
                             label=""
                             id="1-input"
                             sx={{ width: '40ch' }}
@@ -59,16 +90,21 @@ const Dashboard: FC = () => {
 
                 {/* Main content - chiếm hết phần còn lại */}
                 <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3">
-                    <div className="border rounded border-neutral-400 p-3 h-20 cursor-pointer flex items-center gap-2.5 hover:border-amber-400 " >
-                        <img width={50} height={50} src={platform_all} alt="..." className="rounded-full" />
-                        <div>
-                            <div className="font-bold text-base text-black" >Tin tức ý khoa</div>
-                            <div className="flex items-center gap-2 mt-1" >
-                                <img width={15} height={15} src={facebook} alt="" />
-                                <span>01234567899999</span>
+                    {
+                        data.length > 0 && data.map((item: any, index: number) => {
+                            return <div key={item.id} className="border rounded border-neutral-400 p-3 h-20 cursor-pointer flex items-center gap-2.5 hover:border-amber-400 " >
+                                <img width={50} height={50} src={item.page.page_avatar} alt="..." className="rounded-full" />
+                                <div>
+                                    <div className="font-bold text-base text-black" >{item.page.page_name}</div>
+                                    <div className="flex items-center gap-2 mt-1" >
+                                        <img width={15} height={15} src={facebook} alt="" />
+                                        <span>{item.page.facebook_page_id}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        })
+                    }
+
 
                 </div>
             </div>
