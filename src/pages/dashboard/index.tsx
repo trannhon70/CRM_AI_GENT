@@ -125,16 +125,17 @@ const Dashboard: FC = () => {
                 <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3">
                     {
                         data.length > 0 && data.map((item: any, index: number) => {
+
                             return <div key={item.id}
                                 className="border rounded border-neutral-400 p-3 h-20 cursor-pointer flex items-center gap-2.5 hover:border-amber-400 "
-                                onClick={() => onClickRouter(item.page.facebook_page_id)}
+                                onClick={() => onClickRouter(item.page.page_id)}
                             >
                                 <img width={50} height={50} src={item.page.page_avatar} alt="..." className="rounded-full" />
                                 <div>
                                     <div className="font-bold text-base text-black" >{item.page.page_name}</div>
                                     <div className="flex items-center gap-2 mt-1" >
                                         <img width={15} height={15} src={facebook} alt="" />
-                                        <span>{item.page.facebook_page_id}</span>
+                                        <span>{item.page.page_id}</span>
                                     </div>
                                 </div>
                             </div>

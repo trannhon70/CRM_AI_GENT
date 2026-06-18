@@ -6,6 +6,7 @@ const VITE_FB_APP_CONNECT = import.meta.env.VITE_FB_APP_CONNECT;
 import { LoginSocialFacebook } from "reactjs-social-login";
 import { fanPagesAPI } from "../../../apis/fanpage.api";
 import { toast } from "react-toastify";
+import { ProviderEnum } from "../../../utils";
 
 const TabFaceBook: FC = () => {
 
@@ -25,6 +26,7 @@ const TabFaceBook: FC = () => {
             access_token: item.access_token,
             name: item.name,
             url: item.picture?.data?.url,
+            provider: ProviderEnum.FACEBOOK,
         }));
         fanPagesAPI.create(pages).then((_res: any) => {
             toast.success('Kết nối thành công!')

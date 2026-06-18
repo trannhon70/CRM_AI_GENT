@@ -17,11 +17,15 @@ import { fetchUserById } from "../../../features/usersSlice";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import Avatar from '@mui/material/Avatar';
 import { RiDashboardFill } from "react-icons/ri";
+import { useParams } from 'react-router-dom';
+import { fetchPageId } from "../../../features/fanpagesSlice";
 
 const LayoutConversation: FC = () => {
+    const { id } = useParams();
     const { logout } = useContext(AuthContext)
     const dispatch = useDispatch<AppDispatch>();
     const users = useSelector((state: RootState) => state.users);
+    const fanPages = useSelector((state: RootState) => state.fanPages);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -33,13 +37,14 @@ const LayoutConversation: FC = () => {
     };
 
     const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
+    const id_open = open ? 'simple-popover' : undefined;
 
 
 
     useEffect(() => {
         dispatch(fetchUserById());
-    }, [dispatch])
+        dispatch(fetchPageId(id));
+    }, [dispatch, id])
 
 
     const onclickLogout = () => {
@@ -54,13 +59,13 @@ const LayoutConversation: FC = () => {
                         <Button className='flex items-center gap-2' aria-describedby={id} variant="outlined" color='inherit' onClick={handleClick}>
                             <Avatar
                                 alt="Remy Sharp"
-                                src={users.user.avatar}
+                                src={fanPages.page.page_avatar}
                                 sx={{ width: 30, height: 30 }}
                             />
-                            {users.user.full_name}
+                            {fanPages.page.page_name}
                         </Button>
                         <Popover
-                            id={id}
+                            id={id_open}
                             open={open}
                             anchorEl={anchorEl}
                             onClose={handleClose}
