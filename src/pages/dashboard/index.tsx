@@ -7,6 +7,7 @@ import facebook from "../../assets/images/facebook-logo.png";
 import platform_all from "../../assets/images/platform_all.jpg";
 import ModalConnect from "../../components/modal/modalConnect";
 import { ProviderEnum } from "../../utils";
+import { useNavigate } from 'react-router-dom';
 
 const providerIcons: Record<string, string> = {
     all: platform_all,
@@ -15,6 +16,7 @@ const providerIcons: Record<string, string> = {
 };
 
 const Dashboard: FC = () => {
+    const navige = useNavigate()
     const [data, setData] = useState<any>([]);
     const [pageIndex, setPageIndex] = useState<number>(1);
     const [pageSize, setPageSize] = useState<number>(100);
@@ -34,7 +36,6 @@ const Dashboard: FC = () => {
 
         setDataProvider(result)
     }
-    console.log(dataProvider);
 
     useEffect(() => {
         getCountProviderUserPage()
@@ -53,6 +54,10 @@ const Dashboard: FC = () => {
 
     const onChangeSearch = (event: any) => {
         setSearch(event.target.value)
+    }
+
+    const onClickRouter = (value: any) => {
+        navige(`conversation/${value}`)
     }
     return (
         <div className="bg-[#ECEDF4] h-[95vh] w-full flex flex-col">
@@ -120,7 +125,10 @@ const Dashboard: FC = () => {
                 <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3">
                     {
                         data.length > 0 && data.map((item: any, index: number) => {
-                            return <div key={item.id} className="border rounded border-neutral-400 p-3 h-20 cursor-pointer flex items-center gap-2.5 hover:border-amber-400 " >
+                            return <div key={item.id}
+                                className="border rounded border-neutral-400 p-3 h-20 cursor-pointer flex items-center gap-2.5 hover:border-amber-400 "
+                                onClick={() => onClickRouter(item.page.facebook_page_id)}
+                            >
                                 <img width={50} height={50} src={item.page.page_avatar} alt="..." className="rounded-full" />
                                 <div>
                                     <div className="font-bold text-base text-black" >{item.page.page_name}</div>

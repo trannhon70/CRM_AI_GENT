@@ -3,7 +3,7 @@ import { Content } from "antd/es/layout/layout"
 import { Outlet } from "react-router-dom"
 import HeaderComponentUser from "../../header/headerPage"
 
-const LayoutComponentPage: React.FC = () => {
+const LayoutComponentDashboard: React.FC = () => {
 
     return <Layout>
         <HeaderComponentUser />
@@ -18,4 +18,4 @@ const LayoutComponentPage: React.FC = () => {
     </Layout>
 }
 
-export default LayoutComponentPage
+export default LayoutComponentDashboard
