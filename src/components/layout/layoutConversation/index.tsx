@@ -1,124 +1,70 @@
-import { Layout } from "antd"
-import { Content } from "antd/es/layout/layout"
-import { Outlet } from "react-router-dom"
-import Badge from '@mui/material/Badge';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Link from "@mui/material/Link";
-import Popover from '@mui/material/Popover';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
-import { useContext, useEffect, useState, type FC } from "react";
-import { IoIosLogOut, IoMdNotifications } from "react-icons/io";
-import { useDispatch, useSelector } from "react-redux";
-import logo from "../../../assets/images/logo.png";
-import { AuthContext } from '../../../context/AuthContext';
-import { fetchUserById } from "../../../features/usersSlice";
-import type { AppDispatch, RootState } from "../../../redux/store";
-import Avatar from '@mui/material/Avatar';
-import { RiDashboardFill } from "react-icons/ri";
-import { useParams } from 'react-router-dom';
-import { fetchPageId } from "../../../features/fanpagesSlice";
+import Tooltip from "@mui/material/Tooltip";
+import { Layout } from "antd";
+import { Content } from "antd/es/layout/layout";
+import { useState, type FC } from "react";
+import { BiSolidMessageRounded } from "react-icons/bi";
+import { BsEnvelopeFill } from "react-icons/bs";
+import { FaCircleUser, FaMessage } from "react-icons/fa6";
+import HeaderConversation from "../../header/headerConversation";
+import ComponentLeftConversation from "../../tabs/tabsConversation/componentLeftConversation";
+
+const sidebar = [
+    { id: 1, icon: <FaMessage size={20} color="white" />, title: <div>Tất cả hội thoại</div> },
+    { id: 2, icon: <FaCircleUser size={20} color="white" />, title: <div>Lọc chưa lọc</div> },
+    { id: 3, icon: <BiSolidMessageRounded size={20} color="white" />, title: <div>Lọc bình luận</div> },
+    { id: 4, icon: <BsEnvelopeFill size={20} color="white" />, title: <div>Lọc tin nhắn</div> },
+]
 
 const LayoutConversation: FC = () => {
-    const { id } = useParams();
-    const { logout } = useContext(AuthContext)
-    const dispatch = useDispatch<AppDispatch>();
-    const users = useSelector((state: RootState) => state.users);
-    const fanPages = useSelector((state: RootState) => state.fanPages);
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const open = Boolean(anchorEl);
-    const id_open = open ? 'simple-popover' : undefined;
-
-
-
-    useEffect(() => {
-        dispatch(fetchUserById());
-        dispatch(fetchPageId(id));
-    }, [dispatch, id])
-
-
-    const onclickLogout = () => {
-        logout()
-    }
+    const [active, setActive] = useState<number>(1)
     return <Layout>
-        <div className="w-full h-[5vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between  box-border " >
-            <div className="w-[1200px] m-auto flex items-center justify-between" >
-                <Link href="#"><img width={150} src={logo} alt="..." /></Link>
-                <div className="flex items-center gap-2">
-                    <div>
-                        <Button className='flex items-center gap-2' aria-describedby={id} variant="outlined" color='inherit' onClick={handleClick}>
-                            <Avatar
-                                alt="Remy Sharp"
-                                src={fanPages.page.page_avatar}
-                                sx={{ width: 30, height: 30 }}
-                            />
-                            {fanPages.page.page_name}
-                        </Button>
-                        <Popover
-                            id={id_open}
-                            open={open}
-                            anchorEl={anchorEl}
-                            onClose={handleClose}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'left',
-                            }}
+        <HeaderConversation />
 
-                        >
-                            <Typography className='w-[250px] p-2 hover:bg-gray-200 cursor-pointer flex items-center justify-between' >
-                                <Link href="/" style={{ textDecoration: "none" }} className='flex items-center gap-2  ' color='textSecondary' >
-                                    <RiDashboardFill size={25} />
-
-                                    <div className='text-base font-bold capitalize' >Bảng điều khiển</div>
-                                </Link>
-
-                            </Typography>
-                            <hr className="text-gray-300 h-0.5" />
-                            <Typography className='w-[250px] p-2 hover:bg-gray-200 cursor-pointer flex items-center justify-between' >
-                                <Link href="account" style={{ textDecoration: "none" }} className='flex items-center gap-2  ' color='textSecondary' >
-                                    <Avatar
-                                        alt="Remy Sharp"
-                                        src={users.user.avatar}
-                                        sx={{ width: 40, height: 40 }}
-                                    />
-                                    <div  >
-                                        <div className='text-[12px] font-medium '>Tài khoản</div>
-                                        <div className='text-base font-bold capitalize' >{users.user.full_name}</div>
-                                    </div>
-                                </Link>
-                                <Tooltip title="Đăng xuất">
-                                    <IconButton onClick={onclickLogout} aria-label="show new notifications">
-                                        <IoIosLogOut color="red" size={30} />
-                                    </IconButton>
-                                </Tooltip>
-                            </Typography>
-                        </Popover>
-                    </div>
-                    <IconButton aria-label="show new notifications">
-                        <Badge badgeContent={100} max={99} color="error" variant="standard">
-                            <IoMdNotifications color="red" size={30} />
-                        </Badge>
-                    </IconButton>
-                </div>
-            </div>
-        </div>
         <Content
             style={{
-                // background: 'w',
-                height: '95vh'
+                height: '95vh',
             }}
         >
-            <Outlet />
+            <div className="flex h-full box-border">
+                {/* Sidebar */}
+                <div className="w-14 shrink-0 bg-[#0f447d] overflow-y-auto">
+                    <div className="flex flex-col items-center pt-3">
+                        {sidebar.map((item: any) => (
+                            <Tooltip
+                                key={item.id}
+                                describeChild
+                                title={item.title}
+                                placement="right-start"
+                            >
+                                <div
+                                    className={`px-2.5 py-1.5 rounded cursor-pointer mt-3 hover:bg-[#506DAD]
+                ${active === item.id ? 'bg-[#506DAD]' : ''}`}
+                                    onClick={() => setActive(item.id)}
+                                >
+                                    {item.icon}
+                                </div>
+                            </Tooltip>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 bg-[#0f447d]">
+                    <div className="h-full flex-1 flex rounded-tl-2xl bg-white" >
+                        <div className="w-1/4 lg:w-[30%] border-r border-gray-200">
+                            <ComponentLeftConversation />
+                        </div>
+
+                        <div className="w-2/4 lg:w-[40%] border-r border-gray-200">
+                            sadsa
+                        </div>
+
+                        <div className="w-1/4 lg:w-[30%]">
+                            sadsad
+                        </div>
+                    </div>
+                </div>
+            </div>
         </Content>
     </Layout>
 }

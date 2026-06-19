@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { userAPI } from '../apis/user.api.ts'
 import { fanPagesAPI } from '../apis/fanpage.api.ts'
 
 
