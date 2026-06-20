@@ -278,3 +278,17 @@
   min-width: 10%;
   max-width: 70%;
 }
+/* index.css */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}

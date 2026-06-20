@@ -46,8 +46,8 @@ const HeaderConversation: FC = () => {
     const onclickLogout = () => {
         logout()
     }
-    return <div className="w-full h-[5vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between  box-border " >
-        <div className="w-[1200px] m-auto flex items-center justify-between" >
+    return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >
+        <div className="max-w-[1200px] w-full m-auto px-4 flex items-center justify-between" >
             <div className='flex items-center gap-7' >
                 <Link href="#"><img width={150} src={logo} alt="..." /></Link>
                 <div className='flex items-center gap-3' >

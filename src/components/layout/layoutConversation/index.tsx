@@ -7,6 +7,7 @@ import { BsEnvelopeFill } from "react-icons/bs";
 import { FaCircleUser, FaMessage } from "react-icons/fa6";
 import HeaderConversation from "../../header/headerConversation";
 import ComponentLeftConversation from "../../tabs/tabsConversation/componentLeftConversation";
+import ComponentCenterConversation from "../../tabs/tabsConversation/componentCenterConversation";
 
 const sidebar = [
     { id: 1, icon: <FaMessage size={20} color="white" />, title: <div>Tất cả hội thoại</div> },
@@ -17,13 +18,11 @@ const sidebar = [
 
 const LayoutConversation: FC = () => {
     const [active, setActive] = useState<number>(1)
-    return <Layout>
+    return <Layout style={{ height: '100%', width: '100%' }}>
         <HeaderConversation />
 
         <Content
-            style={{
-                height: '95vh',
-            }}
+            style={{ height: 'calc(100% - 5vh)' }}
         >
             <div className="flex h-full box-border">
                 {/* Sidebar */}
@@ -55,8 +54,8 @@ const LayoutConversation: FC = () => {
                             <ComponentLeftConversation />
                         </div>
 
-                        <div className="w-2/4 lg:w-[40%] border-r border-gray-200">
-                            sadsa
+                        <div className="w-2/4 lg:w-[40%] border-r border-gray-200 flex flex-col h-full">
+                            <ComponentCenterConversation />
                         </div>
 
                         <div className="w-1/4 lg:w-[30%]">

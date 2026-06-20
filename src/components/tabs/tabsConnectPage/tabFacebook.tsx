@@ -55,7 +55,7 @@ const TabFaceBook: FC = () => {
                 <LoginSocialFacebook
                     className="flex items-center justify-center w-full"
                     appId={VITE_FB_APP_CONNECT}
-                    scope="public_profile,pages_show_list"
+                    scope="pages_show_list,pages_manage_metadata,pages_messaging,pages_read_engagement"
                     onResolve={(response: any) => {
                         handleConnectFacebook(response)
                     }}
