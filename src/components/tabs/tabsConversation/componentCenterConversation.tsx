@@ -95,7 +95,7 @@ const ComponentCenterConversation: FC = () => {
         </div>
 
         <div className="h-[7vh]">
-            <div className="border-t bg-white px-3 py-2">
+            <div className="border-t bg-white px-3 py-2 border-gray-200">
                 <div className="flex items-end gap-2">
                     {/* Icon bên trái */}
                     <button className="p-2 rounded-full hover:bg-gray-100">

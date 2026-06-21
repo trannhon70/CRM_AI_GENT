@@ -1,12 +1,12 @@
 import instance from "../helper/api.helper";
 
 export const fanPagesAPI = {
-    create,
+    createConnectPageFacebook,
     getPagesId
 };
 
-async function create(body: any) {
-    const respone = await instance.post("/fanpages", body);
+async function createConnectPageFacebook(body: any) {
+    const respone = await instance.post("/fanpages/connect-page-facebook", body);
     return respone.data
 }
 
