@@ -2,12 +2,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from "@mui/material/TextField";
 import { useEffect, useState, type FC } from "react";
 import { IoSearch } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
 import { userPagesAPI } from "../../apis/userPages.api";
 import facebook from "../../assets/images/facebook-logo.png";
 import platform_all from "../../assets/images/platform_all.jpg";
 import ModalConnect from "../../components/modal/modalConnect";
-import { ProviderEnum } from "../../utils";
-import { useNavigate } from 'react-router-dom';
+import { IoSettings } from "react-icons/io5";
+import { formatDate, getRemainingDaysText, getRemainingTime } from '../../utils/date';
+import IconButton from '@mui/material/IconButton';
+
+
 
 const providerIcons: Record<string, string> = {
     all: platform_all,
@@ -59,6 +63,13 @@ const Dashboard: FC = () => {
     const onClickRouter = (value: any) => {
         navige(`conversation/${value}`)
     }
+
+    const handleSettingClick = (item: any) => {
+        console.log(item);
+        // Mở menu
+        // Mở dialog
+        // Điều hướng sang trang cài đặt
+    };
     return (
         <div className="bg-[#ECEDF4] h-[95vh] w-full flex flex-col">
             <div className="w-[1000px] m-auto py-4 flex flex-col flex-1 min-h-0">
@@ -126,18 +137,59 @@ const Dashboard: FC = () => {
                     {
                         data.length > 0 && data.map((item: any, index: number) => {
 
-                            return <div key={item.id}
-                                className="border rounded border-neutral-400 p-3 h-20 cursor-pointer flex items-center gap-2.5 hover:border-amber-400 "
+                            return <div
+                                key={item.id}
                                 onClick={() => onClickRouter(item.page.page_id)}
+                                className="group flex items-center gap-4 h-24 rounded-xl border border-gray-200bg-white p-2 cursor-pointer transition-all duration-200 hover:border-blue-500 hover:shadow-lg hover:-translate-y-0.5 "
                             >
-                                <img width={50} height={50} src={item.page.page_avatar} alt="..." className="rounded-full" />
-                                <div>
-                                    <div className="font-bold text-base text-black" >{item.page.page_name}</div>
-                                    <div className="flex items-center gap-2 mt-1" >
-                                        <img width={15} height={15} src={facebook} alt="" />
-                                        <span>{item.page.page_id}</span>
+                                {/* Avatar */}
+                                <img
+                                    src={item.page.page_avatar}
+                                    alt={item.page.page_name}
+                                    className="w-14 h-14 rounded-full object-cover border border-gray-200"
+                                />
+
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="font-semibold text-gray-900 truncate text-base">
+                                            {item.page.page_name}
+                                        </h3>
+
+                                        <img
+                                            src={facebook}
+                                            alt="facebook"
+                                            className="w-5 h-5"
+                                        />
+                                    </div>
+
+                                    <div className="mt-2 flex flex-col gap-1 text-sm text-gray-500">
+                                        <span>
+                                            <span className="font-medium text-gray-700">
+                                                Page ID:
+                                            </span>{" "}
+                                            {item.page.page_id}
+                                        </span>
+
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                                                Active
+                                            </span>
+                                            <span className="text-xs text-gray-500">
+                                                Token còn: {getRemainingDaysText(item.page.data_access_expires_at)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
+
+                                {/* Arrow */}
+                                <IconButton onClick={(e) => {
+                                    e.stopPropagation(); // Ngăn click lan lên div cha
+                                    handleSettingClick(item);
+                                }} aria-label="delete">
+                                    <IoSettings size={30} />
+                                </IconButton>
+
                             </div>
                         })
                     }
