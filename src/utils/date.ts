@@ -68,9 +68,5 @@ export const getRemainingTime = (timestamp: number) => {
 
 export const getRemainingDaysText = (timestamp: number) => {
     const days = getRemainingDays(timestamp);
-
-    if (days < 0) return "Đã hết hạn";
-    if (days === 0) return "Hết hạn hôm nay";
-
-    return `${days} ngày`;
+    return `${days}`;
 };
