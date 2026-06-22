@@ -15,6 +15,7 @@ import facebook from "../../assets/images/facebook-logo.png";
 import platform_all from "../../assets/images/platform_all.jpg";
 import ModalConnect from "../../components/modal/modalConnect";
 import { getRemainingDaysText } from '../../utils/date';
+import LoadingLayout from '../../components/loadingLayout';
 
 
 const providerIcons: Record<string, string> = {
@@ -35,7 +36,7 @@ const Dashboard: FC = () => {
     const [activeProvider, setActiveProvider] = useState('Tất cả');
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [selectedItem, setSelectedItem] = useState<any>(null);
-
+    const [loading, setLoading] = useState<boolean>(false)
 
     const getPagingUserPage = async () => {
         const result = await userPagesAPI.getpaging({ pageIndex, pageSize, search, provider });
@@ -83,18 +84,36 @@ const Dashboard: FC = () => {
         setAnchorEl(null);
         setSelectedItem(null);
     };
+
     const handleRenewToken = (item: any) => {
+        setLoading(true);
         fanPagesAPI.tokenRenewal({ access_token: item.page.access_token, fanpage_id: item.fanpage_id }).then((_res: any) => {
             toast.success('Gia hạn thành công!');
-            getPagingUserPage()
+            handleClose();
+            getPagingUserPage();
+            setLoading(false);
         }).catch((_err: any) => {
+            setLoading(false);
+            handleClose();
             toast.error('Lỗi khi kết nối!')
         })
     }
 
     const handleDelete = (item: any) => {
-        console.log(item, 'delete');
+        setLoading(true);
+        userPagesAPI.deleteUserPage(item.id).then((_res: any) => {
+            toast.success('Xóa page thành công!');
+            handleClose();
+            getPagingUserPage();
+            setLoading(false);
+        }).catch((_err: any) => {
+            setLoading(false);
+            handleClose();
+            toast.error('Lỗi khi kết nối!')
+        })
     }
+
+    if (loading) return <LoadingLayout />
     return (
         <div className="bg-[#ECEDF4] h-[95vh] w-full flex flex-col">
             <div className="w-[1000px] m-auto py-4 flex flex-col flex-1 min-h-0">

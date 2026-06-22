@@ -20,3 +20,4 @@ async function tokenRenewal(body: any) {
     const respone = await instance.post(`/fanpages/token-renewal`, body);
     return respone.data
 }
+

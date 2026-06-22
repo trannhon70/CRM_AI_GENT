@@ -2,7 +2,8 @@ import instance from "../helper/api.helper";
 
 export const userPagesAPI = {
     getpaging,
-    getCountProvider
+    getCountProvider,
+    deleteUserPage
 };
 
 async function getpaging(query: any) {
@@ -12,5 +13,10 @@ async function getpaging(query: any) {
 
 async function getCountProvider() {
     const respone = await instance.get(`/user-pages/get-count-provider`);
+    return respone.data.data
+}
+
+async function deleteUserPage(id: number) {
+    const respone = await instance.delete(`/user-pages/delete/${id}`);
     return respone.data.data
 }
