@@ -10,7 +10,7 @@ const contentStyle: React.CSSProperties = {
 
 const content = <div style={contentStyle} />;
 const LoadingLayout: FC = () => {
-    return <div className="flex w-full h-screen items-center justify-center " >
+    return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30" >
         <Spin tip="Loading" size="large">
             {content}
         </Spin>

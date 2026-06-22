@@ -44,7 +44,6 @@ const Dashboard: FC = () => {
 
     const getCountProviderUserPage = async () => {
         const result = await userPagesAPI.getCountProvider();
-
         setDataProvider(result)
     }
 
@@ -159,14 +158,14 @@ const Dashboard: FC = () => {
                 </div>
 
                 {/* Main content - chiếm hết phần còn lại */}
-                <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3 items-start">
+                <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3 items-start gap-2.5">
                     {
                         data.length > 0 && data.map((item: any, _index: number) => {
                             const remainingDays = Number(getRemainingDaysText(item.page.data_access_expires_at))
                             return <div
                                 key={item.id}
                                 onClick={() => onClickRouter(item.page.page_id)}
-                                className="group flex items-center gap-4 min-h-24 rounded-xl border border-gray-200 bg-white p-3 cursor-pointer transition-all duration-200 hover:border-blue-500 hover:shadow-lg hover:-translate-y-0.5"
+                                className="group flex items-center gap-2.5 min-h-24 rounded-xl border border-gray-200 bg-white p-2 cursor-pointer transition-all duration-200 hover:border-blue-500 hover:shadow-lg hover:-translate-y-0.5"
                             >
                                 {/* Avatar */}
                                 <img

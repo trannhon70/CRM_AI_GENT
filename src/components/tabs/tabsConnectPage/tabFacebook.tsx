@@ -1,26 +1,30 @@
 import Button from "@mui/material/Button";
-import type { FC } from "react";
+import { useState, type FC } from "react";
 import { toast } from "react-toastify";
 import { LoginSocialFacebook } from "reactjs-social-login";
 import { fanPagesAPI } from "../../../apis/fanpage.api";
 import appCake from "../../../assets/images/appcake.png";
 import facebook from "../../../assets/images/facebook.png";
+import LoadingLayout from "../../loadingLayout";
 const VITE_FB_APP_CONNECT = import.meta.env.VITE_FB_APP_CONNECT;
 
 const TabFaceBook: FC = () => {
-
+    const [loading, setLoading] = useState<boolean>(false)
     const handleConnectFacebook = async (response: any) => {
-
+        setLoading(true)
         const form = {
             access_token: response.data.accessToken,
         }
         fanPagesAPI.createConnectPageFacebook(form).then((_res: any) => {
-            toast.success('Kết nối thành công!')
+            toast.success('Kết nối thành công!');
+            setLoading(false)
         }).catch((_err: any) => {
             toast.error('Lỗi khi kết nối!')
+            setLoading(false)
         })
 
     }
+    if (loading) return <LoadingLayout />
     return <div className="flex flex-col h-[60vh]" >
         <div className="border-b p-3  border-[#F2F4F7] text-black font-medium text-lg shrink-0" >
             Thêm tài khoản Facebook
