@@ -14,16 +14,21 @@ import { fetchUserById } from "../../../features/usersSlice";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import Avatar from '@mui/material/Avatar';
 import { RiDashboardFill } from "react-icons/ri";
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchPageId } from "../../../features/fanpagesSlice";
+
 const HeaderConversation: FC = () => {
     const { id } = useParams();
+    const location = useLocation();
+    const navige = useNavigate()
     const { logout } = useContext(AuthContext)
     const dispatch = useDispatch<AppDispatch>();
     const users = useSelector((state: RootState) => state.users);
     const fanPages = useSelector((state: RootState) => state.fanPages);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
+    const active = location.pathname.split("/")[1];
+    console.log(active)
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -46,13 +51,18 @@ const HeaderConversation: FC = () => {
     const onclickLogout = () => {
         logout()
     }
+    const onClickRouter = (value: any) => {
+        navige(`/${value}/${id}`)
+    }
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >
         <div className="max-w-[1200px] w-full m-auto px-4 flex items-center justify-between" >
             <div className='flex items-center gap-7' >
                 <Link href="#"><img width={150} src={logo} alt="..." /></Link>
                 <div className='flex items-center gap-3' >
-                    <div className='bg-[#394E79] rounded text-lg px-3.5 py-1 text-white font-medium cursor-pointer' >Hội thoại</div>
-                    <div className='rounded text-lg px-3.5 py-1 text-white font-normal hover:bg-[#394E79] cursor-pointer' >Cài đặt</div>
+                    <div onClick={() => { onClickRouter('conversation') }} className={`rounded text-lg px-3.5 py-1 text-white font-medium cursor-pointer ${active === "conversation" ? "bg-[#394E79]" : "hover:bg-[#394E79]"
+                        }`} >Hội thoại</div>
+                    <div onClick={() => { onClickRouter('setting/add-user-page') }} className={`rounded text-lg px-3.5 py-1 text-white font-medium cursor-pointer ${active === "setting" ? "bg-[#394E79]" : "hover:bg-[#394E79]"
+                        }`} >Cài đặt</div>
                 </div>
             </div>
             <div className="flex items-center gap-2">
@@ -112,7 +122,7 @@ const HeaderConversation: FC = () => {
                 </IconButton>
             </div>
         </div>
-    </div>
+    </div >
 }
 
 export default HeaderConversation

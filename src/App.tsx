@@ -10,6 +10,7 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import { CheckRole } from './utils';
 import DataDeletion from './pages/dataDeletion';
 import LayoutConversation from './components/layout/layoutConversation';
+import LayoutSetting from './components/layout/layoutSetting';
 
 
 const CreateUser = React.lazy(() => import('./pages/user/create'));
@@ -17,6 +18,7 @@ const ManageUser = React.lazy(() => import('./pages/user/manager'));
 const Profile = React.lazy(() => import('./pages/profile'));
 const Dashboard = React.lazy(() => import('./pages/dashboard'));
 const Conversation = React.lazy(() => import('./pages/conversation'));
+const PageAddUser = React.lazy(() => import('./pages/settings/addUser'));
 
 
 
@@ -32,20 +34,24 @@ function App() {
       />
 
       {/* 👤 layout dashboard */}
-      <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString()]} />}>
+      <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString(), CheckRole.CSKH.toString(), CheckRole.SALE.toString()]} />}>
         <Route path="/" element={<LayoutDashboard />}>
           <Route path="/account" element={<Suspense fallback={<LoadingLayout />}><Profile /></Suspense>} />
           <Route path="" element={<Suspense fallback={<LoadingLayout />}><Dashboard /></Suspense>} />
         </Route>
       </Route>
 
-      {/* 👤 layout dashboard */}
+      {/* 👤 layout conversation */}
       <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString(), CheckRole.CSKH.toString(), CheckRole.SALE.toString()]} />}>
         <Route path="/conversation" element={<LayoutConversation />}>
-
           <Route path=":id" element={<Suspense fallback={<LoadingLayout />}><Conversation /></Suspense>} />
+        </Route>
+      </Route>
 
-
+      {/* 👤 layout setting */}
+      <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString(), CheckRole.CSKH.toString(), CheckRole.SALE.toString()]} />}>
+        <Route path="/setting" element={<LayoutSetting />}>
+          <Route path="add-user-page/:id" element={<Suspense fallback={<LoadingLayout />}><PageAddUser /></Suspense>} />
         </Route>
       </Route>
 
