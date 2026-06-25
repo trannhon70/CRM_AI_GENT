@@ -28,7 +28,6 @@ const HeaderConversation: FC = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
     const active = location.pathname.split("/")[1];
-    console.log(active)
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -61,7 +60,7 @@ const HeaderConversation: FC = () => {
                 <div className='flex items-center gap-3' >
                     <div onClick={() => { onClickRouter('conversation') }} className={`rounded text-lg px-3.5 py-1 text-white font-medium cursor-pointer ${active === "conversation" ? "bg-[#394E79]" : "hover:bg-[#394E79]"
                         }`} >Hội thoại</div>
-                    <div onClick={() => { onClickRouter('setting/add-user-page') }} className={`rounded text-lg px-3.5 py-1 text-white font-medium cursor-pointer ${active === "setting" ? "bg-[#394E79]" : "hover:bg-[#394E79]"
+                    <div onClick={() => { onClickRouter('setting/general') }} className={`rounded text-lg px-3.5 py-1 text-white font-medium cursor-pointer ${active === "setting" ? "bg-[#394E79]" : "hover:bg-[#394E79]"
                         }`} >Cài đặt</div>
                 </div>
             </div>

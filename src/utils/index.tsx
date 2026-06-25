@@ -25,3 +25,14 @@ export const ProviderEnum = {
   APPLE: 'apple',
 } as const;
 
+export const ProviderEnumData = [
+  { value: 'local', label: 'Tài khoản hệ thống' },
+  { value: 'google', label: 'Google' },
+  { value: 'facebook', label: 'Facebook' },
+] as const;
+
+export const RoleData = [
+  { value: 'Admin Manager', label: 'Quản trị viên' },
+  { value: 'CSKH', label: 'Chăm sóc khách hàng' },
+  { value: 'Sale', label: 'Nhân viên sale' },
+] as const

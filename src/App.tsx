@@ -19,6 +19,7 @@ const Profile = React.lazy(() => import('./pages/profile'));
 const Dashboard = React.lazy(() => import('./pages/dashboard'));
 const Conversation = React.lazy(() => import('./pages/conversation'));
 const PageAddUser = React.lazy(() => import('./pages/settings/addUser'));
+const PageGeneral = React.lazy(() => import('./pages/settings/general'));
 
 
 
@@ -52,6 +53,7 @@ function App() {
       <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString(), CheckRole.CSKH.toString(), CheckRole.SALE.toString()]} />}>
         <Route path="/setting" element={<LayoutSetting />}>
           <Route path="add-user-page/:id" element={<Suspense fallback={<LoadingLayout />}><PageAddUser /></Suspense>} />
+          <Route path="general/:id" element={<Suspense fallback={<LoadingLayout />}><PageGeneral /></Suspense>} />
         </Route>
       </Route>
 
