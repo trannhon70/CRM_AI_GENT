@@ -92,11 +92,21 @@ const PageAddUser: FC = () => {
                 page_id: id
             })
             setLoading(false);
+            getPagingUserPage();
         }).catch((error: any) => {
             toast.error(
                 error.response?.data?.message || 'Lỗi khi kết nối!'
             );
             setLoading(false);
+        })
+    }
+
+    const handleDelete = (item: any) => {
+        userPagesAPI.deleteUserPage(item.id).then((_res: any) => {
+            toast.success('Xóa người dùng thành công!');
+            getPagingUserPage();
+        }).catch((_err: any) => {
+            toast.error('Lỗi khi kết nối!')
         })
     }
 
@@ -210,7 +220,7 @@ const PageAddUser: FC = () => {
                                     <TableCell align="left">{item.role}</TableCell>
                                     <TableCell align="left">{formatUnixTime(item.created_at)}</TableCell>
                                     <TableCell align="center">
-                                        <Fab size="small" color="error" aria-label="delete">
+                                        <Fab onClick={() => handleDelete(item)} size="small" color="error" aria-label="delete">
                                             <MdDelete size={20} />
                                         </Fab>
                                     </TableCell>
