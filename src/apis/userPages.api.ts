@@ -4,7 +4,8 @@ export const userPagesAPI = {
     getpaging,
     getCountProvider,
     deleteUserPage,
-    createUserPage
+    createUserPage,
+    getPagingUserPageActive
 };
 
 async function getpaging(query: any) {
@@ -24,5 +25,10 @@ async function deleteUserPage(id: number) {
 
 async function createUserPage(body: any) {
     const respone = await instance.post(`/user-pages/create`, body);
+    return respone.data.data
+}
+
+async function getPagingUserPageActive(query: any) {
+    const respone = await instance.get(`/user-pages/get-paging-user-page-active?pageIndex=${query.pageIndex}&pageSize=${query.pageSize}&search=${query.search}&page_id=${query.page_id}`);
     return respone.data.data
 }
