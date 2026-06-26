@@ -36,3 +36,10 @@ export const RoleData = [
   { value: 'CSKH', label: 'Chăm sóc khách hàng' },
   { value: 'Sale', label: 'Nhân viên sale' },
 ] as const
+
+export const SyncStatus = {
+  PENDING: 'pending', //Chưa đồng bộ
+  SYNCING: 'syncing', //Đang đồng bộ...
+  SUCCESS: 'success', // Đồng bộ thành công
+  FAILED: 'failed',//  Đồng bộ thất bại
+} as const;

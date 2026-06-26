@@ -2,11 +2,19 @@ import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import type { FC } from "react";
-import { PiSortDescending } from "react-icons/pi";
 import { GrSearch } from "react-icons/gr";
-import Avatar from "@mui/material/Avatar";
-import { GrMail } from "react-icons/gr";
+import { PiSortDescending } from "react-icons/pi";
+import { useSelector } from "react-redux";
+import ConversationItem from "../../../pages/conversation/conversationItem";
+import PendingSyncComponent from "../../../pages/conversation/pendingSync";
+import SyncFailedComponent from "../../../pages/conversation/syncFailed";
+import SyncingComponent from "../../../pages/conversation/syncing";
+import type { RootState } from "../../../redux/store";
+import { SyncStatus } from "../../../utils";
 const ComponentLeftConversation: FC = () => {
+    const fanPages = useSelector((state: RootState) => state.fanPages);
+    console.log(fanPages);
+
     return <div>
         <div className="flex items-center gap-2 p-3 w-full">
             <TextField
@@ -42,34 +50,24 @@ const ComponentLeftConversation: FC = () => {
                 Lọc theo
             </Button>
         </div>
-        <div className="p-2 hover:bg-gray-300 cursor-pointer flex items-center w-full bg-[#D2EBFF] gap-2">
-            <Avatar  >N</Avatar>
+        {fanPages.page.syncStatus === SyncStatus.PENDING && (
+            <PendingSyncComponent />
+        )}
 
-            <div className="flex-1 min-w-0">
-                <div className="truncate font-medium">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Explicabo
-                    reiciendis maiores voluptatem rerum excepturi enim ipsam dolore eos
-                    tenetur.
-                </div>
+        {fanPages.page.syncStatus === SyncStatus.SYNCING && (
+            <SyncingComponent />
+        )}
 
-                <div className="truncate text-sm text-gray-500 mt-2">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Explicabo
-                    reiciendis maiores voluptatem rerum excepturi enim ipsam dolore eos
-                    tenetur.
-                </div>
-            </div>
+        {fanPages.page.syncStatus === SyncStatus.FAILED && (
+            <SyncFailedComponent />
+        )}
 
-            <div className="flex flex-col items-end flex-shrink-0">
-                <div className="text-xs text-gray-500">09:06</div>
+        {fanPages.page.syncStatus === SyncStatus.SUCCESS && (
+            <ConversationItem />
+        )}
 
-                <div className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                    9+
-                </div>
-                <div>
-                    <GrMail color="#98A2B3" size={25} />
-                </div>
-            </div>
-        </div>
+
+
     </div>
 }
 

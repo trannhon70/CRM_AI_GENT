@@ -1,13 +1,11 @@
 import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import type { FC } from "react";
-import { IoIosLogOut } from "react-icons/io";
-import { TiEyeOutline } from "react-icons/ti";
-import { FaUserPlus } from "react-icons/fa";
-import { TbListDetails } from "react-icons/tb";
-import { IoMailUnreadSharp } from "react-icons/io5";
 import { BsLayoutSidebarReverse } from "react-icons/bs";
+import { FaUserPlus } from "react-icons/fa";
+import { IoMailUnreadSharp } from "react-icons/io5";
+import { TbListDetails } from "react-icons/tb";
+import { TiEyeOutline } from "react-icons/ti";
 
 type Message = {
     id: number;
@@ -19,24 +17,7 @@ const messages: Message[] = [
     { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
     { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
     { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
-    { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-    { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-    { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
-    { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-    { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-    { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
-    { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-    { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-    { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
-    { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-    { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-    { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
-    { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-    { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-    { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
-    { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-    { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-    { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
+
 ]
 
 const ComponentCenterConversation: FC = () => {
@@ -107,17 +88,7 @@ const ComponentCenterConversation: FC = () => {
                         <textarea
                             rows={1}
                             placeholder="Aa"
-                            className="
-          w-full
-          resize-none
-          rounded-3xl
-          bg-gray-100
-          px-4
-          py-2.5
-          outline-none
-          max-h-32
-          overflow-y-auto
-        "
+                            className=" w-full resize-none rounded-3xlbg-gray-100 px-4 py-2.5 outline-none max-h-32 overflow-y-auto"
                         />
                     </div>
 
