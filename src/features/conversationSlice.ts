@@ -19,6 +19,7 @@ interface conversationState {
     pageIndex: number,
     total: number,
     totalPages: number,
+    active: number,
 }
 
 const initialState = {
@@ -28,7 +29,7 @@ const initialState = {
     pageIndex: 1,
     total: 0,
     totalPages: 0,
-
+    active: 0
 
 } satisfies conversationState as conversationState
 
@@ -36,7 +37,9 @@ const conversationSlice = createSlice({
     name: 'conversation',
     initialState,
     reducers: {
-
+        setActiveConversation(state, action) {
+            state.active = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPaging.fulfilled, (state, action) => {
@@ -52,5 +55,5 @@ const conversationSlice = createSlice({
     },
 })
 
-export const { } = conversationSlice.actions;
+export const { setActiveConversation } = conversationSlice.actions;
 export const conversationReducer = conversationSlice.reducer;

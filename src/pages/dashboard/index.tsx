@@ -38,7 +38,7 @@ const Dashboard: FC = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(false);
-    const { set } = useLocalStorage("roomId", null)
+    const { setStorage } = useLocalStorage("roomId", null)
 
     const getPagingUserPage = async () => {
         const result = await userPagesAPI.getpaging({ pageIndex, pageSize, search, provider });
@@ -70,7 +70,7 @@ const Dashboard: FC = () => {
     }
 
     const onClickRouter = (value: any) => {
-        set(value);
+        setStorage(value);
         navige(`conversation/${value}`)
     }
 

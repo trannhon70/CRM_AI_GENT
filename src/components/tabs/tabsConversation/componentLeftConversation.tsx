@@ -82,8 +82,6 @@ const ComponentLeftConversation: FC = () => {
 
         {fanPages.page.syncStatus === SyncStatus.SUCCESS && (
             data.map((item: any) => {
-                console.log(item);
-
                 return <ConversationItem item={item} key={item.id} />
             })
 

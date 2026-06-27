@@ -4,6 +4,10 @@ import "dayjs/locale/vi";
 import relativeTime from "dayjs/plugin/relativeTime";
 import type { FC } from "react";
 import { GrMail } from "react-icons/gr";
+import type { AppDispatch, RootState } from "../../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveConversation } from "../../../features/conversationSlice";
+import { useLocalStorage } from "../../../hooks/useLocalStorage";
 
 dayjs.extend(relativeTime);
 dayjs.locale("vi");
@@ -12,8 +16,17 @@ interface IProps {
 }
 const ConversationItem: FC<IProps> = (props) => {
     const { item } = props
+    const dispatch = useDispatch<AppDispatch>();
+    const { setStorage, value } = useLocalStorage<string | null>("roomId", null)
+    console.log(value);
 
-    return <div className="p-2 hover:bg-gray-300 cursor-pointer flex items-center w-full bg-[#D2EBFF] gap-2">
+    const onclickItem = () => {
+        setStorage(String(item.id));
+    }
+    return <div
+        onClick={onclickItem}
+        className={`p-2 hover:bg-gray-300 cursor-pointer flex items-center w-full gap-2 ${Number(value) === item.id ? "bg-[#D2EBFF]" : ""} `}
+    >
         <Avatar src={item.avatar || undefined}>
             {item.full_name?.charAt(0).toUpperCase()}
         </Avatar>
