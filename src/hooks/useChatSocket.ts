@@ -3,37 +3,47 @@ import { Socket } from 'socket.io-client';
 import { getSocket } from './chatSocketSingleton';
 
 type UseChatSocketProps = {
+  roomId: string;
   onNewMessage?: (message: any) => void;
   onSyncStatus?: (message: any) => void;
-  roomId: string;
 };
 
 export const useChatSocket = ({
+  roomId,
   onNewMessage,
   onSyncStatus,
-  roomId,
 }: UseChatSocketProps) => {
   const socketRef = useRef<Socket | null>(null);
-  const prevRoomRef = useRef<string | null>(null);
+  const currentRoomRef = useRef<string | null>(null);
+  const pendingRoomRef = useRef<string | null>(null);
+
   const [isConnected, setIsConnected] = useState(false);
 
-  // 1. INIT SOCKET + LISTEN EVENTS (chỉ chạy 1 lần)
+  // INIT SOCKET (CHỈ 1 LẦN)
   useEffect(() => {
     const socket = getSocket();
     socketRef.current = socket;
 
+    // CONNECT
     const handleConnect = () => {
-      console.log('🔌 Connected');
+      console.log('🔌 Connected:', socket.id);
       setIsConnected(true);
-      socket.emit('joinRoom', roomId);
-      prevRoomRef.current = roomId;
+
+      // join room nếu đã có pending
+      const roomToJoin = pendingRoomRef.current;
+      if (roomToJoin) {
+        socket.emit('joinRoom', roomToJoin);
+        currentRoomRef.current = roomToJoin;
+      }
     };
 
+    // DISCONNECT
     const handleDisconnect = () => {
       console.log('❌ Disconnected');
       setIsConnected(false);
     };
 
+    // EVENTS
     const handleNewMessage = (message: any) => {
       onNewMessage?.(message);
     };
@@ -53,24 +63,31 @@ export const useChatSocket = ({
       socket.off('send_message', handleNewMessage);
       socket.off('syncStatus', handleSyncStatus);
     };
-  }, []);
+  }, [onNewMessage, onSyncStatus]);
 
-  // 2. HANDLE ROOM CHANGE (QUAN TRỌNG NHẤT)
+  // HANDLE ROOM CHANGE
   useEffect(() => {
     const socket = socketRef.current;
-    if (!socket || !isConnected) return;
+    if (!socket) return;
+
+    // lưu room mới vào pending
+    pendingRoomRef.current = roomId;
+
+    // nếu chưa connect → chờ connect rồi join
+    if (!isConnected) return;
 
     // leave room cũ
-    if (prevRoomRef.current) {
-      socket.emit('leaveRoom', prevRoomRef.current);
+    if (currentRoomRef.current && currentRoomRef.current !== roomId) {
+      socket.emit('leaveRoom', currentRoomRef.current);
     }
 
     // join room mới
     socket.emit('joinRoom', roomId);
-    prevRoomRef.current = roomId;
+
+    currentRoomRef.current = roomId;
   }, [roomId, isConnected]);
 
-  // 3. SEND MESSAGE
+  // SEND MESSAGE
   const sendMessage = (data: any) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('send_message', data);
@@ -78,8 +95,8 @@ export const useChatSocket = ({
   };
 
   return {
-    sendMessage,
     socket: socketRef.current,
     isConnected,
+    sendMessage,
   };
 };
