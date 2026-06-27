@@ -15,7 +15,8 @@ import type { AppDispatch, RootState } from "../../../redux/store";
 import Avatar from '@mui/material/Avatar';
 import { RiDashboardFill } from "react-icons/ri";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { fetchPageId } from "../../../features/fanpagesSlice";
+import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
+import { useChatSocket } from "../../../hooks/useChatSocket";
 
 const HeaderConversation: FC = () => {
     const { id } = useParams();
@@ -26,7 +27,6 @@ const HeaderConversation: FC = () => {
     const users = useSelector((state: RootState) => state.users);
     const fanPages = useSelector((state: RootState) => state.fanPages);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
     const active = location.pathname.split("/")[1];
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -38,8 +38,6 @@ const HeaderConversation: FC = () => {
 
     const open = Boolean(anchorEl);
     const id_open = open ? 'simple-popover' : undefined;
-
-
 
     useEffect(() => {
         dispatch(fetchUserById());
@@ -53,6 +51,13 @@ const HeaderConversation: FC = () => {
     const onClickRouter = (value: any) => {
         navige(`/${value}/${id}`)
     }
+
+    useChatSocket({
+        roomId: String(id),
+        onSyncStatus: (event: any) => {
+            dispatch(updateSyncStatus(event));
+        },
+    });
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >
         <div className="max-w-[1200px] w-full m-auto px-4 flex items-center justify-between" >
             <div className='flex items-center gap-7' >

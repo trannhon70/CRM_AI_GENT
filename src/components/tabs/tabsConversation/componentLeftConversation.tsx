@@ -13,7 +13,6 @@ import type { RootState } from "../../../redux/store";
 import { SyncStatus } from "../../../utils";
 const ComponentLeftConversation: FC = () => {
     const fanPages = useSelector((state: RootState) => state.fanPages);
-    console.log(fanPages);
 
     return <div>
         <div className="flex items-center gap-2 p-3 w-full">

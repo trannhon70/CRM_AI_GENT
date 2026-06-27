@@ -16,27 +16,25 @@ export const fetchPageId = createAsyncThunk(
 
 
 interface FanpagesState {
-
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
-
     page: any,
-
 }
 
 const initialState = {
-
     loading: 'idle',
-
     page: {},
-
-
 } satisfies FanpagesState as FanpagesState
 
 const fanPagesSlice = createSlice({
     name: 'fanPages',
     initialState,
     reducers: {
-
+        updateSyncStatus(state, action) {
+            const { page_id, syncStatus } = action.payload;
+            if (state.page.page_id === page_id) {
+                state.page.syncStatus = syncStatus;
+            }
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPageId.fulfilled, (state, action) => {
@@ -47,5 +45,5 @@ const fanPagesSlice = createSlice({
     },
 })
 
-export const { } = fanPagesSlice.actions;
+export const { updateSyncStatus } = fanPagesSlice.actions;
 export const fanPagesReducer = fanPagesSlice.reducer;

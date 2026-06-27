@@ -1,19 +1,10 @@
 import { alpha, styled } from '@mui/material/styles';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
-import { Fragment, useCallback, useEffect, useState, type FC } from "react";
+import { Fragment, useState, type FC } from "react";
 import { AiFillCloseSquare, AiTwotoneAudio } from "react-icons/ai";
 import { IoAddCircleSharp } from "react-icons/io5";
-import { useChatSocket } from '../../../hooks/useChatSocket';
 import CardUserInfoNode from "../cardUserInfoNode";
-import { IoMdSettings } from "react-icons/io";
-import { Popover } from 'antd';
-import { PiDotFill } from "react-icons/pi";
-import { userAPI } from '../../../apis/user.api';
-import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../redux/store';
-import { CheckRole } from '../../../utils';
 
 const CustomTreeItem = styled(TreeItem)(({ theme }) => ({
     [`& .${treeItemClasses.content}`]: {

@@ -3,7 +3,8 @@ import instance from "../helper/api.helper";
 export const fanPagesAPI = {
     createConnectPageFacebook,
     getPagesId,
-    tokenRenewal
+    tokenRenewal,
+    syncing
 };
 
 async function createConnectPageFacebook(body: any) {
@@ -21,3 +22,7 @@ async function tokenRenewal(body: any) {
     return respone.data
 }
 
+async function syncing(body: any) {
+    const respone = await instance.post(`/fanpages/syncing`, body);
+    return respone.data
+}
