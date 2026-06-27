@@ -18,7 +18,6 @@ const ConversationItem: FC<IProps> = (props) => {
     const { item } = props
     const dispatch = useDispatch<AppDispatch>();
     const { setStorage, value } = useLocalStorage<string | null>("roomId", null)
-    console.log(value);
 
     const onclickItem = () => {
         setStorage(String(item.id));

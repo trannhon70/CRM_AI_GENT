@@ -18,6 +18,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
 import { useChatSocket } from "../../../hooks/useChatSocket";
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
+import { fetchPaging } from '../../../features/conversationSlice';
 
 const HeaderConversation: FC = () => {
     const { id } = useParams();
@@ -59,6 +60,9 @@ const HeaderConversation: FC = () => {
         roomId: String(value),
         onSyncStatus: (event: any) => {
             dispatch(updateSyncStatus(event));
+            if (event.syncStatus === 'success') {
+                dispatch(fetchPaging({ pageIndex: 1, pageSize: 100, page_id: id, search: "" }));
+            }
         },
     });
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >
