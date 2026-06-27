@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { usersReducer } from '../features/usersSlice';
 import { fanPagesReducer } from '../features/fanpagesSlice';
+import { conversationReducer } from '../features/conversationSlice';
 
 
 export const store = configureStore({
   reducer: {
     users: usersReducer,
-    fanPages: fanPagesReducer
+    fanPages: fanPagesReducer,
+    conversation: conversationReducer
   },
 });
 

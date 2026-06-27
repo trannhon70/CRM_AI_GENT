@@ -1,11 +1,8 @@
 import { Button, Select, Tag, Tooltip } from "antd";
-import React, { useEffect, type FC } from "react";
+import React, { type FC } from "react";
 import { IoPricetagOutline } from "react-icons/io5";
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { useCopyToClipboard } from "../../../hooks/useCopyToClipboard";
-import { labelAPI } from "../../../apis/label.api";
-import { conversationAPI } from "../../../apis/conversation.api";
-import { toast } from "react-toastify";
 
 interface Iprops {
     conversation?: any;
