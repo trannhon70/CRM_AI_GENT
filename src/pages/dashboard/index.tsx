@@ -16,6 +16,7 @@ import platform_all from "../../assets/images/platform_all.jpg";
 import ModalConnect from "../../components/modal/modalConnect";
 import { getRemainingDaysText } from '../../utils/date';
 import LoadingLayout from '../../components/loadingLayout';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 
 const providerIcons: Record<string, string> = {
@@ -36,7 +37,8 @@ const Dashboard: FC = () => {
     const [activeProvider, setActiveProvider] = useState('Tất cả');
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [selectedItem, setSelectedItem] = useState<any>(null);
-    const [loading, setLoading] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false);
+    const { set } = useLocalStorage("roomId", null)
 
     const getPagingUserPage = async () => {
         const result = await userPagesAPI.getpaging({ pageIndex, pageSize, search, provider });
@@ -68,6 +70,7 @@ const Dashboard: FC = () => {
     }
 
     const onClickRouter = (value: any) => {
+        set(value);
         navige(`conversation/${value}`)
     }
 

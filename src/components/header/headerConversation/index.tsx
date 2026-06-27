@@ -17,6 +17,7 @@ import { RiDashboardFill } from "react-icons/ri";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
 import { useChatSocket } from "../../../hooks/useChatSocket";
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
 
 const HeaderConversation: FC = () => {
     const { id } = useParams();
@@ -28,6 +29,8 @@ const HeaderConversation: FC = () => {
     const fanPages = useSelector((state: RootState) => state.fanPages);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const active = location.pathname.split("/")[1];
+    const { value } = useLocalStorage("roomId", null)
+
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -53,7 +56,7 @@ const HeaderConversation: FC = () => {
     }
 
     useChatSocket({
-        roomId: String(id),
+        roomId: String(value),
         onSyncStatus: (event: any) => {
             dispatch(updateSyncStatus(event));
         },
