@@ -31,6 +31,7 @@ const ComponentLeftConversation: FC = () => {
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(event.target.value);
     };
+
     return <div>
         <div className="flex items-center gap-2 p-3 w-full">
             <TextField

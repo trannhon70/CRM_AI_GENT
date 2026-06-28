@@ -1,11 +1,15 @@
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import type { FC } from "react";
+import { useEffect, type FC } from "react";
 import { BsLayoutSidebarReverse } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa";
 import { IoMailUnreadSharp } from "react-icons/io5";
 import { TbListDetails } from "react-icons/tb";
 import { TiEyeOutline } from "react-icons/ti";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../../redux/store";
+import { useLocalStorage } from "../../../hooks/useLocalStorage";
+import { fetchPagingLivemessage } from "../../../features/liveMessageSlice";
 
 type Message = {
     id: number;
@@ -13,14 +17,24 @@ type Message = {
     isSender: boolean; // true = mình gửi, false = người dùng gửi
 }
 
-const messages: Message[] = [
-    { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-    { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-    { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
+// const messages: Message[] = [
+//     { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
+//     { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
+//     { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
 
-]
+// ]
 
 const ComponentCenterConversation: FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const conversation = useSelector((state: RootState) => state.conversation);
+    const messages = useSelector((state: RootState) => state.message);
+    console.log(messages, ' message');
+
+    useEffect(() => {
+        if (conversation.active) {
+            dispatch(fetchPagingLivemessage({ pageIndex: 1, pageSize: 100, conversation_id: conversation.active, search: "" }))
+        }
+    }, [conversation.active])
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
             <div className="flex gap-2.5 items-center" >
@@ -51,7 +65,7 @@ const ComponentCenterConversation: FC = () => {
         </div>
 
         <div className="flex-1 overflow-auto bg-[#E5DED8] p-3 flex flex-col gap-3">
-            {messages.map((msg) => (
+            {messages.data.map((msg: any) => (
                 <div
                     key={msg.id}
                     className={`flex items-end gap-2 ${msg.isSender ? 'flex-row-reverse' : 'flex-row'}`}

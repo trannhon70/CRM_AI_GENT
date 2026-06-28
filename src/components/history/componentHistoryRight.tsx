@@ -1,7 +1,7 @@
 import IconButton from "@mui/material/IconButton";
 import { Fragment, useEffect, useRef, useState, type FC } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { messageAPI } from "../../apis/message.api";
+import { messageAPI } from "../../apis/liveMessage.api";
 import { SENDER_TYPE } from "../../utils";
 import { renderCustomer, renderStaff } from "../card/cardItemRenderChat";
 import moment from "moment";

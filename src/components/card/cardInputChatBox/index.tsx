@@ -5,7 +5,7 @@ import { LuSendHorizontal } from "react-icons/lu";
 import { MdAttachFile, MdInsertEmoticon } from "react-icons/md";
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { messageAPI } from '../../../apis/message.api';
+import { messageAPI } from '../../../apis/liveMessage.api';
 import type { RootState } from '../../../redux/store';
 import { SENDER_TYPE } from '../../../utils';
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 10MB

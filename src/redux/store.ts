@@ -2,13 +2,15 @@ import { configureStore } from '@reduxjs/toolkit';
 import { usersReducer } from '../features/usersSlice';
 import { fanPagesReducer } from '../features/fanpagesSlice';
 import { conversationReducer } from '../features/conversationSlice';
+import { liveMessageReducer } from '../features/liveMessageSlice';
 
 
 export const store = configureStore({
   reducer: {
     users: usersReducer,
     fanPages: fanPagesReducer,
-    conversation: conversationReducer
+    conversation: conversationReducer,
+    message: liveMessageReducer,
   },
 });
 

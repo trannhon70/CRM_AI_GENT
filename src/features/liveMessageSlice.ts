@@ -1,25 +1,23 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { conversationAPI } from '../apis/conversation.api.ts'
+import { LiveMessageAPI } from '../apis/liveMessage.api.ts'
 
 // First, create the thunk
-export const fetchPaging = createAsyncThunk(
-    'conversation/getPaging',
+export const fetchPagingLivemessage = createAsyncThunk(
+    'live-message/getPaging',
     async (query: any) => {
-        const response = await conversationAPI.getPaging(query)
+        const response = await LiveMessageAPI.getPaging(query)
         return response
     },
 )
 
 
-
-interface conversationState {
+interface liveMessageState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
     data: any,
     pageSize: number,
     pageIndex: number,
     total: number,
     totalPages: number,
-    active: number | null,
 }
 
 const initialState = {
@@ -29,20 +27,17 @@ const initialState = {
     pageIndex: 1,
     total: 0,
     totalPages: 0,
-    active: null
 
-} satisfies conversationState as conversationState
+} satisfies liveMessageState as liveMessageState
 
-const conversationSlice = createSlice({
-    name: 'conversation',
+const liveMessageSlice = createSlice({
+    name: 'liveMessage',
     initialState,
     reducers: {
-        setActiveConversation(state, action) {
-            state.active = action.payload;
-        },
+
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchPaging.fulfilled, (state, action) => {
+        builder.addCase(fetchPagingLivemessage.fulfilled, (state, action) => {
             state.data = action.payload.data;
             state.pageSize = action.payload.pageSize;
             state.pageIndex = action.payload.pageIndex;
@@ -55,5 +50,5 @@ const conversationSlice = createSlice({
     },
 })
 
-export const { setActiveConversation } = conversationSlice.actions;
-export const conversationReducer = conversationSlice.reducer;
+export const { } = liveMessageSlice.actions;
+export const liveMessageReducer = liveMessageSlice.reducer;
