@@ -34,7 +34,9 @@ const liveMessageSlice = createSlice({
     name: 'liveMessage',
     initialState,
     reducers: {
-
+        updateMessage(state, action) {
+            state.data.push(action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPagingLivemessage.fulfilled, (state, action) => {
@@ -50,5 +52,5 @@ const liveMessageSlice = createSlice({
     },
 })
 
-export const { } = liveMessageSlice.actions;
+export const { updateMessage } = liveMessageSlice.actions;
 export const liveMessageReducer = liveMessageSlice.reducer;

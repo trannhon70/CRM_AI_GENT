@@ -6,10 +6,11 @@ type Props = {
 };
 
 const ImageMessage: FC<Props> = ({ message }) => {
+
     const attachment = message.attachments?.[0];
     const image =
-        attachment?.image_data?.url ??
-        attachment?.image_data?.animated_gif_url;
+        attachment?.preview_url ??
+        attachment?.url;
     return (
         <div
             className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm

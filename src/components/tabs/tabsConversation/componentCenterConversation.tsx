@@ -1,6 +1,6 @@
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import { useEffect, type FC } from "react";
+import { useEffect, useRef, type FC } from "react";
 import { BsLayoutSidebarReverse } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa";
 import { IoMailUnreadSharp } from "react-icons/io5";
@@ -20,7 +20,14 @@ const ComponentCenterConversation: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const conversation = useSelector((state: RootState) => state.conversation);
     const messages = useSelector((state: RootState) => state.message);
+    const bottomRef = useRef<HTMLDivElement>(null);
     // console.log(messages, ' message');
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+    }, [messages.data]);
 
     useEffect(() => {
         if (conversation.active) {
@@ -87,7 +94,7 @@ const ComponentCenterConversation: FC = () => {
                 >
                     {/* Avatar */}
                     <Avatar src={msg.direction !== MessageDirection.STAFF ? msg.conversation?.avatar : msg.user?.avatar}>
-                        {msg.direction !== MessageDirection.STAFF ? msg.conversation.full_name?.charAt(0).toUpperCase() : msg.user?.full_name?.charAt(0).toUpperCase()}
+                        {msg.direction !== MessageDirection.STAFF ? msg.conversation?.full_name?.charAt(0).toUpperCase() : msg.user?.full_name?.charAt(0).toUpperCase()}
                     </Avatar>
                     {
                         renderMessageContent(msg)
@@ -95,6 +102,7 @@ const ComponentCenterConversation: FC = () => {
 
                 </div>
             ))}
+            <div ref={bottomRef} />
         </div>
 
         <div className="h-[7vh]">

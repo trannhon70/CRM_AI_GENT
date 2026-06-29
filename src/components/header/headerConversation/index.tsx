@@ -19,6 +19,7 @@ import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
 import { useChatSocket } from "../../../hooks/useChatSocket";
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { fetchPaging } from '../../../features/conversationSlice';
+import { updateMessage } from '../../../features/liveMessageSlice';
 
 const HeaderConversation: FC = () => {
     const { id } = useParams();
@@ -63,6 +64,10 @@ const HeaderConversation: FC = () => {
             if (event.syncStatus === 'success') {
                 dispatch(fetchPaging({ pageIndex: 1, pageSize: 100, page_id: id, search: "" }));
             }
+        },
+        onNewMessage(event: any) {
+            console.log(event, 'message');
+            dispatch(updateMessage(event.message))
         },
     });
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >

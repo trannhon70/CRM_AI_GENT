@@ -47,7 +47,7 @@ const TextMessage: FC<Props> = ({ message }) => {
                         className={`text-[11px] text-gray-500 mt-1 ${isStaff ? "text-right mr-2" : "ml-2"
                             }`}
                     >
-                        {formatUnixTime(message.sent_at)}
+                        {formatUnixTime(message.created_at)}
                     </span>
                 </div>
 
