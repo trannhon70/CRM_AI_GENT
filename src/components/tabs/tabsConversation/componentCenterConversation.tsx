@@ -7,34 +7,47 @@ import { IoMailUnreadSharp } from "react-icons/io5";
 import { TbListDetails } from "react-icons/tb";
 import { TiEyeOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
-import type { AppDispatch, RootState } from "../../../redux/store";
-import { useLocalStorage } from "../../../hooks/useLocalStorage";
 import { fetchPagingLivemessage } from "../../../features/liveMessageSlice";
+import type { AppDispatch, RootState } from "../../../redux/store";
+import { MessageDirection, MessageType } from "../../../utils";
+import TextMessage from "../../card/cardMessageContent/textMessage";
+import VideoMessage from "../../card/cardMessageContent/videoMessage";
+import ImageMessage from "../../card/cardMessageContent/imageMessage";
+import AudioMessage from "../../card/cardMessageContent/audioMessage";
 
-type Message = {
-    id: number;
-    text: string;
-    isSender: boolean; // true = mình gửi, false = người dùng gửi
-}
-
-// const messages: Message[] = [
-//     { id: 1, text: 'Xin chào bạn cần hỗ trợ gì?', isSender: false },
-//     { id: 2, text: 'Tôi muốn hỏi về sản phẩm', isSender: true },
-//     { id: 3, text: 'Vâng bạn cần hỗ trợ gì ạ?', isSender: false },
-
-// ]
 
 const ComponentCenterConversation: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const conversation = useSelector((state: RootState) => state.conversation);
     const messages = useSelector((state: RootState) => state.message);
-    console.log(messages, ' message');
+    // console.log(messages, ' message');
 
     useEffect(() => {
         if (conversation.active) {
             dispatch(fetchPagingLivemessage({ pageIndex: 1, pageSize: 100, conversation_id: conversation.active, search: "" }))
         }
     }, [conversation.active])
+
+    const renderMessageContent = (msg: any) => {
+        switch (msg.type) {
+            case MessageType.TEXT:
+                return <TextMessage message={msg} />;
+            case MessageType.IMAGE:
+                return <ImageMessage message={msg} />;
+
+            case MessageType.VIDEO:
+                return <VideoMessage message={msg} />;
+
+            case MessageType.AUDIO:
+                return <AudioMessage message={msg} />;
+
+            // case MessageType.STICKER:
+            //     return <StickerMessage message={msg} />;
+
+            default:
+                return null;
+        }
+    };
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
             <div className="flex gap-2.5 items-center" >
@@ -68,23 +81,17 @@ const ComponentCenterConversation: FC = () => {
             {messages.data.map((msg: any) => (
                 <div
                     key={msg.id}
-                    className={`flex items-end gap-2 ${msg.isSender ? 'flex-row-reverse' : 'flex-row'}`}
+                    className={`flex items-end gap-2 ${msg.direction === MessageDirection.STAFF ? 'flex-row-reverse' : 'flex-row'}`}
                 >
                     {/* Avatar */}
-                    <Avatar sx={{ width: 32, height: 32, fontSize: 14 }}>
-                        {msg.isSender ? 'A' : 'N'}
+                    <Avatar src={msg.direction !== MessageDirection.STAFF ? msg.conversation?.avatar : msg.user?.avatar}>
+                        {msg.direction !== MessageDirection.STAFF ? msg.conversation.full_name?.charAt(0).toUpperCase() : msg.user?.full_name?.charAt(0).toUpperCase()}
                     </Avatar>
-
+                    {
+                        renderMessageContent(msg)
+                    }
                     {/* Bubble */}
-                    <div
-                        className={`max-w-[70%] rounded-2xl px-3 py-2 text-sm
-                            ${msg.isSender
-                                ? 'bg-[#0f447d] text-white rounded-br-none'
-                                : 'bg-white text-gray-800 rounded-bl-none'
-                            }`}
-                    >
-                        {msg.text}
-                    </div>
+
                 </div>
             ))}
         </div>

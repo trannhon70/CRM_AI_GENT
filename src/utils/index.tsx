@@ -1,7 +1,5 @@
 
 
-
-
 export const CheckRole = {
   OWNER: 1,
   ADMIN_MANAGE: 2,
@@ -10,11 +8,11 @@ export const CheckRole = {
 } as const;
 
 // staff là nhân viên phòng khám, customer là khách hàng
-export const SENDER_TYPE = {
+export const MessageDirection = {
   CUSTOMER: "customer",
   STAFF: "staff",
   AUTO: "auto",
-  AI: "AI",
+  AI: "ai",
 } as const;
 
 export const ProviderEnum = {
@@ -43,3 +41,13 @@ export const SyncStatus = {
   SUCCESS: 'success', // Đồng bộ thành công
   FAILED: 'failed',//  Đồng bộ thất bại
 } as const;
+
+
+export const MessageType = {
+  TEXT: 'text',
+  IMAGE: 'image',
+  AUDIO: 'audio',
+  VIDEO: 'video',
+  FILE: 'file',
+  STICKER: 'sticker',
+} as const
