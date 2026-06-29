@@ -22,12 +22,12 @@ const ConversationItem: FC<IProps> = (props) => {
 
 
     const onclickItem = () => {
-        dispatch(setActiveConversation(item.id))
+        dispatch(setActiveConversation({ id: item.id, full_name: item.full_name, avatar: item.avatar }))
         setStorage(String(item.id));
     }
     return <div
         onClick={onclickItem}
-        className={`p-2 hover:bg-gray-300 cursor-pointer flex items-center w-full gap-2 ${Number(conversation.active) === item.id ? "bg-[#D2EBFF]" : ""} `}
+        className={`p-2 hover:bg-gray-300 cursor-pointer flex items-center w-full gap-2 ${Number(conversation.active?.id) === item.id ? "bg-[#D2EBFF]" : ""} `}
     >
         <Avatar src={item.avatar || undefined}>
             {item.full_name?.charAt(0).toUpperCase()}

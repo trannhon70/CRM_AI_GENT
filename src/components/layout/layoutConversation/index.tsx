@@ -50,15 +50,15 @@ const LayoutConversation: FC = () => {
                 {/* Content */}
                 <div className="flex-1 bg-[#0f447d]">
                     <div className="h-full flex-1 flex rounded-tl-2xl bg-white" >
-                        <div className="w-1/4 lg:w-[30%] border-r border-gray-200">
+                        <div className="w-1/4 lg:w-[25%] border-r border-gray-200">
                             <ComponentLeftConversation />
                         </div>
 
-                        <div className="w-2/4 lg:w-[40%] border-r border-gray-200 flex flex-col h-full">
+                        <div className="w-2/4 lg:w-[50%] border-r border-gray-200 flex flex-col h-full">
                             <ComponentCenterConversation />
                         </div>
 
-                        <div className="w-1/4 lg:w-[30%]">
+                        <div className="w-1/4 lg:w-[25%]">
                             sadsad
                         </div>
                     </div>

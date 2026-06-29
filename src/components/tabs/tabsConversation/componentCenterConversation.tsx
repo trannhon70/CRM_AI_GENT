@@ -24,7 +24,7 @@ const ComponentCenterConversation: FC = () => {
 
     useEffect(() => {
         if (conversation.active) {
-            dispatch(fetchPagingLivemessage({ pageIndex: 1, pageSize: 100, conversation_id: conversation.active, search: "" }))
+            dispatch(fetchPagingLivemessage({ pageIndex: 1, pageSize: 100, conversation_id: conversation.active?.id, search: "" }))
         }
     }, [conversation.active])
 
@@ -51,7 +51,9 @@ const ComponentCenterConversation: FC = () => {
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
             <div className="flex gap-2.5 items-center" >
-                <Avatar  >N</Avatar>
+                <Avatar src={conversation.active?.avatar || undefined}>
+                    {conversation.active?.full_name?.charAt(0).toUpperCase()}
+                </Avatar>
                 <div className="" >
                     <div className="text-sm font-medium text-black" > Kevin tran</div>
                     <div className="flex items-center gap-1" >
@@ -90,7 +92,6 @@ const ComponentCenterConversation: FC = () => {
                     {
                         renderMessageContent(msg)
                     }
-                    {/* Bubble */}
 
                 </div>
             ))}

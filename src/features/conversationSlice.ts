@@ -11,6 +11,11 @@ export const fetchPaging = createAsyncThunk(
 )
 
 
+interface ConversationActive {
+    id: number;
+    full_name: string;
+    avatar: string; // bạn đang viết "avarta" - typo
+}
 
 interface conversationState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
@@ -19,7 +24,7 @@ interface conversationState {
     pageIndex: number,
     total: number,
     totalPages: number,
-    active: number | null,
+    active: ConversationActive | null;
 }
 
 const initialState = {
