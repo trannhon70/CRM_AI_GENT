@@ -45,6 +45,17 @@ const conversationSlice = createSlice({
         setActiveConversation(state, action) {
             state.active = action.payload;
         },
+        updateConversation(state, action) {
+            const data = action.payload
+            const index = state.data.findIndex((m: any) => m.id === data.id);
+            if (index !== -1) {
+                state.data[index] = {
+                    ...state.data[index],
+                    ...data,
+                };
+            }
+            // state.active = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPaging.fulfilled, (state, action) => {
@@ -60,5 +71,5 @@ const conversationSlice = createSlice({
     },
 })
 
-export const { setActiveConversation } = conversationSlice.actions;
+export const { setActiveConversation, updateConversation } = conversationSlice.actions;
 export const conversationReducer = conversationSlice.reducer;

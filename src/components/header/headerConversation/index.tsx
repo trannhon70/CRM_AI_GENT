@@ -18,7 +18,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
 import { useChatSocket } from "../../../hooks/useChatSocket";
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
-import { fetchPaging } from '../../../features/conversationSlice';
+import { fetchPaging, updateConversation } from '../../../features/conversationSlice';
 import { updateMessage } from '../../../features/liveMessageSlice';
 
 const HeaderConversation: FC = () => {
@@ -66,8 +66,8 @@ const HeaderConversation: FC = () => {
             }
         },
         onNewMessage(event: any) {
-            console.log(event, 'message');
             dispatch(updateMessage(event.message))
+            dispatch(updateConversation(event.conversation))
         },
     });
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >
