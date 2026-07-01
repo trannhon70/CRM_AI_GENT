@@ -26,17 +26,14 @@ const ComponentLeftConversation: FC = () => {
 
     const dispatch = useDispatch<AppDispatch>();
     const fanPages = useSelector((state: RootState) => state.fanPages);
-    const { data, lastId, limit } = useSelector((state: RootState) => state.conversation);
+    const { data, lastId } = useSelector((state: RootState) => state.conversation);
     const [search, setSearch] = useState("");
     const searchDebounce = useDebounce(search, 500);
-
-    // console.log(limit, 'pageSize');
-    // console.log(lastId, 'lastId');
 
     useEffect(() => {
         if (!id) return;
 
-        dispatch(fetchPaging({ lastId: undefined, limit: 50, page_id: id, search: searchDebounce }));
+        dispatch(fetchPaging({ lastId: undefined, limit: 5000, page_id: id, search: searchDebounce }));
     }, [id, searchDebounce, dispatch]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +53,7 @@ const ComponentLeftConversation: FC = () => {
 
         if (scrollTop + clientHeight >= scrollHeight - 200 && !isFetching && hasMore) {
             setIsFetching(true);
-            const result = await dispatch(fetchPaging({ lastId, limit: 100, page_id: id, search: searchDebounce }));
+            const result = await dispatch(fetchPaging({ lastId, limit: 1000, page_id: id, search: searchDebounce }));
             if (!result.payload?.hasMore) setHasMore(false);
             setIsFetching(false);
         }
