@@ -20,20 +20,18 @@ interface ConversationActive {
 interface conversationState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
     data: any,
-    pageSize: number,
-    pageIndex: number,
-    total: number,
-    totalPages: number,
+    limit: number,
+    lastId: number,
+    hasMore: boolean,
     active: ConversationActive | null;
 }
 
 const initialState = {
     loading: 'idle',
     data: [],
-    pageSize: 5,
-    pageIndex: 1,
-    total: 0,
-    totalPages: 0,
+    limit: 5,
+    lastId: 1,
+    hasMore: false,
     active: null
 
 } satisfies conversationState as conversationState
@@ -59,11 +57,15 @@ const conversationSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPaging.fulfilled, (state, action) => {
-            state.data = action.payload.data;
-            state.pageSize = action.payload.pageSize;
-            state.pageIndex = action.payload.pageIndex;
-            state.total = action.payload.total;
-            state.totalPages = action.payload.totalPages;
+            if (!action.payload.lastId) {
+                // Lần đầu load hoặc search mới → reset
+                state.data = action.payload.data;
+            } else {
+                // Scroll load thêm → append
+                state.data = [...state.data, ...action.payload.data];
+            }
+            state.lastId = action.payload.lastId;
+            state.hasMore = action.payload.hasMore;
             state.loading = 'succeeded';
 
         });
