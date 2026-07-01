@@ -55,6 +55,7 @@ const ComponentCenterConversation: FC = () => {
                 return null;
         }
     };
+
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
             <div className="flex gap-2.5 items-center" >
@@ -62,7 +63,7 @@ const ComponentCenterConversation: FC = () => {
                     {conversation.active?.full_name?.charAt(0).toUpperCase()}
                 </Avatar>
                 <div className="" >
-                    <div className="text-sm font-medium text-black" > Kevin tran</div>
+                    <div className="text-sm font-medium text-black" > {conversation.active?.full_name}</div>
                     <div className="flex items-center gap-1" >
                         <TiEyeOutline />
                         <div>được xem bởi Kevin trần - 15:40 hôm qua</div>

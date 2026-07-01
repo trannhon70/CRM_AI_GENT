@@ -33,7 +33,7 @@ const ComponentLeftConversation: FC = () => {
     useEffect(() => {
         if (!id) return;
 
-        dispatch(fetchPaging({ lastId: undefined, limit: 5000, page_id: id, search: searchDebounce }));
+        dispatch(fetchPaging({ lastId: undefined, limit: 10000, page_id: id, search: searchDebounce }));
     }, [id, searchDebounce, dispatch]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
