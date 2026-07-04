@@ -31,7 +31,8 @@ const HeaderConversation: FC = () => {
     const fanPages = useSelector((state: RootState) => state.fanPages);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const active = location.pathname.split("/")[1];
-    const { value } = useLocalStorage("roomId", null)
+    const { value: pageId } = useLocalStorage("pageId", null)
+    const { value: conversationId } = useLocalStorage("conversationId", null)
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -58,7 +59,8 @@ const HeaderConversation: FC = () => {
     }
 
     useChatSocket({
-        roomId: String(value),
+        pageId: String(pageId),
+        conversationId: String(conversationId),
         onSyncStatus: (event: any) => {
             dispatch(updateSyncStatus(event));
             if (event.syncStatus === 'success') {

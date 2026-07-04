@@ -3,47 +3,56 @@ import { Socket } from 'socket.io-client';
 import { getSocket } from './chatSocketSingleton';
 
 type UseChatSocketProps = {
-  roomId: string;
+  pageId: string;
+  conversationId?: string;
   onNewMessage?: (message: any) => void;
   onSyncStatus?: (message: any) => void;
 };
 
 export const useChatSocket = ({
-  roomId,
+  pageId,
+  conversationId,
   onNewMessage,
   onSyncStatus,
 }: UseChatSocketProps) => {
   const socketRef = useRef<Socket | null>(null);
-  const currentRoomRef = useRef<string | null>(null);
-  const pendingRoomRef = useRef<string | null>(null);
+
+  const currentPageRoomRef = useRef<string | null>(null);
+  const currentConversationRoomRef = useRef<string | null>(null);
 
   const [isConnected, setIsConnected] = useState(false);
 
-  // INIT SOCKET (CHỈ 1 LẦN)
+  // ===========================
+  // INIT SOCKET (1 lần)
+  // ===========================
   useEffect(() => {
     const socket = getSocket();
     socketRef.current = socket;
 
-    // CONNECT
     const handleConnect = () => {
       console.log('🔌 Connected:', socket.id);
       setIsConnected(true);
 
-      // join room nếu đã có pending
-      const roomToJoin = pendingRoomRef.current;
-      if (roomToJoin) {
-        socket.emit('joinRoom', roomToJoin);
-        currentRoomRef.current = roomToJoin;
+      // Join lại page room
+      if (pageId) {
+        const room = `page:${pageId}`;
+        socket.emit('joinRoom', room);
+        currentPageRoomRef.current = room;
+      }
+
+      // Join lại conversation room
+      if (conversationId) {
+        const room = `conversation:${conversationId}`;
+        socket.emit('joinRoom', room);
+        currentConversationRoomRef.current = room;
       }
     };
 
-    // DISCONNECT
     const handleDisconnect = () => {
       console.log('❌ Disconnected');
       setIsConnected(false);
     };
 
-    // EVENTS
     const handleNewMessage = (message: any) => {
       onNewMessage?.(message);
     };
@@ -57,6 +66,11 @@ export const useChatSocket = ({
     socket.on('send_message', handleNewMessage);
     socket.on('syncStatus', handleSyncStatus);
 
+    // Nếu socket đã connect trước khi hook mount
+    if (socket.connected) {
+      handleConnect();
+    }
+
     return () => {
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
@@ -65,29 +79,62 @@ export const useChatSocket = ({
     };
   }, [onNewMessage, onSyncStatus]);
 
-  // HANDLE ROOM CHANGE
+  // ===========================
+  // PAGE ROOM
+  // ===========================
   useEffect(() => {
     const socket = socketRef.current;
-    if (!socket) return;
+    if (!socket || !isConnected || !pageId) return;
 
-    // lưu room mới vào pending
-    pendingRoomRef.current = roomId;
+    const newRoom = `page:${pageId}`;
 
-    // nếu chưa connect → chờ connect rồi join
-    if (!isConnected) return;
-
-    // leave room cũ
-    if (currentRoomRef.current && currentRoomRef.current !== roomId) {
-      socket.emit('leaveRoom', currentRoomRef.current);
+    if (
+      currentPageRoomRef.current &&
+      currentPageRoomRef.current !== newRoom
+    ) {
+      socket.emit('leaveRoom', currentPageRoomRef.current);
     }
 
-    // join room mới
-    socket.emit('joinRoom', roomId);
+    if (currentPageRoomRef.current !== newRoom) {
+      socket.emit('joinRoom', newRoom);
+      currentPageRoomRef.current = newRoom;
+    }
+  }, [pageId, isConnected]);
 
-    currentRoomRef.current = roomId;
-  }, [roomId, isConnected]);
+  // ===========================
+  // CONVERSATION ROOM
+  // ===========================
+  useEffect(() => {
+    const socket = socketRef.current;
+    if (!socket || !isConnected) return;
 
+    // Không mở conversation nào
+    if (!conversationId) {
+      if (currentConversationRoomRef.current) {
+        socket.emit('leaveRoom', currentConversationRoomRef.current);
+        currentConversationRoomRef.current = null;
+      }
+      return;
+    }
+
+    const newRoom = `conversation:${conversationId}`;
+
+    if (
+      currentConversationRoomRef.current &&
+      currentConversationRoomRef.current !== newRoom
+    ) {
+      socket.emit('leaveRoom', currentConversationRoomRef.current);
+    }
+
+    if (currentConversationRoomRef.current !== newRoom) {
+      socket.emit('joinRoom', newRoom);
+      currentConversationRoomRef.current = newRoom;
+    }
+  }, [conversationId, isConnected]);
+
+  // ===========================
   // SEND MESSAGE
+  // ===========================
   const sendMessage = (data: any) => {
     if (socketRef.current?.connected) {
       socketRef.current.emit('send_message', data);

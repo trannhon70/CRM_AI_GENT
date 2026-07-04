@@ -17,7 +17,7 @@ interface IProps {
 const ConversationItem: FC<IProps> = (props) => {
     const { item } = props
     const dispatch = useDispatch<AppDispatch>();
-    const { setStorage } = useLocalStorage<string | null>("roomId", null);
+    const { setStorage } = useLocalStorage<string | null>("conversationId", null);
     const conversation = useSelector((state: RootState) => state.conversation);
 
 
