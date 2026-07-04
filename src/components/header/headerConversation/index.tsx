@@ -68,8 +68,10 @@ const HeaderConversation: FC = () => {
             }
         },
         onNewMessage(event: any) {
-            dispatch(updateMessage(event.message))
-            dispatch(updateConversation(event.conversation))
+            dispatch(updateMessage(event))
+        },
+        onNewConversation(event: any) {
+            dispatch(updateConversation(event))
         },
     });
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >

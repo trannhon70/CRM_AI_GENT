@@ -1,7 +1,4 @@
 import Avatar from "@mui/material/Avatar";
-import dayjs from "dayjs";
-import "dayjs/locale/vi";
-import relativeTime from "dayjs/plugin/relativeTime";
 import type { FC } from "react";
 import { GrMail } from "react-icons/gr";
 import type { AppDispatch, RootState } from "../../../redux/store";
@@ -9,8 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
 import { setActiveConversation } from "../../../features/conversationSlice";
 
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/vi';
+
 dayjs.extend(relativeTime);
-dayjs.locale("vi");
+dayjs.locale('vi');
 interface IProps {
     item?: any,
 }
@@ -43,7 +44,7 @@ const ConversationItem: FC<IProps> = (props) => {
         </div>
 
         <div className="flex flex-col items-end flex-shrink-0">
-            <div className="text-xs text-gray-500">{dayjs(item.last_message_at).fromNow()}</div>
+            <div className="text-xs text-gray-500">{dayjs.unix(item.last_message_at ? item.last_message_at : item.updated_at).fromNow()}</div>
             {
                 item.unread_count > 0 && <div className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
                     {item.unread_count > 9 ? "9+" : item.unread_count}

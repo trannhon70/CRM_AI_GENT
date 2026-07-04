@@ -6,6 +6,7 @@ type UseChatSocketProps = {
   pageId: string;
   conversationId?: string;
   onNewMessage?: (message: any) => void;
+  onNewConversation?: (message: any) => void;
   onSyncStatus?: (message: any) => void;
 };
 
@@ -13,6 +14,7 @@ export const useChatSocket = ({
   pageId,
   conversationId,
   onNewMessage,
+  onNewConversation,
   onSyncStatus,
 }: UseChatSocketProps) => {
   const socketRef = useRef<Socket | null>(null);
@@ -57,6 +59,10 @@ export const useChatSocket = ({
       onNewMessage?.(message);
     };
 
+    const handleNewConversation = (message: any) => {
+      onNewConversation?.(message);
+    };
+
     const handleSyncStatus = (message: any) => {
       onSyncStatus?.(message);
     };
@@ -64,6 +70,7 @@ export const useChatSocket = ({
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('send_message', handleNewMessage);
+    socket.on('send_conversation', handleNewConversation);
     socket.on('syncStatus', handleSyncStatus);
 
     // Nếu socket đã connect trước khi hook mount
@@ -75,6 +82,7 @@ export const useChatSocket = ({
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
       socket.off('send_message', handleNewMessage);
+      socket.on('send_conversation', handleNewConversation);
       socket.off('syncStatus', handleSyncStatus);
     };
   }, [onNewMessage, onSyncStatus]);
