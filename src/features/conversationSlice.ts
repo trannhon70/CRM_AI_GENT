@@ -22,6 +22,7 @@ interface conversationState {
     data: any,
     limit: number,
     lastId: number,
+    lastUpdatedAt: number,
     hasMore: boolean,
     active: ConversationActive | null;
 }
@@ -30,6 +31,7 @@ const initialState = {
     loading: 'idle',
     data: [],
     limit: 5,
+    lastUpdatedAt: 0,
     lastId: 1,
     hasMore: false,
     active: null
@@ -65,6 +67,8 @@ const conversationSlice = createSlice({
                 state.data = [...state.data, ...action.payload.data];
             }
             state.lastId = action.payload.lastId;
+            state.limit = action.payload.limit;
+            state.lastUpdatedAt = action.payload.lastUpdatedAt;
             state.hasMore = action.payload.hasMore;
             state.loading = 'succeeded';
 

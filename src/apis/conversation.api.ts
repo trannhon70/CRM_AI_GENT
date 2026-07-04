@@ -24,7 +24,7 @@ async function updateName(id: number, body: any) {
 }
 
 async function getPaging(query: any) {
-    const respone = await instance.get(`/conversations/get-paging?lastId=${query.lastId}&limit=${query.limit}&page_id=${query.page_id}&search=${query.search}`);
+    const respone = await instance.get(`/conversations/get-paging?lastId=${query.lastId}&lastUpdatedAt=${query.lastUpdatedAt}&limit=${query.limit}&page_id=${query.page_id}&search=${query.search}`);
     return respone.data.data
 }
 
