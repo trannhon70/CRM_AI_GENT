@@ -22,13 +22,17 @@ const ComponentCenterConversation: FC = () => {
     const conversation = useSelector((state: RootState) => state.conversation);
     const messages = useSelector((state: RootState) => state.message);
     const bottomRef = useRef<HTMLDivElement>(null);
-
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({
-            behavior: "smooth",
+            behavior: "auto",
+            block: "end",
         });
-    }, [messages.data]);
+    }, [
+        messages.data.length,
+        conversation.active?.updated_at,
+    ]);
 
     useEffect(() => {
         if (conversation.active) {
@@ -56,6 +60,29 @@ const ComponentCenterConversation: FC = () => {
                 return null;
         }
     };
+
+    const handleScroll = () => {
+        const el = containerRef.current;
+        if (!el) return;
+
+        // Gần chạm đầu danh sách
+        if (el.scrollTop < 100) {
+            // loadMoreMessages();
+            console.log('sadsa', 'el.scrollTop');
+
+        }
+    };
+
+    useEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+
+        el.addEventListener("scroll", handleScroll);
+
+        return () => {
+            el.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
 
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
@@ -88,22 +115,44 @@ const ComponentCenterConversation: FC = () => {
             </div>
         </div>
 
-        <div className="flex-1 overflow-auto bg-[#E5DED8] p-3 flex flex-col gap-3">
-            {messages.data.map((msg: any) => (
-                <div
-                    key={msg.id}
-                    className={`flex items-end gap-2 ${msg.direction === MessageDirection.STAFF ? 'flex-row-reverse' : 'flex-row'}`}
-                >
-                    {/* Avatar */}
-                    <Avatar src={msg.direction !== MessageDirection.STAFF ? msg.conversation?.avatar : msg.user?.avatar}>
-                        {msg.direction !== MessageDirection.STAFF ? msg.conversation?.full_name?.charAt(0).toUpperCase() : msg.user?.full_name?.charAt(0).toUpperCase()}
-                    </Avatar>
-                    {
-                        renderMessageContent(msg)
-                    }
+        <div ref={containerRef} className="flex-1 overflow-auto bg-[#E5DED8] p-3 flex flex-col gap-3">
+            {messages.data.map((msg: any, index: number) => {
+                const prev = messages.data[index - 1];
+                const showDate = !prev || !dayjs.unix(prev.sent_at).isSame(dayjs.unix(msg.sent_at), "day");
 
-                </div>
-            ))}
+                return (
+                    <div key={msg.id}>
+                        {showDate && (
+                            <div className="flex justify-center my-4">
+                                <div className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+                                    {dayjs.unix(msg.sent_at).format("hh:mm:ss DD/MM/YYYY")}
+                                </div>
+                            </div>
+                        )}
+
+                        <div
+                            className={`flex items-end gap-2 ${msg.direction === MessageDirection.STAFF
+                                ? "flex-row-reverse"
+                                : "flex-row"
+                                }`}
+                        >
+                            <Avatar
+                                src={
+                                    msg.direction !== MessageDirection.STAFF
+                                        ? msg.conversation?.avatar
+                                        : msg.user?.avatar
+                                }
+                            >
+                                {msg.direction !== MessageDirection.STAFF
+                                    ? msg.conversation?.full_name?.charAt(0).toUpperCase()
+                                    : msg.user?.full_name?.charAt(0).toUpperCase()}
+                            </Avatar>
+
+                            {renderMessageContent(msg)}
+                        </div>
+                    </div>
+                );
+            })}
             <div ref={bottomRef} />
         </div>
 
