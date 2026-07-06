@@ -14,6 +14,7 @@ import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
 import ImageMessage from "../../card/cardMessageContent/imageMessage";
 import AudioMessage from "../../card/cardMessageContent/audioMessage";
+import dayjs from "dayjs";
 
 
 const ComponentCenterConversation: FC = () => {
@@ -21,7 +22,7 @@ const ComponentCenterConversation: FC = () => {
     const conversation = useSelector((state: RootState) => state.conversation);
     const messages = useSelector((state: RootState) => state.message);
     const bottomRef = useRef<HTMLDivElement>(null);
-    // console.log(messages, ' message');
+
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({
@@ -66,7 +67,7 @@ const ComponentCenterConversation: FC = () => {
                     <div className="text-sm font-medium text-black" > {conversation.active?.full_name}</div>
                     <div className="flex items-center gap-1" >
                         <TiEyeOutline />
-                        <div>được xem bởi Kevin trần - 15:40 hôm qua</div>
+                        <div>được xem bởi {conversation.active?.full_name} - {dayjs.unix(conversation.active?.last_message_at ? conversation.active.last_message_at : conversation.active.updated_at).fromNow()}</div>
 
                     </div>
                 </div>

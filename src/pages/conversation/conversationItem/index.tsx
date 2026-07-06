@@ -5,13 +5,9 @@ import type { AppDispatch, RootState } from "../../../redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
 import { setActiveConversation } from "../../../features/conversationSlice";
+import dayjs from "dayjs";
 
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import 'dayjs/locale/vi';
 
-dayjs.extend(relativeTime);
-dayjs.locale('vi');
 interface IProps {
     item?: any,
 }
@@ -23,7 +19,7 @@ const ConversationItem: FC<IProps> = (props) => {
 
 
     const onclickItem = () => {
-        dispatch(setActiveConversation({ id: item.id, full_name: item.full_name, avatar: item.avatar }))
+        dispatch(setActiveConversation(item))
         setStorage(String(item.id));
     }
     return <div

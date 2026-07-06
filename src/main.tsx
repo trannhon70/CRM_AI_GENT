@@ -11,6 +11,12 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/vi';
+
+dayjs.extend(relativeTime);
+dayjs.locale('vi');
 
 // khi build web thì sử dụng BrowserRouter còn khi build app PC thì sử dụng HashRouter
 const queryClient = new QueryClient()

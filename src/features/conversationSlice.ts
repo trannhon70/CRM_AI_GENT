@@ -15,6 +15,9 @@ interface ConversationActive {
     id: number;
     full_name: string;
     avatar: string; // bạn đang viết "avarta" - typo
+    unread_count: number;
+    last_message_at: number;
+    updated_at: number;
 }
 
 interface conversationState {
@@ -24,7 +27,7 @@ interface conversationState {
     lastId: number,
     lastUpdatedAt: number,
     hasMore: boolean,
-    active: ConversationActive | null;
+    active: ConversationActive;
 }
 
 const initialState = {
@@ -34,7 +37,7 @@ const initialState = {
     lastUpdatedAt: 0,
     lastId: 1,
     hasMore: false,
-    active: null
+    active: { id: 0, full_name: '', avatar: '', unread_count: 0, last_message_at: 0, updated_at: 0 }
 
 } satisfies conversationState as conversationState
 
