@@ -21,7 +21,8 @@ interface ConversationActive {
 }
 
 interface conversationState {
-    loading: 'idle' | 'pending' | 'succeeded' | 'failed'
+    loading: 'idle' | 'pending' | 'succeeded' | 'failed',
+    search: string;
     data: any,
     limit: number,
     lastId: number,
@@ -32,6 +33,7 @@ interface conversationState {
 
 const initialState = {
     loading: 'idle',
+    search: '',
     data: [],
     limit: 5,
     lastUpdatedAt: 0,
@@ -62,13 +64,18 @@ const conversationSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPaging.fulfilled, (state, action) => {
-            if (!action.payload.lastId) {
+            const currentSearch = action.meta.arg.search ?? '';
+            if (state.search !== currentSearch) {
+                state.data = action.payload.data;
+            }
+            else if (!action.payload.lastId) {
                 // Lần đầu load hoặc search mới → reset
                 state.data = action.payload.data;
             } else {
                 // Scroll load thêm → append
                 state.data = [...state.data, ...action.payload.data];
             }
+            state.search = currentSearch;
             state.lastId = action.payload.lastId;
             state.limit = action.payload.limit;
             state.lastUpdatedAt = action.payload.lastUpdatedAt;

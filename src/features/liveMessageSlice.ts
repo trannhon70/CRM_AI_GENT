@@ -14,19 +14,19 @@ export const fetchPagingLivemessage = createAsyncThunk(
 interface liveMessageState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
     data: any,
-    pageSize: number,
-    pageIndex: number,
-    total: number,
-    totalPages: number,
+    limit: number,
+    lastId: number,
+    lastUpdatedAt: number,
+    hasMore: boolean,
 }
 
 const initialState = {
     loading: 'idle',
     data: [],
-    pageSize: 5,
-    pageIndex: 1,
-    total: 0,
-    totalPages: 0,
+    limit: 5,
+    lastUpdatedAt: 0,
+    lastId: 1,
+    hasMore: false,
 
 } satisfies liveMessageState as liveMessageState
 
@@ -40,11 +40,19 @@ const liveMessageSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPagingLivemessage.fulfilled, (state, action) => {
-            state.data = action.payload.data;
-            state.pageSize = action.payload.pageSize;
-            state.pageIndex = action.payload.pageIndex;
-            state.total = action.payload.total;
-            state.totalPages = action.payload.totalPages;
+            console.log(action.meta.arg, 'action.meta.arg');
+            if (!action.payload.lastId) {
+                // Lần đầu load hoặc search mới → reset
+                state.data = action.payload.data;
+            }
+            else {
+                // Scroll load thêm → append
+                state.data = [...action.payload.data, ...state.data];
+            }
+            state.lastId = action.payload.lastId;
+            state.limit = action.payload.limit;
+            state.lastUpdatedAt = action.payload.lastUpdatedAt;
+            state.hasMore = action.payload.hasMore;
             state.loading = 'succeeded';
 
         });
