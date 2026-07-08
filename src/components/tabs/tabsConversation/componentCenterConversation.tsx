@@ -1,6 +1,6 @@
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import { useEffect, useMemo, useRef, useState, type FC } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC } from "react";
 import { BsLayoutSidebarReverse } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa";
 import { IoMailUnreadSharp } from "react-icons/io5";
@@ -23,7 +23,8 @@ const ComponentCenterConversation: FC = () => {
     const { data: messages, limit, pageIndex, hasMore } = useSelector((state: RootState) => state.message);
     const bottomRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
-
+    const isLoadMoreRef = useRef(false);
+    const previousScrollHeight = useRef(0);
 
     useEffect(() => {
         if (!conversation.active?.id) return;
@@ -56,6 +57,8 @@ const ComponentCenterConversation: FC = () => {
         if (!el) return;
 
         if (el.scrollTop === 0 && hasMore) {
+            previousScrollHeight.current = el.scrollHeight;
+            isLoadMoreRef.current = true;
             dispatch(fetchPagingLivemessage({ pageIndex: pageIndex + 1, limit, conversation_id: conversation.active?.id, search: "", }));
         }
     };
@@ -69,6 +72,22 @@ const ComponentCenterConversation: FC = () => {
         };
     }, [pageIndex, hasMore]);
 
+    //Sau khi messages thay đổi sẽ scroll xuống cuối, trừ khi đang load thêm tin nhắn cũ
+    useLayoutEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+        if (isLoadMoreRef.current) {
+            const newScrollHeight = el.scrollHeight;
+            el.scrollTop += newScrollHeight - previousScrollHeight.current;
+            isLoadMoreRef.current = false;
+        } else {
+            bottomRef.current?.scrollIntoView({
+                behavior: "smooth",
+            });
+        }
+    }, [messages]);
+
+    // khi mở tin nhắn sẽ scroll xuống cuối, hoặc khi có tin nhắn mới
     useEffect(() => {
         const el = containerRef.current;
         if (!el) return;
