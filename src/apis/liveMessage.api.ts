@@ -5,6 +5,6 @@ export const LiveMessageAPI = {
 };
 
 async function getPaging(query: any) {
-    const respone = await instance.get(`/live-messages/get-paging?lastId=${query.lastId}&lastUpdatedAt=${query.lastUpdatedAt}&limit=${query.limit}&conversation_id=${query.conversation_id}&search=${query.search}`);
+    const respone = await instance.get(`/live-messages/get-paging?pageIndex=${query.pageIndex}&limit=${query.limit}&conversation_id=${query.conversation_id}&search=${query.search}`);
     return respone.data.data
 }

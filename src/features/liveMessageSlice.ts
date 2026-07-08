@@ -13,19 +13,21 @@ export const fetchPagingLivemessage = createAsyncThunk(
 
 interface liveMessageState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
+    currentRequestId: string | null,
     data: any,
+    pageIndex: number,
     limit: number,
-    lastId: number,
-    lastUpdatedAt: number,
+
     hasMore: boolean,
 }
 
 const initialState = {
     loading: 'idle',
+    currentRequestId: null,
     data: [],
+    pageIndex: 1,
     limit: 5,
-    lastUpdatedAt: 0,
-    lastId: 1,
+
     hasMore: false,
 
 } satisfies liveMessageState as liveMessageState
@@ -39,19 +41,23 @@ const liveMessageSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(fetchPagingLivemessage.pending, (state, action) => {
+            state.currentRequestId = action.meta.requestId;
+        });
         builder.addCase(fetchPagingLivemessage.fulfilled, (state, action) => {
-            console.log(action.meta.arg, 'action.meta.arg');
-            if (!action.payload.lastId) {
-                // Lần đầu load hoặc search mới → reset
-                state.data = action.payload.data;
+
+            if (state.currentRequestId !== action.meta.requestId) {
+                return; // bỏ qua request cũ
             }
-            else {
-                // Scroll load thêm → append
+
+            if (action.meta.arg.pageIndex === 1) {
+                state.data = action.payload.data;
+            } else {
                 state.data = [...action.payload.data, ...state.data];
             }
-            state.lastId = action.payload.lastId;
+
+            state.pageIndex = action.meta.arg.pageIndex;
             state.limit = action.payload.limit;
-            state.lastUpdatedAt = action.payload.lastUpdatedAt;
             state.hasMore = action.payload.hasMore;
             state.loading = 'succeeded';
 
