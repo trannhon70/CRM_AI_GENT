@@ -28,7 +28,7 @@ const ComponentCenterConversation: FC = () => {
 
     useEffect(() => {
         if (!conversation.active?.id) return;
-        dispatch(fetchPagingLivemessage({ pageIndex: 1, limit: 20, conversation_id: conversation.active.id, search: "", }));
+        dispatch(fetchPagingLivemessage({ pageIndex: 1, limit: 100, conversation_id: conversation.active.id, search: "", }));
     }, [conversation.active?.id, dispatch]);
 
     const renderMessageContent = (msg: any) => {
@@ -82,22 +82,11 @@ const ComponentCenterConversation: FC = () => {
             isLoadMoreRef.current = false;
         } else {
             bottomRef.current?.scrollIntoView({
-                behavior: "smooth",
+                behavior: "auto",
+                block: "end",
             });
         }
     }, [messages]);
-
-    // khi mở tin nhắn sẽ scroll xuống cuối, hoặc khi có tin nhắn mới
-    useEffect(() => {
-        const el = containerRef.current;
-        if (!el) return;
-        // Load lần đầu hoặc có tin nhắn mới
-        bottomRef.current?.scrollIntoView({
-            behavior: "auto",
-            block: "end",
-        });
-    }, [hasMore]);
-
 
     const messageElements = useMemo(() => {
         return messages.map((msg: any, index: number) => {
