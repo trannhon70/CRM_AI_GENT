@@ -45,17 +45,14 @@ const liveMessageSlice = createSlice({
             state.currentRequestId = action.meta.requestId;
         });
         builder.addCase(fetchPagingLivemessage.fulfilled, (state, action) => {
-
             if (state.currentRequestId !== action.meta.requestId) {
                 return; // bỏ qua request cũ
             }
-
             if (action.meta.arg.pageIndex === 1) {
                 state.data = action.payload.data;
             } else {
                 state.data = [...action.payload.data, ...state.data];
             }
-
             state.pageIndex = action.meta.arg.pageIndex;
             state.limit = action.payload.limit;
             state.hasMore = action.payload.hasMore;
