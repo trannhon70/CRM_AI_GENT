@@ -38,7 +38,7 @@ const ConversationItem: FC<IProps> = (props) => {
                 {item.full_name}
             </div>
 
-            <div className="truncate text-sm text-gray-500 mt-2">
+            <div className="truncate text-sm text-gray-500 mt-2 ">
                 {item.lastMessage?.text}
             </div>
         </div>

@@ -33,7 +33,7 @@ const TextMessage: FC<Props> = ({ message }) => {
                 <div className="flex flex-col">
                     {/* Bubble */}
                     <div
-                        className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm break-words
+                        className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm break-words  whitespace-pre-line
                         ${isStaff
                                 ? "bg-[#0f447d] text-white rounded-br-none"
                                 : "bg-white text-gray-800 rounded-bl-none"
