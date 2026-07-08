@@ -73,6 +73,13 @@ const HeaderConversation: FC = () => {
         onNewConversation(event: any) {
             dispatch(updateConversation(event))
         },
+        onUnreadCountConversation(event: any) {
+            const payload = {
+                id: event.conversation_id,
+                unread_count: event.unread_count,
+            }
+            dispatch(updateConversation(payload))
+        }
     });
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >
         <div className="max-w-[1200px] w-full m-auto px-4 flex items-center justify-between" >

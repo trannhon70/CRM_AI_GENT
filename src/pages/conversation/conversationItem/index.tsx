@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocalStorage } from "../../../hooks/useLocalStorage";
 import { setActiveConversation } from "../../../features/conversationSlice";
 import dayjs from "dayjs";
+import { conversationAPI } from "../../../apis/conversation.api";
 
 
 interface IProps {
@@ -18,9 +19,12 @@ const ConversationItem: FC<IProps> = (props) => {
     const conversation = useSelector((state: RootState) => state.conversation);
 
 
-    const onclickItem = () => {
+    const onclickItem = async () => {
         dispatch(setActiveConversation(item))
         setStorage(String(item.id));
+        if (item.unread_count > 0) {
+            await conversationAPI.updateUnreadCount({ conversation_id: item.id, unread_count: 0, page_id: item.page_id });
+        }
     }
     return <div
         onClick={onclickItem}

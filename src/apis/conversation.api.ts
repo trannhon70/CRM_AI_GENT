@@ -5,7 +5,8 @@ export const conversationAPI = {
     getById,
     updateName,
     getPaging,
-    updateLabel
+    updateLabel,
+    updateUnreadCount
 };
 
 async function getAll(query: any) {
@@ -30,5 +31,10 @@ async function getPaging(query: any) {
 
 async function updateLabel(body: any) {
     const response = await instance.post(`/conversations/update-label`, body);
+    return response.data
+}
+
+async function updateUnreadCount(body: any) {
+    const response = await instance.post(`/conversations/update-unread-count`, body);
     return response.data
 }

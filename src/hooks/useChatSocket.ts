@@ -8,6 +8,7 @@ type UseChatSocketProps = {
   onNewMessage?: (message: any) => void;
   onNewConversation?: (message: any) => void;
   onSyncStatus?: (message: any) => void;
+  onUnreadCountConversation?: (message: any) => void;
 };
 
 export const useChatSocket = ({
@@ -16,6 +17,7 @@ export const useChatSocket = ({
   onNewMessage,
   onNewConversation,
   onSyncStatus,
+  onUnreadCountConversation,
 }: UseChatSocketProps) => {
   const socketRef = useRef<Socket | null>(null);
 
@@ -67,11 +69,16 @@ export const useChatSocket = ({
       onSyncStatus?.(message);
     };
 
+    const handleUnreadCountConversation = (message: any) => {
+      onUnreadCountConversation?.(message);
+    };
+
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('send_message', handleNewMessage);
     socket.on('send_conversation', handleNewConversation);
     socket.on('syncStatus', handleSyncStatus);
+    socket.on('send_unread_count', handleUnreadCountConversation);
 
     // Nếu socket đã connect trước khi hook mount
     if (socket.connected) {
@@ -84,8 +91,9 @@ export const useChatSocket = ({
       socket.off('send_message', handleNewMessage);
       socket.on('send_conversation', handleNewConversation);
       socket.off('syncStatus', handleSyncStatus);
+      socket.off('send_unread_count', handleUnreadCountConversation);
     };
-  }, [onNewMessage, onSyncStatus]);
+  }, [onNewMessage, onSyncStatus, onUnreadCountConversation]);
 
   // ===========================
   // PAGE ROOM

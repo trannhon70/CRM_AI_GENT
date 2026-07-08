@@ -59,7 +59,6 @@ const conversationSlice = createSlice({
                     ...data,
                 };
             }
-            // state.active = action.payload;
         },
     },
     extraReducers: (builder) => {
