@@ -18,7 +18,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
 import { useChatSocket } from "../../../hooks/useChatSocket";
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
-import { fetchPaging, updateConversation } from '../../../features/conversationSlice';
+import { fetchPaging, setNullConversation, updateConversation } from '../../../features/conversationSlice';
 import { updateMessage } from '../../../features/liveMessageSlice';
 
 const HeaderConversation: FC = () => {
@@ -55,6 +55,10 @@ const HeaderConversation: FC = () => {
         logout()
     }
     const onClickRouter = (value: any) => {
+        if (value === "conversation") {
+            dispatch(setNullConversation([]))
+        }
+
         navige(`/${value}/${id}`)
     }
 

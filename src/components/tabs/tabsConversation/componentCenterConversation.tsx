@@ -1,5 +1,6 @@
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import dayjs from "dayjs";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC } from "react";
 import { BsLayoutSidebarReverse } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa";
@@ -7,15 +8,14 @@ import { IoMailUnreadSharp } from "react-icons/io5";
 import { TbListDetails } from "react-icons/tb";
 import { TiEyeOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPagingLivemessage, sendMessage, updateMessage } from "../../../features/liveMessageSlice";
+import { LiveMessageAPI } from "../../../apis/liveMessage.api";
+import { fetchPagingLivemessage, sendMessage } from "../../../features/liveMessageSlice";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { MessageDirection, MessageType } from "../../../utils";
+import AudioMessage from "../../card/cardMessageContent/audioMessage";
+import ImageMessage from "../../card/cardMessageContent/imageMessage";
 import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
-import ImageMessage from "../../card/cardMessageContent/imageMessage";
-import AudioMessage from "../../card/cardMessageContent/audioMessage";
-import dayjs from "dayjs";
-import { LiveMessageAPI } from "../../../apis/liveMessage.api";
 
 
 const ComponentCenterConversation: FC = () => {

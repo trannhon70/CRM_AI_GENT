@@ -52,6 +52,9 @@ const conversationSlice = createSlice({
         setActiveConversation(state, action) {
             state.active = action.payload;
         },
+        setNullConversation(state, action) {
+            state.data = action.payload;
+        },
         updateConversation(state, action) {
             const data = action.payload
             const index = state.data.findIndex((m: any) => m.id === data.id);
@@ -88,5 +91,5 @@ const conversationSlice = createSlice({
     },
 })
 
-export const { setActiveConversation, updateConversation } = conversationSlice.actions;
+export const { setActiveConversation, updateConversation, setNullConversation } = conversationSlice.actions;
 export const conversationReducer = conversationSlice.reducer;
