@@ -18,6 +18,8 @@ interface ConversationActive {
     unread_count: number;
     last_message_at: number;
     updated_at: number;
+    customer_id?: string;
+    page_id?: string;
 }
 
 interface conversationState {
@@ -39,7 +41,7 @@ const initialState = {
     lastUpdatedAt: 0,
     lastId: 1,
     hasMore: false,
-    active: { id: 0, full_name: '', avatar: '', unread_count: 0, last_message_at: 0, updated_at: 0 }
+    active: { id: 0, full_name: '', avatar: '', unread_count: 0, last_message_at: 0, updated_at: 0, customer_id: '', page_id: '' },
 
 } satisfies conversationState as conversationState
 

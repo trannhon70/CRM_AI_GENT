@@ -7,7 +7,7 @@ import { IoMailUnreadSharp } from "react-icons/io5";
 import { TbListDetails } from "react-icons/tb";
 import { TiEyeOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPagingLivemessage } from "../../../features/liveMessageSlice";
+import { fetchPagingLivemessage, sendMessage, updateMessage } from "../../../features/liveMessageSlice";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { MessageDirection, MessageType } from "../../../utils";
 import TextMessage from "../../card/cardMessageContent/textMessage";
@@ -15,6 +15,7 @@ import VideoMessage from "../../card/cardMessageContent/videoMessage";
 import ImageMessage from "../../card/cardMessageContent/imageMessage";
 import AudioMessage from "../../card/cardMessageContent/audioMessage";
 import dayjs from "dayjs";
+import { LiveMessageAPI } from "../../../apis/liveMessage.api";
 
 
 const ComponentCenterConversation: FC = () => {
@@ -25,6 +26,7 @@ const ComponentCenterConversation: FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const isLoadMoreRef = useRef(false);
     const previousScrollHeight = useRef(0);
+    const [text, setText] = useState<string>("");
 
     useEffect(() => {
         if (!conversation.active?.id) return;
@@ -128,6 +130,34 @@ const ComponentCenterConversation: FC = () => {
         });
     }, [messages]);
 
+
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+
+            if (!text.trim()) return;
+            const body = {
+                id: Date.now().toString(),
+                page_id: conversation.active.page_id,
+                customer_id: conversation.active.customer_id,
+                conversation_id: conversation.active.id,
+                type: MessageType.TEXT,
+                text: text,
+                direction: MessageDirection.STAFF,
+                sent_at: Math.floor(Date.now() / 1000),
+            };
+            dispatch(sendMessage(body));
+            LiveMessageAPI.sendMessage(body).then((_response: any) => {
+                setText("");
+            }).catch((error) => {
+                console.error("Error sending message:", error);
+                setText("");
+            });
+
+        }
+    };
+
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
             <div className="flex gap-2.5 items-center" >
@@ -164,27 +194,48 @@ const ComponentCenterConversation: FC = () => {
             <div ref={bottomRef} />
         </div>
 
-        <div className="h-[7vh]">
-            <div className="border-t bg-white px-3 py-2 border-gray-200">
-                <div className="flex items-end gap-2">
-                    {/* Icon bên trái */}
-                    <button className="p-2 rounded-full hover:bg-gray-100">
+        <div className="h-[8vh]">
+            <div className="border-t border-gray-200 bg-white p-3">
+                <div className="flex items-end gap-2 rounded-3xl border border-gray-300 bg-white px-3 py-2 shadow-sm">
+
+                    {/* Emoji */}
+                    <button
+                        className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-gray-500 transition hover:bg-gray-100"
+                    >
                         😊
                     </button>
 
                     {/* Input */}
-                    <div className="flex-1">
-                        <textarea
-                            rows={1}
-                            placeholder="Aa"
-                            className=" w-full resize-none rounded-3xlbg-gray-100 px-4 py-2.5 outline-none max-h-32 overflow-y-auto"
-                        />
-                    </div>
+                    <textarea
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Nhập tin nhắn..."
+                        rows={1}
+                        className="max-h-36 flex-1 resize-none overflow-y-auto bg-transparent py-2 text-[15px] outline-none placeholder:text-gray-400"
+                    />
 
-                    {/* Gửi */}
-                    <button className="p-2 text-blue-500 hover:bg-gray-100 rounded-full">
+                    {/* Upload */}
+                    <button
+                        className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100"
+                    >
+                        📎
+                    </button>
+
+                    {/* Image */}
+                    <button
+                        className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100"
+                    >
+                        🖼️
+                    </button>
+
+                    {/* Send */}
+                    <button
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white transition hover:bg-blue-600"
+                    >
                         ➤
                     </button>
+
                 </div>
             </div>
         </div>
