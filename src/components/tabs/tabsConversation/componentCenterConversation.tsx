@@ -20,6 +20,7 @@ import AudioMessage from "../../card/cardMessageContent/audioMessage";
 import ImageMessage from "../../card/cardMessageContent/imageMessage";
 import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
+import ComponentGifPicker from "../../chat/componentGifPicker";
 
 
 
@@ -304,13 +305,8 @@ const ComponentCenterConversation: FC = () => {
                     </Tooltip>
 
                     {/* nhãn dán */}
-                    <Tooltip title="Chọn file GIF">
-                        <button
-                            className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 cursor-pointer"
-                        >
-                            <PiGifFill size={25} />
-                        </button>
-                    </Tooltip>
+                    <ComponentGifPicker />
+
                     {/* Send */}
                     <Tooltip title="Gửi tin nhắn">
                         <button
