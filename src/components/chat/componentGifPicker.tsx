@@ -6,16 +6,15 @@ import TextField from "@mui/material/TextField";
 import Tooltip from "@mui/material/Tooltip";
 import type { FC } from "react";
 import React, { useState } from "react";
-import { IoSearchCircleOutline } from "react-icons/io5";
-import { PiGifFill } from "react-icons/pi";
-import ResizeObserver from "react-resize-observer";
 import { IoSearchSharp } from "react-icons/io5";
-import { useDebounce } from "../../hooks/useDebounce";
+import { PiGifFill } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
+import ResizeObserver from "react-resize-observer";
+import { LiveMessageAPI } from "../../apis/liveMessage.api";
+import { sendMessage } from "../../features/liveMessageSlice";
+import { useDebounce } from "../../hooks/useDebounce";
 import type { AppDispatch, RootState } from "../../redux/store";
 import { MessageDirection, MessageType } from "../../utils";
-import { sendMessage } from "../../features/liveMessageSlice";
-import { LiveMessageAPI } from "../../apis/liveMessage.api";
 
 const giphyFetch = new GiphyFetch("sXpGFDGZs0Dv1mmNFvYaGUvYwKX0PWIh");
 

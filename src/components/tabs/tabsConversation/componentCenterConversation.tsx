@@ -7,7 +7,6 @@ import { FaUserPlus } from "react-icons/fa";
 import { FaImage } from "react-icons/fa6";
 import { IoMdSend } from "react-icons/io";
 import { IoMailUnreadSharp } from "react-icons/io5";
-import { PiGifFill } from "react-icons/pi";
 import { TbListDetails } from "react-icons/tb";
 import { TiEyeOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
