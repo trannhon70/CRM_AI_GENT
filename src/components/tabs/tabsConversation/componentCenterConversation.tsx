@@ -4,18 +4,23 @@ import dayjs from "dayjs";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC } from "react";
 import { BsLayoutSidebarReverse } from "react-icons/bs";
 import { FaUserPlus } from "react-icons/fa";
+import { FaImage } from "react-icons/fa6";
+import { IoMdSend } from "react-icons/io";
 import { IoMailUnreadSharp } from "react-icons/io5";
+import { PiGifFill } from "react-icons/pi";
 import { TbListDetails } from "react-icons/tb";
 import { TiEyeOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { LiveMessageAPI } from "../../../apis/liveMessage.api";
 import { fetchPagingLivemessage, sendMessage } from "../../../features/liveMessageSlice";
 import type { AppDispatch, RootState } from "../../../redux/store";
-import { MessageDirection, MessageType } from "../../../utils";
+import { ALLOWED_TYPES, MAX_SIZE_BY_TYPE, MessageDirection, MessageType } from "../../../utils";
 import AudioMessage from "../../card/cardMessageContent/audioMessage";
 import ImageMessage from "../../card/cardMessageContent/imageMessage";
 import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
+
 
 
 const ComponentCenterConversation: FC = () => {
@@ -27,6 +32,7 @@ const ComponentCenterConversation: FC = () => {
     const isLoadMoreRef = useRef(false);
     const previousScrollHeight = useRef(0);
     const [text, setText] = useState<string>("");
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (!conversation.active?.id) return;
@@ -130,34 +136,98 @@ const ComponentCenterConversation: FC = () => {
         });
     }, [messages]);
 
+    const handleSend = () => {
+        if (!text.trim()) return;
 
+        const body = {
+            id: Date.now().toString(),
+            page_id: conversation.active.page_id,
+            customer_id: conversation.active.customer_id,
+            conversation_id: conversation.active.id,
+            type: MessageType.TEXT,
+            text: text,
+            direction: MessageDirection.STAFF,
+            sent_at: Math.floor(Date.now() / 1000),
+        };
+
+        dispatch(sendMessage(body));
+        LiveMessageAPI.sendMessage(body)
+            .then(() => {
+                setText("");
+            })
+            .catch((error) => {
+                console.error("Error sending message:", error);
+                setText("");
+            });
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-
-            if (!text.trim()) return;
-            const body = {
-                id: Date.now().toString(),
-                page_id: conversation.active.page_id,
-                customer_id: conversation.active.customer_id,
-                conversation_id: conversation.active.id,
-                type: MessageType.TEXT,
-                text: text,
-                direction: MessageDirection.STAFF,
-                sent_at: Math.floor(Date.now() / 1000),
-            };
-            dispatch(sendMessage(body));
-            LiveMessageAPI.sendMessage(body).then((_response: any) => {
-                setText("");
-            }).catch((error) => {
-                console.error("Error sending message:", error);
-                setText("");
-            });
-
+            handleSend();
         }
     };
 
+    const onClickSend = () => {
+        handleSend();
+    };
+
+    const handleFileClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file: any = e.target.files?.[0];
+        if (!file) return;
+        if (!ALLOWED_TYPES.includes(file.type)) {
+            toast.warning(`Định dạng không được hỗ trợ: ${file.type}`)
+            e.target.value = "";
+            return;
+        }
+        const maxSize = MAX_SIZE_BY_TYPE[file.type];
+        if (file.size > maxSize) {
+            toast.warning(`File vượt quá giới hạn ${maxSize / 1024 / 1024}MB`)
+            e.target.value = "";
+            return;
+        }
+        const previewUrl = URL.createObjectURL(file);
+
+        const type =
+            file.type?.startsWith("image") ? MessageType.IMAGE :
+                file.type?.startsWith("video") ? MessageType.VIDEO :
+                    file.type?.startsWith("audio") ? MessageType.AUDIO :
+                        MessageType.FILE;
+        const body = {
+            id: Date.now().toString(),
+            page_id: conversation.active.page_id,
+            customer_id: conversation.active.customer_id,
+            conversation_id: conversation.active.id,
+            type: type,
+            attachments: [
+                {
+                    id: 0,
+                    url: previewUrl,
+                    name: file.name,
+                    size: file.size,
+                    mime_type: file.type,
+                }
+            ],
+            direction: MessageDirection.STAFF,
+            sent_at: Math.floor(Date.now() / 1000),
+        };
+        // thực hiện update UI message
+        dispatch(sendMessage(body));
+        //cập nhật api
+        const form = new FormData();
+        form.append("file", file);
+        form.append("type", type);
+        form.append("page_id", `${conversation.active.page_id}`);
+        form.append("customer_id", `${conversation.active.customer_id}`);
+        form.append("conversation_id", `${conversation.active.id}`);
+        form.append("direction", `${MessageDirection.STAFF}`);
+        await LiveMessageAPI.sendMessage(form)
+        e.target.value = "";
+    };
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
             <div className="flex gap-2.5 items-center" >
@@ -199,12 +269,13 @@ const ComponentCenterConversation: FC = () => {
                 <div className="flex items-end gap-2 rounded-3xl border border-gray-300 bg-white px-3 py-2 shadow-sm">
 
                     {/* Emoji */}
-                    <button
-                        className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-gray-500 transition hover:bg-gray-100"
-                    >
-                        😊
-                    </button>
-
+                    <Tooltip title="Chọn icons">
+                        <button
+                            className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-gray-500 transition hover:bg-gray-100"
+                        >
+                            😊
+                        </button>
+                    </Tooltip>
                     {/* Input */}
                     <textarea
                         value={text}
@@ -216,26 +287,39 @@ const ComponentCenterConversation: FC = () => {
                     />
 
                     {/* Upload */}
-                    <button
-                        className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100"
-                    >
-                        📎
-                    </button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept={ALLOWED_TYPES.join(",")} // tuỳ loại file bạn cho phép, bỏ nếu nhận mọi loại
+                    />
+                    <Tooltip title="Đính kèm file có kích thước tối đa 25MB">
+                        <button
+                            onClick={handleFileClick}
+                            className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 cursor-pointer"
+                        >
+                            <FaImage size={20} />
+                        </button>
+                    </Tooltip>
 
-                    {/* Image */}
-                    <button
-                        className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100"
-                    >
-                        🖼️
-                    </button>
-
+                    {/* nhãn dán */}
+                    <Tooltip title="Chọn file GIF">
+                        <button
+                            className="flex h-10 w-10 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 cursor-pointer"
+                        >
+                            <PiGifFill size={25} />
+                        </button>
+                    </Tooltip>
                     {/* Send */}
-                    <button
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white transition hover:bg-blue-600"
-                    >
-                        ➤
-                    </button>
-
+                    <Tooltip title="Gửi tin nhắn">
+                        <button
+                            onClick={onClickSend}
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white transition hover:bg-blue-600 cursor-pointer"
+                        >
+                            <IoMdSend size={20} />
+                        </button>
+                    </Tooltip>
                 </div>
             </div>
         </div>

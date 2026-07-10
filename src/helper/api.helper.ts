@@ -4,7 +4,7 @@ const apiUrl = import.meta.env.VITE_API_URL_API;
 const instance = axios.create({
 
     baseURL: apiUrl,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', "ngrok-skip-browser-warning": "true", },
 });
 
 // Interceptor cho request

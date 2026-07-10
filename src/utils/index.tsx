@@ -51,3 +51,27 @@ export const MessageType = {
   FILE: 'file',
   STICKER: 'sticker',
 } as const
+
+
+export const ALLOWED_TYPES = [
+  "video/mp4",
+  "video/quicktime",
+  "audio/mpeg",
+  "audio/mp4",
+  "audio/wav",
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+] as const;
+export const MAX_SIZE_BY_TYPE: Record<string, number> = {
+  "image/jpeg": 25 * 1024 * 1024,
+  "image/png": 25 * 1024 * 1024,
+  "image/gif": 25 * 1024 * 1024,
+  "image/webp": 25 * 1024 * 1024,
+  "video/mp4": 25 * 1024 * 1024,
+  "video/quicktime": 25 * 1024 * 1024,
+  "audio/mpeg": 25 * 1024 * 1024,
+  "audio/mp4": 25 * 1024 * 1024,
+  "audio/wav": 25 * 1024 * 1024,
+} as const;

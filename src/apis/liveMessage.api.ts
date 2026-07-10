@@ -2,7 +2,7 @@ import instance from "../helper/api.helper";
 
 export const LiveMessageAPI = {
     getPaging,
-    sendMessage
+    sendMessage,
 };
 
 async function getPaging(query: any) {
@@ -11,6 +11,13 @@ async function getPaging(query: any) {
 }
 
 async function sendMessage(body: any) {
-    const respone = await instance.post(`/live-messages`, body);
+    const respone = await instance.post(`/live-messages`, body,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        }
+    );
     return respone.data.data
 }
+
