@@ -7,8 +7,10 @@ import { useLocalStorage } from "../../../hooks/useLocalStorage";
 import { setActiveConversation } from "../../../features/conversationSlice";
 import dayjs from "dayjs";
 import { conversationAPI } from "../../../apis/conversation.api";
-
-
+import { MessageType } from "../../../utils";
+import { FaImage } from "react-icons/fa";
+import { PiFileAudioLight } from "react-icons/pi";
+import { FcVideoCall } from "react-icons/fc";
 interface IProps {
     item?: any,
 }
@@ -17,6 +19,7 @@ const ConversationItem: FC<IProps> = (props) => {
     const dispatch = useDispatch<AppDispatch>();
     const { setStorage } = useLocalStorage<string | null>("conversationId", null);
     const conversation = useSelector((state: RootState) => state.conversation);
+    console.log(item);
 
 
     const onclickItem = async () => {
@@ -24,6 +27,21 @@ const ConversationItem: FC<IProps> = (props) => {
         setStorage(String(item.id));
         if (item.unread_count > 0) {
             await conversationAPI.updateUnreadCount({ conversation_id: item.id, unread_count: 0, page_id: item.page_id });
+        }
+    }
+
+    const renderType = (value: any) => {
+        switch (value) {
+            case MessageType.TEXT:
+                return <div>{item.lastMessage?.text}</div>
+            case MessageType.IMAGE:
+                return <div className="flex items-center gap-1" > <FaImage size={20} /> hình ảnh</div>
+            case MessageType.AUDIO:
+                return <div className="flex items-center gap-1" > <PiFileAudioLight size={20} /> âm thanh</div>
+            case MessageType.VIDEO:
+                return <div className="flex items-center gap-1" > <FcVideoCall size={20} /> video</div>
+            default:
+                return <div>{item.lastMessage?.text}</div>
         }
     }
     return <div
@@ -39,17 +57,21 @@ const ConversationItem: FC<IProps> = (props) => {
             </div>
 
             <div className="truncate text-sm text-gray-500 mt-2 ">
-                {item.lastMessage?.text}
+                {
+                    renderType(item.lastMessage?.type)
+                }
             </div>
         </div>
 
         <div className="flex flex-col items-end flex-shrink-0">
             <div className="text-xs text-gray-500">{dayjs.unix(item.last_message_at ? item.last_message_at : item.updated_at).fromNow()}</div>
-            {
-                item.unread_count > 0 && <div className="mt-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                    {item.unread_count > 9 ? "9+" : item.unread_count}
-                </div>
-            }
+            <div className="h-5" >
+                {
+                    item.unread_count > 0 && <div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                        {item.unread_count > 9 ? "9+" : item.unread_count}
+                    </div>
+                }
+            </div>
 
             <div>
                 <GrMail color="#98A2B3" size={25} />
