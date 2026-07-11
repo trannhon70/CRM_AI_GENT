@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-import { useEffect, useState, type FC } from "react";
+import { useEffect, useMemo, useState, type FC } from "react";
 import { GrSearch } from "react-icons/gr";
 import { PiSortDescending } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,8 +40,14 @@ const ComponentLeftConversation: FC = () => {
         setSearch(event.target.value);
     };
 
+    const sortedData = useMemo(() => {
+        const arr = [...data].sort((a, b) => b.last_message_at - a.last_message_at);
+        return arr;
+    }, [data]);
+
+
     const rowVirtualizer = useVirtualizer({
-        count: data?.length ?? 0,
+        count: sortedData?.length ?? 0,
         getScrollElement: () => parentRef.current,
         estimateSize: () => 80,
         overscan: 10,
@@ -135,7 +141,7 @@ const ComponentLeftConversation: FC = () => {
                                 }}
                             >
                                 <ConversationItem
-                                    item={data[virtualRow.index]}
+                                    item={sortedData[virtualRow.index]}
                                 />
                             </div>
                         })}
