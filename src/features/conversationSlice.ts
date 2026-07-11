@@ -64,6 +64,10 @@ const conversationSlice = createSlice({
                     ...data,
                 };
             }
+            //cập nhật lại active
+            if (state.active) {
+                state.active.unread_count = action.payload.unread_count;
+            }
         },
     },
     extraReducers: (builder) => {

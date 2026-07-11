@@ -20,6 +20,7 @@ import ImageMessage from "../../card/cardMessageContent/imageMessage";
 import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
 import ComponentGifPicker from "../../chat/componentGifPicker";
+import { conversationAPI } from "../../../apis/conversation.api";
 
 
 
@@ -228,6 +229,16 @@ const ComponentCenterConversation: FC = () => {
         await LiveMessageAPI.sendMessage(form)
         e.target.value = "";
     };
+
+    const handleChangeTextarea = (event: any) => {
+        setText(event.target.value)
+    }
+
+    const handleFocus = async (event: any) => {
+        if (conversation.active.unread_count > 0) {
+            await conversationAPI.updateUnreadCount({ conversation_id: conversation.active.id, unread_count: 0, page_id: conversation.active.page_id });
+        }
+    }
     return <div className="h-full flex flex-col overflow-hidden">
         <div className="h-[7vh] p-2.5 box-border flex items-end justify-between border-b border-gray-200" >
             <div className="flex gap-2.5 items-center" >
@@ -278,8 +289,10 @@ const ComponentCenterConversation: FC = () => {
                     </Tooltip>
                     {/* Input */}
                     <textarea
+                        onFocus={handleFocus}
+
                         value={text}
-                        onChange={(e) => setText(e.target.value)}
+                        onChange={handleChangeTextarea}
                         onKeyDown={handleKeyDown}
                         placeholder="Nhập tin nhắn..."
                         rows={1}
