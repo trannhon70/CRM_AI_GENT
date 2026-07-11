@@ -8,6 +8,11 @@ import { FaCircleUser, FaMessage } from "react-icons/fa6";
 import HeaderConversation from "../../header/headerConversation";
 import ComponentLeftConversation from "../../tabs/tabsConversation/componentLeftConversation";
 import ComponentCenterConversation from "../../tabs/tabsConversation/componentCenterConversation";
+import { FiMessageSquare } from "react-icons/fi";
+import ConponentRightConversation from "../../tabs/tabsConversation/conponentRightConversation";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../../redux/store";
+
 
 const sidebar = [
     { id: 1, icon: <FaMessage size={20} color="white" />, title: <div>Tất cả hội thoại</div> },
@@ -17,7 +22,9 @@ const sidebar = [
 ]
 
 const LayoutConversation: FC = () => {
-    const [active, setActive] = useState<number>(1)
+    const [active, setActive] = useState<number>(0);
+    const conversation = useSelector((state: RootState) => state.conversation);
+
     return <Layout style={{ height: '100%', width: '100%' }}>
         <HeaderConversation />
 
@@ -55,11 +62,23 @@ const LayoutConversation: FC = () => {
                         </div>
 
                         <div className="w-2/4 lg:w-[50%] border-r border-gray-200 flex flex-col h-full">
-                            <ComponentCenterConversation />
+                            {
+                                conversation.active?.id ? <ComponentCenterConversation /> :
+                                    <div className="flex items-center justify-center h-full text-2xl text-gray-500 bg-[#E5DED8] gap-3" >
+                                        <FiMessageSquare size={30} color="" />  Xin chọn 1 hội thoại từ danh sách bên trái
+                                    </div>
+                            }
+
                         </div>
 
                         <div className="w-1/4 lg:w-[25%]">
-                            sadsad
+                            {
+                                conversation.active?.id ? <ConponentRightConversation /> :
+                                    <div className="p-2 h-full text-xl text-gray-500 " >
+                                        Chưa có thông tin khách hàng
+                                    </div>
+                            }
+
                         </div>
                     </div>
                 </div>
