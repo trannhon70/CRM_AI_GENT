@@ -4,7 +4,14 @@ import type { FC } from "react";
 import React from "react";
 import EmojiPicker from 'emoji-picker-react';
 
-const ComponentEmojiPicker: FC = () => {
+interface IProps {
+    textareaRef?: any,
+    setText?: any,
+    text?: any
+}
+
+const ComponentEmojiPicker: FC<IProps> = (props) => {
+    const { textareaRef, setText, text } = props
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
@@ -17,6 +24,26 @@ const ComponentEmojiPicker: FC = () => {
         setAnchorEl(event.currentTarget);
     };
 
+    const handleEmoji = (emoji: string) => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+
+        const newText =
+            text.substring(0, start) +
+            emoji +
+            text.substring(end);
+
+        setText(newText);
+
+        requestAnimationFrame(() => {
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd =
+                start + emoji.length;
+        });
+    };
 
     return <div>
         <Tooltip title="Chọn icons">
@@ -51,7 +78,7 @@ const ComponentEmojiPicker: FC = () => {
                 },
             }}
         >
-            <EmojiPicker onEmojiClick={(emojiObject) => console.log(emojiObject)} />
+            <EmojiPicker onEmojiClick={(emojiData) => handleEmoji(emojiData.emoji)} />
 
         </Popover>
     </div>

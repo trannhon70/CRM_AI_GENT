@@ -35,6 +35,7 @@ const ComponentCenterConversation: FC = () => {
     const previousScrollHeight = useRef(0);
     const [text, setText] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
         if (!conversation.active?.id) return;
@@ -281,11 +282,11 @@ const ComponentCenterConversation: FC = () => {
                 <div className="flex items-end gap-2 rounded-3xl border border-gray-300 bg-white px-3 py-2 shadow-sm">
 
                     {/* Emoji */}
-                    <ComponentEmojiPicker />
+                    <ComponentEmojiPicker textareaRef={textareaRef} text={text} setText={setText} />
                     {/* Input */}
                     <textarea
                         onFocus={handleFocus}
-
+                        ref={textareaRef}
                         value={text}
                         onChange={handleChangeTextarea}
                         onKeyDown={handleKeyDown}
