@@ -22,7 +22,7 @@ export default defineConfig({
     host: true, // Cho phép truy cập từ mọi host
 
   },
-  base: './', // Đảm bảo đúng base path khi deploy
+  base: '/', // Đảm bảo đúng base path khi deploy
   build: {
     outDir: 'dist',
     assetsDir: 'assets', // ✅ đảm bảo CSS/JS nằm trong dist/assets/
