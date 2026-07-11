@@ -74,7 +74,6 @@ const ComponentGifPicker: FC = () => {
     }
 
     const handleSendGif = async (gif: any) => {
-        console.log(gif);
         const body = {
             id: Date.now().toString(),
             page_id: conversation.active.page_id,

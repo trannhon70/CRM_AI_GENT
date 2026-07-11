@@ -21,6 +21,7 @@ import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
 import ComponentGifPicker from "../../chat/componentGifPicker";
 import { conversationAPI } from "../../../apis/conversation.api";
+import ComponentEmojiPicker from "../../chat/componentEmojiPicker";
 
 
 
@@ -280,13 +281,7 @@ const ComponentCenterConversation: FC = () => {
                 <div className="flex items-end gap-2 rounded-3xl border border-gray-300 bg-white px-3 py-2 shadow-sm">
 
                     {/* Emoji */}
-                    <Tooltip title="Chọn icons">
-                        <button
-                            className="flex h-10 w-10 items-center justify-center rounded-full text-xl text-gray-500 transition hover:bg-gray-100"
-                        >
-                            😊
-                        </button>
-                    </Tooltip>
+                    <ComponentEmojiPicker />
                     {/* Input */}
                     <textarea
                         onFocus={handleFocus}
