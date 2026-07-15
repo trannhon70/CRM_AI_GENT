@@ -19,8 +19,6 @@ const ConversationItem: FC<IProps> = (props) => {
     const dispatch = useDispatch<AppDispatch>();
     const { setStorage } = useLocalStorage<string | null>("conversationId", null);
     const conversation = useSelector((state: RootState) => state.conversation);
-    console.log(item);
-
 
     const onclickItem = async () => {
         dispatch(setActiveConversation(item))
