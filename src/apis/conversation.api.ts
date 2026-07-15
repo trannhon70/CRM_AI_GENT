@@ -1,4 +1,5 @@
 import instance from "../helper/api.helper";
+import { isValidValue } from "../utils";
 
 export const conversationAPI = {
     getAll,
@@ -25,8 +26,28 @@ async function updateName(id: number, body: any) {
 }
 
 async function getPaging(query: any) {
-    const respone = await instance.get(`/conversations/get-paging?lastId=${query.lastId}&lastUpdatedAt=${query.lastUpdatedAt}&limit=${query.limit}&page_id=${query.page_id}&search=${query.search}`);
-    return respone.data.data
+    const params: Record<string, any> = {
+        limit: query.limit ?? 20,
+    };
+
+    if (isValidValue(query.page_id)) {
+        params.page_id = query.page_id;
+    }
+
+    if (isValidValue(query.lastId)) {
+        params.lastId = Number(query.lastId);
+    }
+
+    if (isValidValue(query.lastUpdatedAt)) {
+        params.lastUpdatedAt = Number(query.lastUpdatedAt);
+    }
+
+    if (isValidValue(query.search)) {
+        params.search = query.search;
+    }
+
+    const response = await instance.get('/conversations/get-paging', { params });
+    return response.data?.data;
 }
 
 async function updateLabel(body: any) {

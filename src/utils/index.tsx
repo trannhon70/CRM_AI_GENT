@@ -75,3 +75,6 @@ export const MAX_SIZE_BY_TYPE: Record<string, number> = {
   "audio/mp4": 25 * 1024 * 1024,
   "audio/wav": 25 * 1024 * 1024,
 } as const;
+
+export const isValidValue = (value: unknown) =>
+  value !== undefined && value !== null && value !== '' && value !== 'undefined' && value !== 'null';
