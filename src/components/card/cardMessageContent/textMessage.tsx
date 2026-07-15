@@ -3,6 +3,7 @@ import { MessageDirection } from "../../../utils";
 import { BsEmojiSmile, BsReply } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { formatUnixTime } from "../../../utils/date";
+import CardMessageReply from "../cardMessageReply";
 
 type Props = {
     message: any;
@@ -11,8 +12,10 @@ type Props = {
 const TextMessage: FC<Props> = ({ message }) => {
     const isStaff = message.direction === MessageDirection.STAFF;
 
+
+
     return (
-        <div className={`group flex ${isStaff ? "justify-end" : "justify-start"}`}>
+        <div id={`message-${message.facebook_mid}`} className={`group flex ${isStaff ? "justify-end" : "justify-start"}`}>
             <div className="flex items-end gap-2">
 
                 {/* Action bên trái khi hover */}
@@ -31,10 +34,13 @@ const TextMessage: FC<Props> = ({ message }) => {
                 )}
 
                 <div className="flex flex-col">
-                    {/* Bubble */}
+                    {message.reply_to && (
+                        <CardMessageReply message={message} isStaff={isStaff} />
+                    )}
+
                     <div
-                        className={`max-w-[100%] rounded-2xl px-3 py-2 text-sm break-words  whitespace-pre-line
-                        ${isStaff
+                        className={`max-w-full rounded-2xl px-3 py-2 text-sm whitespace-pre-line break-words
+                            ${isStaff
                                 ? "bg-[#0f447d] text-white rounded-br-none"
                                 : "bg-white text-gray-800 rounded-bl-none"
                             }`}
@@ -42,7 +48,6 @@ const TextMessage: FC<Props> = ({ message }) => {
                         {message.text}
                     </div>
 
-                    {/* Thời gian */}
                     <span
                         className={`text-[11px] text-gray-500 mt-1 ${isStaff ? "text-right mr-2" : "ml-2"
                             }`}

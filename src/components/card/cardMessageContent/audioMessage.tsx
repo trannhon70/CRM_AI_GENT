@@ -3,6 +3,7 @@ import { MessageDirection } from "../../../utils";
 import { BsEmojiSmile, BsReply } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { formatUnixTime } from "../../../utils/date";
+import CardMessageReply from "../cardMessageReply";
 
 type Props = {
     message: any;
@@ -12,7 +13,7 @@ const AudioMessage: FC<Props> = ({ message }) => {
     const isStaff = message.direction === MessageDirection.STAFF;
     return (
 
-        <div className={`group flex ${isStaff ? "justify-end" : "justify-start"}`}>
+        <div id={`message-${message.facebook_mid}`} className={`group flex ${isStaff ? "justify-end" : "justify-start"}`}>
             <div className="flex items-end gap-2">
 
                 {/* Action bên trái khi hover */}
@@ -31,6 +32,9 @@ const AudioMessage: FC<Props> = ({ message }) => {
                 )}
 
                 <div className="flex flex-col w-full">
+                    {message.reply_to && (
+                        <CardMessageReply message={message} isStaff={isStaff} />
+                    )}
                     {/* Bubble */}
                     <div
                         className={`max-w-[100%] rounded-2xl px-3 py-2 text-sm break-words  whitespace-pre-line
