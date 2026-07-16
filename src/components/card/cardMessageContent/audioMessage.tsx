@@ -1,10 +1,8 @@
 import type { FC } from "react";
 import { MessageDirection } from "../../../utils";
-import { BsEmojiSmile, BsReply } from "react-icons/bs";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { formatUnixTime } from "../../../utils/date";
-import CardMessageReply from "../cardMessageReply";
 import CardHoverIconMessage from "../cardHoverIconMessage";
+import CardMessageReply from "../cardMessageReply";
 
 type Props = {
     message: any;

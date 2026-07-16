@@ -150,13 +150,14 @@ const ComponentCenterConversation: FC = () => {
             text: text,
             direction: MessageDirection.STAFF,
             sent_at: Math.floor(Date.now() / 1000),
+            reply_to: reply
         };
 
         dispatch(sendMessage(body));
-        dispatch(deleteReplyMessage(null))
         LiveMessageAPI.sendMessage(body)
             .then(() => {
                 setText("");
+                dispatch(deleteReplyMessage(null))
             })
             .catch((error) => {
                 console.error("Error sending message:", error);
