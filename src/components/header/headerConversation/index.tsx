@@ -20,6 +20,7 @@ import { useChatSocket } from "../../../hooks/useChatSocket";
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { fetchPaging, setNullConversation, updateConversation } from '../../../features/conversationSlice';
 import { updateMessage } from '../../../features/liveMessageSlice';
+import { useZaloNotificationSound } from '../../../hooks/useZaloNotificationSound';
 
 const HeaderConversation: FC = () => {
     const { id } = useParams();
@@ -32,7 +33,8 @@ const HeaderConversation: FC = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const active = location.pathname.split("/")[1];
     const { value: pageId } = useLocalStorage("pageId", null)
-    const { value: conversationId } = useLocalStorage("conversationId", null)
+    const { value: conversationId } = useLocalStorage("conversationId", null);
+    const { play } = useZaloNotificationSound();
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -72,7 +74,8 @@ const HeaderConversation: FC = () => {
             }
         },
         onNewMessage(event: any) {
-            dispatch(updateMessage(event))
+            dispatch(updateMessage(event));
+            play();
         },
         onNewConversation(event: any) {
             dispatch(updateConversation(event))

@@ -1,55 +1,48 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
-const useZaloNotificationSound = () => {
+interface UseZaloNotificationSoundProps {
+  volume?: number;
+}
+
+export const useZaloNotificationSound = ({
+  volume = 1,
+}: UseZaloNotificationSoundProps = {}) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const lastPlayedRef = useRef<number>(0);
 
   useEffect(() => {
     const audio = new Audio("/sounds/notication.mp3");
+
+    audio.preload = "auto";
+    audio.volume = volume;
+
     audioRef.current = audio;
 
-    // Preload để không bị request trễ
-    audio.preload = "auto";
-
-    const unlock = () => {
-      if (!audioRef.current) return;
-      audioRef.current.muted = true;
-      audioRef.current.play().finally(() => {
-        audioRef.current?.pause();
-        if (audioRef.current) {
-          audioRef.current.muted = false;
-          audioRef.current.currentTime = 0;
-        }
-      });
-      window.removeEventListener("click", unlock);
-    };
-
-    // unlock khi user click lần đầu
-    window.addEventListener("click", unlock);
-
     return () => {
-      window.removeEventListener("click", unlock);
+      audio.pause();
+      audio.src = "";
     };
   }, []);
 
-  const play = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
 
-    // chặn spam play nếu nhiều noti trong 300ms
-    const now = Date.now();
-    if (now - lastPlayedRef.current < 300) return;
-    lastPlayedRef.current = now;
+  const play = useCallback(async () => {
+    if (!audioRef.current) return;
 
     try {
-      audio.currentTime = 0;
-      audio.play();
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+
+      await audioRef.current.play();
     } catch (err) {
-      console.warn("🔇 Không thể phát âm thanh:", err);
+      console.warn("Cannot play notification sound:", err);
     }
+  }, []);
+
+  return {
+    play,
   };
-
-  return { play };
 };
-
-export default useZaloNotificationSound;
