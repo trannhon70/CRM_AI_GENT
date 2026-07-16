@@ -11,13 +11,7 @@ async function getPaging(query: any) {
 }
 
 async function sendMessage(body: any) {
-    const respone = await instance.post(`/live-messages`, body,
-        {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
-        }
-    );
+    const respone = await instance.post(`/live-messages`, body);
     return respone.data.data
 }
 

@@ -23,6 +23,7 @@ import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
 import ComponentEmojiPicker from "../../chat/componentEmojiPicker";
 import ComponentGifPicker from "../../chat/componentGifPicker";
+import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
 
 const ComponentCenterConversation: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -35,6 +36,7 @@ const ComponentCenterConversation: FC = () => {
     const [text, setText] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const { upload } = useCloudinaryUpload();
 
     useEffect(() => {
         if (!conversation.active?.id) return;
@@ -194,7 +196,7 @@ const ComponentCenterConversation: FC = () => {
             e.target.value = "";
             return;
         }
-        const previewUrl = URL.createObjectURL(file);
+        const result = await upload(file);
 
         const type =
             file.type?.startsWith("image") ? MessageType.IMAGE :
@@ -209,11 +211,12 @@ const ComponentCenterConversation: FC = () => {
             type: type,
             attachments: [
                 {
-                    id: 0,
-                    url: previewUrl,
-                    name: file.name,
-                    size: file.size,
-                    mime_type: file.type,
+                    id: result.asset_id,
+                    url: result.url,
+                    width: result.width,
+                    height: result.height,
+                    mime_type: result.resource_type,
+                    preview_url: result.secure_url,
                 }
             ],
             direction: MessageDirection.STAFF,
@@ -221,15 +224,8 @@ const ComponentCenterConversation: FC = () => {
         };
         // thực hiện update UI message
         dispatch(sendMessage(body));
-        //cập nhật api
-        const form = new FormData();
-        form.append("file", file);
-        form.append("type", type);
-        form.append("page_id", `${conversation.active.page_id}`);
-        form.append("customer_id", `${conversation.active.customer_id}`);
-        form.append("conversation_id", `${conversation.active.id}`);
-        form.append("direction", `${MessageDirection.STAFF}`);
-        await LiveMessageAPI.sendMessage(form)
+
+        await LiveMessageAPI.sendMessage(body)
         e.target.value = "";
     };
 

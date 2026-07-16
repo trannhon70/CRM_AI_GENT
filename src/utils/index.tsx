@@ -64,17 +64,29 @@ export const ALLOWED_TYPES = [
   "image/gif",
   "image/webp",
 ] as const;
+
 export const MAX_SIZE_BY_TYPE: Record<string, number> = {
-  "image/jpeg": 25 * 1024 * 1024,
-  "image/png": 25 * 1024 * 1024,
-  "image/gif": 25 * 1024 * 1024,
-  "image/webp": 25 * 1024 * 1024,
-  "video/mp4": 25 * 1024 * 1024,
-  "video/quicktime": 25 * 1024 * 1024,
-  "audio/mpeg": 25 * 1024 * 1024,
-  "audio/mp4": 25 * 1024 * 1024,
-  "audio/wav": 25 * 1024 * 1024,
-} as const;
+  // Images
+  "image/jpeg": 10 * 1024 * 1024,
+  "image/png": 10 * 1024 * 1024,
+  "image/gif": 10 * 1024 * 1024,
+  "image/webp": 10 * 1024 * 1024,
+
+  // Videos
+  "video/mp4": 50 * 1024 * 1024,
+  "video/quicktime": 50 * 1024 * 1024,
+
+  // Audio
+  "audio/mpeg": 20 * 1024 * 1024,
+  "audio/mp4": 20 * 1024 * 1024,
+  "audio/wav": 20 * 1024 * 1024,
+
+  // Documents
+  "application/pdf": 20 * 1024 * 1024,
+  "application/msword": 20 * 1024 * 1024,
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    20 * 1024 * 1024,
+};
 
 export const isValidValue = (value: unknown) =>
   value !== undefined && value !== null && value !== '' && value !== 'undefined' && value !== 'null';
