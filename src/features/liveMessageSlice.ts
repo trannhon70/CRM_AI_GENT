@@ -17,8 +17,8 @@ interface liveMessageState {
     data: any,
     pageIndex: number,
     limit: number,
-
     hasMore: boolean,
+    reply: any
 }
 
 const initialState = {
@@ -27,8 +27,8 @@ const initialState = {
     data: [],
     pageIndex: 1,
     limit: 5,
-
     hasMore: false,
+    reply: null
 
 } satisfies liveMessageState as liveMessageState
 
@@ -41,6 +41,14 @@ const liveMessageSlice = createSlice({
         },
         sendMessage(state, action) {
             state.data.push(action.payload);
+        },
+
+        replyMessage(state, action) {
+            state.reply = action.payload;
+        },
+
+        deleteReplyMessage(state, action) {
+            state.reply = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -66,5 +74,5 @@ const liveMessageSlice = createSlice({
     },
 })
 
-export const { updateMessage, sendMessage } = liveMessageSlice.actions;
+export const { updateMessage, sendMessage, replyMessage, deleteReplyMessage } = liveMessageSlice.actions;
 export const liveMessageReducer = liveMessageSlice.reducer;

@@ -11,24 +11,23 @@ import { TbListDetails } from "react-icons/tb";
 import { TiEyeOutline } from "react-icons/ti";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { conversationAPI } from "../../../apis/conversation.api";
 import { LiveMessageAPI } from "../../../apis/liveMessage.api";
-import { fetchPagingLivemessage, sendMessage } from "../../../features/liveMessageSlice";
+import { deleteReplyMessage, fetchPagingLivemessage, sendMessage } from "../../../features/liveMessageSlice";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { ALLOWED_TYPES, MAX_SIZE_BY_TYPE, MessageDirection, MessageType } from "../../../utils";
+import CardInputChatReply from "../../card/cardInputReply";
 import AudioMessage from "../../card/cardMessageContent/audioMessage";
 import ImageMessage from "../../card/cardMessageContent/imageMessage";
 import TextMessage from "../../card/cardMessageContent/textMessage";
 import VideoMessage from "../../card/cardMessageContent/videoMessage";
-import ComponentGifPicker from "../../chat/componentGifPicker";
-import { conversationAPI } from "../../../apis/conversation.api";
 import ComponentEmojiPicker from "../../chat/componentEmojiPicker";
-
-
+import ComponentGifPicker from "../../chat/componentGifPicker";
 
 const ComponentCenterConversation: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const conversation = useSelector((state: RootState) => state.conversation);
-    const { data: messages, limit, pageIndex, hasMore } = useSelector((state: RootState) => state.message);
+    const { data: messages, limit, pageIndex, hasMore, reply } = useSelector((state: RootState) => state.message);
     const bottomRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const isLoadMoreRef = useRef(false);
@@ -154,6 +153,7 @@ const ComponentCenterConversation: FC = () => {
         };
 
         dispatch(sendMessage(body));
+        dispatch(deleteReplyMessage(null))
         LiveMessageAPI.sendMessage(body)
             .then(() => {
                 setText("");
@@ -236,7 +236,7 @@ const ComponentCenterConversation: FC = () => {
         setText(event.target.value)
     }
 
-    const handleFocus = async (event: any) => {
+    const handleFocus = async (_event: any) => {
         if (conversation.active.unread_count > 0) {
             await conversationAPI.updateUnreadCount({ conversation_id: conversation.active.id, unread_count: 0, page_id: conversation.active.page_id });
         }
@@ -277,8 +277,12 @@ const ComponentCenterConversation: FC = () => {
             <div ref={bottomRef} />
         </div>
 
-        <div className="h-[8vh]">
+        <div className={`${reply} ? "h-[10vh]" : "h-[8vh]"`}>
             <div className="border-t border-gray-200 bg-white p-3">
+                {
+                    reply && <CardInputChatReply />
+                }
+
                 <div className="flex items-end gap-2 rounded-3xl border border-gray-300 bg-white px-3 py-2 shadow-sm">
 
                     {/* Emoji */}

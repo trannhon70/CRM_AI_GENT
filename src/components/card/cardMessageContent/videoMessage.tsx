@@ -4,6 +4,7 @@ import { BsEmojiSmile, BsReply } from "react-icons/bs";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { formatUnixTime } from "../../../utils/date";
 import CardMessageReply from "../cardMessageReply";
+import CardHoverIconMessage from "../cardHoverIconMessage";
 
 type Props = {
     message: any;
@@ -18,17 +19,7 @@ const VideoMessage: FC<Props> = ({ message }) => {
 
                 {/* Action bên trái khi hover */}
                 {isStaff && (
-                    <div className="opacity-0 group-hover:opacity-100 transition flex gap-1">
-                        <button className="p-1 rounded-full hover:bg-gray-200">
-                            <BsEmojiSmile size={16} />
-                        </button>
-                        <button className="p-1 rounded-full hover:bg-gray-200">
-                            <BsReply size={16} />
-                        </button>
-                        <button className="p-1 rounded-full hover:bg-gray-200">
-                            <HiOutlineDotsHorizontal size={18} />
-                        </button>
-                    </div>
+                    <CardHoverIconMessage message={message} />
                 )}
 
                 <div className="flex flex-col w-full">
@@ -61,17 +52,7 @@ const VideoMessage: FC<Props> = ({ message }) => {
 
                 {/* Action bên phải khi hover */}
                 {!isStaff && (
-                    <div className="opacity-0 group-hover:opacity-100 transition flex gap-1">
-                        <button className="p-1 rounded-full hover:bg-gray-200">
-                            <BsEmojiSmile size={16} />
-                        </button>
-                        <button className="p-1 rounded-full hover:bg-gray-200">
-                            <BsReply size={16} />
-                        </button>
-                        <button className="p-1 rounded-full hover:bg-gray-200">
-                            <HiOutlineDotsHorizontal size={18} />
-                        </button>
-                    </div>
+                    <CardHoverIconMessage message={message} />
                 )}
             </div>
         </div>

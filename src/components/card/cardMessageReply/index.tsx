@@ -45,7 +45,7 @@ const CardMessageReply: FC<IProps> = (props) => {
             }`}
     >
         <div className="font-semibold mb-1">
-            {message.reply_to.direction === MessageDirection.CUSTOMER ? "Bạn" : "Khách hàng"}
+            {message.reply_to.direction === MessageDirection.STAFF ? "Trả lời tin nhắn của bạn" : "Trả lời tin nhắn của khách hàng"}
         </div>
 
         <div className="truncate">
