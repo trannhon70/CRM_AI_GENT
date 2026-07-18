@@ -15,12 +15,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import ActionFab from '../../../components/common/ActionFab';
 import CommonTable from '../../../components/common/CommonTable';
-import { getPagingLabel } from '../../../features/labelSlice';
+import { getPagingLabel, removeItem } from '../../../features/labelSlice';
 import { useDebounce } from '../../../hooks/useDebounce';
 import type { AppDispatch, RootState } from '../../../redux/store';
 import { formatUnixTime } from '../../../utils/date';
 import { getContrastTextColor } from '../../../utils/color';
 import { Skeleton } from '@mui/material';
+import { FiEdit } from "react-icons/fi";
+import type { Label } from '../../../types/label';
+import { labelAPI } from '../../../apis/label.api';
+import { toast } from 'react-toastify';
 
 const PageSettingTag: FC = () => {
     const { id } = useParams();
@@ -95,7 +99,16 @@ const PageSettingTag: FC = () => {
         [hasMore, loading]
     );
 
-
+    const onclickDelete = (event: Label) => {
+        labelAPI.isDelete(event.id).then((_res: any) => {
+            dispatch(removeItem(event.id));
+            toast.success("Xóa thẻ hội thoại thành công!")
+        }).catch((_res: any) => {
+            toast.error(
+                _res.response?.data?.message || 'Lỗi khi kết nối!'
+            );
+        })
+    }
 
     return <div className="h-full">
         <div className="text-2xl font-bold text-black mb-5">
@@ -169,14 +182,18 @@ const PageSettingTag: FC = () => {
                     loading={loading}
                     getRowKey={(item) => item.id}
                     emptyText="Coming soon"
-                    renderRow={(item: any, index: number) => (
+                    renderRow={(item: Label, index: number) => (
                         <>
                             <TableCell align="center"> {index + 1} </TableCell>
                             <TableCell><div className="font-medium"> {item.name}</div></TableCell>
                             <TableCell> <Chip label={item.color} size="small" sx={{ backgroundColor: item.color, color: getContrastTextColor(item.color) }} /></TableCell>
                             <TableCell>{formatUnixTime(item.created_at)}</TableCell>
-                            <TableCell align="center">
-                                <ActionFab>
+                            <TableCell sx={{ display: "flex", gap: "10px" }} align="center">
+
+                                <ActionFab color='success'>
+                                    <FiEdit size={22} />
+                                </ActionFab>
+                                <ActionFab onClick={() => onclickDelete(item)} color='error'>
                                     <MdDelete size={22} color="red" />
                                 </ActionFab>
                             </TableCell>

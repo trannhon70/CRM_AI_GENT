@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { labelAPI } from '../apis/label.api.ts'
-import type { GetPagingLabelQuery } from '../types/label.ts'
+import type { GetPagingLabelQuery, Label } from '../types/label.ts'
 
 
 
@@ -18,7 +18,7 @@ export const getPagingLabel = createAsyncThunk(
 interface LabelsState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
     currentRequestId: string | null,
-    data: any,
+    data: Label[],
     pageIndex?: number,
     limit?: number,
     hasMore: boolean,
@@ -38,7 +38,9 @@ const labelSlice = createSlice({
     name: 'label',
     initialState,
     reducers: {
-
+        removeItem: (state, action: PayloadAction<number>) => {
+            state.data = state.data.filter(item => item.id !== action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -67,5 +69,5 @@ const labelSlice = createSlice({
     },
 })
 
-export const { } = labelSlice.actions;
+export const { removeItem } = labelSlice.actions;
 export const labelReducer = labelSlice.reducer;
