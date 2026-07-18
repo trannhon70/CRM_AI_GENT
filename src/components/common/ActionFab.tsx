@@ -12,17 +12,19 @@ const ActionFab = ({ children, sx, ...props }: ActionFabProps) => {
             size="small"
             {...props}
             sx={{
-                width: 30,
-                height: 30,
-                minWidth: 30,
-                minHeight: 30,
-                zIndex: 0,
+                width: 32,
+                height: 32,
+                minWidth: 32,
+                minHeight: 32,
+                backgroundColor: "#fff",
+                color: "#64748b",
                 boxShadow: "none",
-                transition: "all .2s ease",
-
+                transition: "background-color .2s,color .2s",
+                zIndex: 0,
                 "&:hover": {
-                    transform: "scale(1.08)",
-                    boxShadow: "0 2px 8px rgba(0,0,0,.2)",
+                    backgroundColor: "#fee2e2",
+                    color: "#ef4444",
+                    boxShadow: "none",
                 },
 
                 ...sx,

@@ -2,14 +2,8 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from "@mui/material/Chip";
 import InputAdornment from '@mui/material/InputAdornment';
-import Paper from '@mui/material/Paper';
 import Tab from '@mui/material/Tab';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Tabs from "@mui/material/Tabs";
 import TextField from '@mui/material/TextField';
 import type { FC } from "react";
@@ -20,30 +14,76 @@ import { MdDelete } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import ActionFab from '../../../components/common/ActionFab';
+import CommonTable from '../../../components/common/CommonTable';
 import { getPagingLabel } from '../../../features/labelSlice';
+import { useDebounce } from '../../../hooks/useDebounce';
 import type { AppDispatch, RootState } from '../../../redux/store';
 import { formatUnixTime } from '../../../utils/date';
+import { getContrastTextColor } from '../../../utils/color';
+import { Skeleton } from '@mui/material';
 
 const PageSettingTag: FC = () => {
     const { id } = useParams();
     const dispatch = useDispatch<AppDispatch>();
-    const { data } = useSelector((state: RootState) => state.label);
+    const { data, loading } = useSelector((state: RootState) => state.label);
     const [active, setActive] = React.useState<any>("false");
+    const [search, setSearch] = React.useState("");
+    const searchDebounce = useDebounce(search, 500);
+    console.log(loading, 'loading');
 
     React.useEffect(() => {
-        dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 10, search: "" }))
-    }, [id, active])
+        dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 10, search: searchDebounce }))
+    }, [id, active, searchDebounce])
 
     const handleChange = (_: React.SyntheticEvent, newValue: boolean) => {
         setActive(newValue);
     };
+
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+    };
+
+    const columns: any = [
+        {
+            key: "stt",
+            label: "STT",
+            align: "center",
+            width: 70
+        },
+        {
+            key: "name",
+            label: "Tên thẻ"
+        },
+        {
+            key: "color",
+            label: "Màu sắc"
+        },
+        {
+            key: "created",
+            label: "Ngày tạo"
+        },
+        {
+            key: "action",
+            label: "Thao tác",
+            align: "center",
+            width: 120,
+            skeleton: (
+                <Skeleton
+                    variant="circular"
+                    width={32}
+                    height={32}
+                    sx={{ mx: "auto" }}
+                />
+            ),
+        }
+    ];
     return <div className="h-full">
         <div className="text-2xl font-bold text-black mb-5">
             Thẻ hội thoại
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm h-[calc(100%-52px)] flex flex-col">
-            <div className="flex items-center gap-2.5 text-lg text-black/90 font-medium" >Thẻ hội thoại <BsQuestionCircleFill className="cursor-pointer" color="#B9BEC7" size={25} /> <Chip label="0 thẻ" color="warning" variant="filled" size="small" /></div>
+            <div className="flex items-center gap-2.5 text-lg text-black/90 font-medium" >Thẻ hội thoại <BsQuestionCircleFill className="cursor-pointer" color="#B9BEC7" size={22} /> <Chip label="0 thẻ" color="warning" variant="filled" size="small" /></div>
             <div>Sử dụng thẻ hội thoại giúp phân biệt các hội thoại hoặc khách hàng </div>
 
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, mt: 2, }}>
@@ -74,6 +114,8 @@ const PageSettingTag: FC = () => {
                 </Tabs>
                 <div className='flex items-center justify-between mt-2' >
                     <TextField
+                        onChange={handleSearch}
+                        value={search}
                         size="small"
                         variant="outlined"
                         placeholder="Tìm kiếm thẻ"
@@ -97,45 +139,27 @@ const PageSettingTag: FC = () => {
                         <Button variant="contained" sx={{ height: 40, px: 2.5, textTransform: "none" }}>Thêm thẻ</Button>
                     </div>
                 </div>
-                <TableContainer sx={{ mt: 2, flex: 1, overflow: "auto", minHeight: 0, }} component={Paper}>
-                    <Table sx={{ minWidth: 650, marginTop: '10px' }} aria-label="simple table" stickyHeader size="small">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>STT</TableCell>
-                                <TableCell align="left">Tên thẻ</TableCell>
-                                <TableCell align="left">Màu sắc</TableCell>
-                                <TableCell align="left">Ngày tạo</TableCell>
-                                <TableCell align="center">Thao tác</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {data.map((item: any, index: number) => (
-                                <TableRow
-                                    key={item.id}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        {index + 1}
-                                    </TableCell>
-                                    <TableCell align="left">{item.name}</TableCell>
-                                    <TableCell align="left">{item.color}</TableCell>
-                                    <TableCell align="left">{formatUnixTime(item.created_at)}</TableCell>
-                                    <TableCell align="center">
-                                        <ActionFab
-                                            color="error"
-                                            aria-label="delete"
-                                        // onClick={handleDelete}
-                                        >
-                                            <MdDelete size={20} />
-                                        </ActionFab>
-
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-
-                </TableContainer>
+                <CommonTable
+                    skeletonCount={10}
+                    columns={columns}
+                    data={data}
+                    loading={loading}
+                    getRowKey={(item) => item.id}
+                    emptyText="Coming soon"
+                    renderRow={(item: any, index: number) => (
+                        <>
+                            <TableCell align="center"> {index + 1} </TableCell>
+                            <TableCell><div className="font-medium"> {item.name}</div></TableCell>
+                            <TableCell> <Chip label={item.color} size="small" sx={{ backgroundColor: item.color, color: getContrastTextColor(item.color) }} /></TableCell>
+                            <TableCell>{formatUnixTime(item.created_at)}</TableCell>
+                            <TableCell align="center">
+                                <ActionFab>
+                                    <MdDelete size={22} color="red" />
+                                </ActionFab>
+                            </TableCell>
+                        </>
+                    )}
+                />
 
             </Box>
         </div>
