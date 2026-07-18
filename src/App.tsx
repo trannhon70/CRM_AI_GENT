@@ -20,6 +20,7 @@ const Dashboard = React.lazy(() => import('./pages/dashboard'));
 const Conversation = React.lazy(() => import('./pages/conversation'));
 const PageAddUser = React.lazy(() => import('./pages/settings/addUser'));
 const PageGeneral = React.lazy(() => import('./pages/settings/general'));
+const PageSettingTag = React.lazy(() => import('./pages/settings/tag'));
 
 
 
@@ -54,6 +55,7 @@ function App() {
         <Route path="/setting" element={<LayoutSetting />}>
           <Route path="add-user-page/:id" element={<Suspense fallback={<LoadingLayout />}><PageAddUser /></Suspense>} />
           <Route path="general/:id" element={<Suspense fallback={<LoadingLayout />}><PageGeneral /></Suspense>} />
+          <Route path="tag/:id" element={<Suspense fallback={<LoadingLayout />}><PageSettingTag /></Suspense>} />
         </Route>
       </Route>
 

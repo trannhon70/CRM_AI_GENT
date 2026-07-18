@@ -28,6 +28,7 @@ import PaginationItem from '@mui/material/PaginationItem';
 
 import { IoMdArrowBack } from "react-icons/io";
 import { IoArrowForward } from "react-icons/io5";
+import ActionFab from "../../../components/common/ActionFab";
 
 
 
@@ -220,9 +221,13 @@ const PageAddUser: FC = () => {
                                     <TableCell align="left">{item.role}</TableCell>
                                     <TableCell align="left">{formatUnixTime(item.created_at)}</TableCell>
                                     <TableCell align="center">
-                                        <Fab onClick={() => handleDelete(item)} size="small" color="error" aria-label="delete">
+                                        <ActionFab
+                                            color="error"
+                                            aria-label="delete"
+                                            onClick={() => handleDelete(item)}
+                                        >
                                             <MdDelete size={20} />
-                                        </Fab>
+                                        </ActionFab>
                                     </TableCell>
                                 </TableRow>
                             ))}

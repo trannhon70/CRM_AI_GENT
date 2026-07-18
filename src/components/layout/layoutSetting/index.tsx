@@ -5,10 +5,12 @@ import HeaderConversation from "../../header/headerConversation";
 import { Layout } from "antd";
 import { IoSettings } from "react-icons/io5";
 import { IoPersonAddSharp } from "react-icons/io5";
+import { FaTag } from "react-icons/fa6";
 
 const siderBar = [
     { id: 1, icon: <IoSettings />, title: "Cài đặt chung", url: "setting/general" },
     { id: 2, icon: <IoPersonAddSharp />, title: "Thêm người dùng", url: "setting/add-user-page" },
+    { id: 3, icon: <FaTag />, title: "Thẻ hội thoại", url: "setting/tag" },
 ]
 
 const LayoutSetting: FC = () => {

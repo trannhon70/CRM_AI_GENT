@@ -3,6 +3,7 @@ import { usersReducer } from '../features/usersSlice';
 import { fanPagesReducer } from '../features/fanpagesSlice';
 import { conversationReducer } from '../features/conversationSlice';
 import { liveMessageReducer } from '../features/liveMessageSlice';
+import { labelReducer } from '../features/labelSlice';
 
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     fanPages: fanPagesReducer,
     conversation: conversationReducer,
     message: liveMessageReducer,
+    label: labelReducer,
   },
 });
 
