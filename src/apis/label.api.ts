@@ -1,5 +1,6 @@
 import instance from "../helper/api.helper";
 import type { GetPagingLabelQuery } from "../types/label";
+import { isValidValue } from "../utils";
 
 export const labelAPI = {
     getPaging,
@@ -7,7 +8,23 @@ export const labelAPI = {
 };
 
 async function getPaging(query: GetPagingLabelQuery) {
-    const respone = await instance.get(`/labels/get-paging?pageIndex=${query.pageIndex}&limit=${query.limit}&search=${query.search}&page_id=${query.page_id}&is_deleted=${query.is_deleted}`);
+    const params: Record<string, any> = {
+        limit: query.limit ?? 20,
+        pageIndex: query.pageIndex ?? 1,
+    };
+
+    if (isValidValue(query.page_id)) {
+        params.page_id = query.page_id;
+    }
+
+    if (isValidValue(query.is_deleted)) {
+        params.is_deleted = query.is_deleted;
+    }
+
+    if (isValidValue(query.search)) {
+        params.search = query.search;
+    }
+    const respone = await instance.get(`/labels/get-paging`, { params });
     return respone.data
 }
 

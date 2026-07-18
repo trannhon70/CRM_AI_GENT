@@ -1,5 +1,5 @@
+import { Skeleton, Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Chip from "@mui/material/Chip";
 import InputAdornment from '@mui/material/InputAdornment';
 import Tab from '@mui/material/Tab';
@@ -9,27 +9,27 @@ import TextField from '@mui/material/TextField';
 import type { FC } from "react";
 import * as React from 'react';
 import { BsQuestionCircleFill } from "react-icons/bs";
+import { FiEdit } from "react-icons/fi";
 import { GrSearch } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { labelAPI } from '../../../apis/label.api';
 import ActionFab from '../../../components/common/ActionFab';
 import CommonTable from '../../../components/common/CommonTable';
 import { getPagingLabel, removeItem } from '../../../features/labelSlice';
 import { useDebounce } from '../../../hooks/useDebounce';
 import type { AppDispatch, RootState } from '../../../redux/store';
-import { formatUnixTime } from '../../../utils/date';
-import { getContrastTextColor } from '../../../utils/color';
-import { Skeleton } from '@mui/material';
-import { FiEdit } from "react-icons/fi";
 import type { Label } from '../../../types/label';
-import { labelAPI } from '../../../apis/label.api';
-import { toast } from 'react-toastify';
+import { getContrastTextColor } from '../../../utils/color';
+import { formatUnixTime } from '../../../utils/date';
+import ModalLabel from './modalLabel';
 
 const PageSettingTag: FC = () => {
     const { id } = useParams();
     const dispatch = useDispatch<AppDispatch>();
-    const { data, loading, hasMore, pageIndex, limit } = useSelector((state: RootState) => state.label);
+    const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.label);
     const [active, setActive] = React.useState<any>("false");
     const [search, setSearch] = React.useState("");
     const searchDebounce = useDebounce(search, 500);
@@ -164,12 +164,12 @@ const PageSettingTag: FC = () => {
                         sx={{
                             width: 250,
                             "& .MuiOutlinedInput-root": {
-                                height: 40,
+                                height: 35,
                             },
                         }}
                     />
                     <div>
-                        <Button variant="contained" sx={{ height: 40, px: 2.5, textTransform: "none" }}>Thêm thẻ</Button>
+                        <ModalLabel />
                     </div>
                 </div>
                 <CommonTable
@@ -189,13 +189,16 @@ const PageSettingTag: FC = () => {
                             <TableCell> <Chip label={item.color} size="small" sx={{ backgroundColor: item.color, color: getContrastTextColor(item.color) }} /></TableCell>
                             <TableCell>{formatUnixTime(item.created_at)}</TableCell>
                             <TableCell sx={{ display: "flex", gap: "10px" }} align="center">
-
-                                <ActionFab color='success'>
-                                    <FiEdit size={22} />
-                                </ActionFab>
-                                <ActionFab onClick={() => onclickDelete(item)} color='error'>
-                                    <MdDelete size={22} color="red" />
-                                </ActionFab>
+                                <Tooltip title="Chỉnh sửa" >
+                                    <ActionFab color='success'>
+                                        <FiEdit size={22} />
+                                    </ActionFab>
+                                </Tooltip>
+                                <Tooltip title="Xóa" >
+                                    <ActionFab onClick={() => onclickDelete(item)} color='error'>
+                                        <MdDelete size={22} color="red" />
+                                    </ActionFab>
+                                </Tooltip>
                             </TableCell>
                         </>
                     )}
