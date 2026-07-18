@@ -25,17 +25,22 @@ import { Skeleton } from '@mui/material';
 const PageSettingTag: FC = () => {
     const { id } = useParams();
     const dispatch = useDispatch<AppDispatch>();
-    const { data, loading } = useSelector((state: RootState) => state.label);
+    const { data, loading, hasMore, pageIndex, limit } = useSelector((state: RootState) => state.label);
     const [active, setActive] = React.useState<any>("false");
     const [search, setSearch] = React.useState("");
     const searchDebounce = useDebounce(search, 500);
-    console.log(loading, 'loading');
+    const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
-        dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 10, search: searchDebounce }))
-    }, [id, active, searchDebounce])
+        dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 20, search: searchDebounce }))
+    }, [id, active, searchDebounce, dispatch])
 
     const handleChange = (_: React.SyntheticEvent, newValue: boolean) => {
+        tableContainerRef.current?.scrollTo({
+            top: 0,
+            behavior: "auto", // hoặc "smooth"
+        });
+
         setActive(newValue);
     };
 
@@ -77,6 +82,21 @@ const PageSettingTag: FC = () => {
             ),
         }
     ];
+
+    const handleScroll = React.useCallback(
+        (e: React.UIEvent<HTMLDivElement>) => {
+            const target = e.currentTarget;
+            const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+            if (distanceToBottom < 50 && hasMore && loading !== "pending") {
+                dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: Number(pageIndex) + 1, limit: 20, search: searchDebounce }))
+            }
+
+        },
+        [hasMore, loading]
+    );
+
+
+
     return <div className="h-full">
         <div className="text-2xl font-bold text-black mb-5">
             Thẻ hội thoại
@@ -140,6 +160,9 @@ const PageSettingTag: FC = () => {
                     </div>
                 </div>
                 <CommonTable
+                    containerRef={tableContainerRef}
+                    handleScroll={handleScroll}
+                    containerProps={{ sx: { mt: 2 } }}
                     skeletonCount={10}
                     columns={columns}
                     data={data}

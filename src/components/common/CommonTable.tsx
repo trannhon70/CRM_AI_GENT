@@ -1,5 +1,5 @@
 import { Box, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, type SxProps, type TableContainerProps, type TableProps, } from "@mui/material";
-import type { ReactNode } from "react";
+import { useCallback, type ReactNode } from "react";
 export type LoadingState = | "idle" | "pending" | "succeeded" | "failed";
 export interface TableColumn {
     key: string;
@@ -21,16 +21,21 @@ interface CommonTableProps<T> {
     rowSx?: SxProps;
     tableProps?: TableProps;
     containerProps?: TableContainerProps;
+    handleScroll?: any,
+    containerRef?: any;
 }
 
 function CommonTable<T>({ columns, data, loading = "idle", emptyText = "Không có dữ liệu", errorText = "Có lỗi xảy ra", skeletonCount = 8,
-    renderRow, getRowKey, rowSx, tableProps, containerProps,
+    renderRow, getRowKey, rowSx, tableProps, containerProps, handleScroll, containerRef
 }: CommonTableProps<T>) {
     const isLoading = loading === "pending";
     const isError = loading === "failed";
 
+
     return (
         <TableContainer
+            className="table-scroll"
+            ref={containerRef}
             {...containerProps}
             sx={{
                 flex: 1,
@@ -40,6 +45,11 @@ function CommonTable<T>({ columns, data, loading = "idle", emptyText = "Không c
                 border: "1px solid #e5e7eb",
                 boxShadow: "none",
                 ...containerProps?.sx,
+            }}
+            onScroll={(e) => {
+                containerProps?.onScroll?.(e);
+                handleScroll?.(e);
+
             }}
         >
             <Table

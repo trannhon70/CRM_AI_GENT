@@ -42,24 +42,22 @@ const labelSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getPagingLabel.pending, (state) => {
+            .addCase(getPagingLabel.pending, (state, action) => {
                 state.loading = "pending";
+                state.currentRequestId = action.meta.requestId;
             })
             .addCase(getPagingLabel.fulfilled, (state, action) => {
-                const { pageIndex } = action.meta.arg;
 
-                if (pageIndex === 1) {
+                if (action.meta.arg.pageIndex === 1) {
                     state.data = action.payload.data;
+                    state.pageIndex = 1;
                 } else {
-                    state.data = [
-                        ...state.data,
-                        ...action.payload.data,
-                    ];
+                    state.data.push(...action.payload.data);
+                    state.pageIndex = action.meta.arg.pageIndex;
                 }
 
-                state.pageIndex = pageIndex;
-                state.limit = action.payload.limit;
                 state.hasMore = action.payload.hasMore;
+                state.limit = action.payload.limit;
                 state.loading = "succeeded";
             })
             .addCase(getPagingLabel.rejected, (state) => {
