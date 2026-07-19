@@ -138,7 +138,10 @@ const PageSettingTag: FC = () => {
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm h-[calc(100%-52px)] flex flex-col">
-            <div className="flex items-center gap-2.5 text-lg text-black/90 font-medium" >Thẻ hội thoại <BsQuestionCircleFill className="cursor-pointer" color="#B9BEC7" size={22} /> <Chip label="0 thẻ" color="warning" variant="filled" size="small" /></div>
+            <div className="flex items-center gap-2.5 text-lg text-black/90 font-medium" >
+                Thẻ hội thoại <BsQuestionCircleFill className="cursor-pointer" color="#B9BEC7" size={22} />
+                <Chip label={`${data.length || 0} thẻ`} color="warning" variant="filled" size="small" />
+            </div>
             <div>Sử dụng thẻ hội thoại giúp phân biệt các hội thoại hoặc khách hàng </div>
 
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, mt: 2, }}>
