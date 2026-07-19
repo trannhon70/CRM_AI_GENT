@@ -45,13 +45,26 @@ const labelSlice = createSlice({
             // thêm vào đầu danh sách
             state.data.unshift(action.payload);
         },
-        updateItemLabel: (state, action: PayloadAction<Label>) => {
+        updateItemLabel: (
+            state,
+            action: PayloadAction<{ item: Label; currentDeleted: boolean }>
+        ) => {
+            const { item, currentDeleted } = action.payload;
+
             const index = state.data.findIndex(
-                item => item.id === action.payload.id
+                x => x.id === item.id
             );
 
+            // Item không thuộc tab hiện tại => remove
+            if (item.is_deleted !== currentDeleted) {
+                if (index !== -1) {
+                    state.data.splice(index, 1);
+                }
+                return;
+            }
+
             if (index !== -1) {
-                state.data[index] = action.payload;
+                state.data[index] = item;
             }
         },
     },

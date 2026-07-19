@@ -174,7 +174,7 @@ const PageSettingTag: FC = () => {
                         }}
                     />
                     <div>
-                        <ModalLabel item={item} setItem={setItem} />
+                        <ModalLabel item={item} setItem={setItem} active={active} />
                     </div>
                 </div>
                 <CommonTable

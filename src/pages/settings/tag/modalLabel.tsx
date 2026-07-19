@@ -86,10 +86,11 @@ const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
 
 interface IProps {
     item?: any,
-    setItem?: any
+    setItem?: any,
+    active?: boolean
 }
 const ModalLabel: FC<IProps> = (props) => {
-    const { item, setItem } = props
+    const { item, setItem, active = false } = props
     const { id } = useParams();
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState<boolean>(false)
@@ -136,8 +137,14 @@ const ModalLabel: FC<IProps> = (props) => {
         setLoading(true)
         if (item?.id) {
             labelAPI.update({ id: form?.id, color: form.color, page_id: form.page_id, is_deleted: form.is_deleted, name: form.name }).then((_res: any) => {
+
                 setLoading(false)
-                dispatch(updateItemLabel(_res.data[0]));
+                dispatch(
+                    updateItemLabel({
+                        item: _res.data[0],
+                        currentDeleted: active
+                    })
+                );
                 toast.success("Cập nhật thẻ hội thoại thành công!");
                 handleClose()
                 setForm({
@@ -191,7 +198,7 @@ const ModalLabel: FC<IProps> = (props) => {
             <Fade in={open}>
                 <Box sx={style} className="flex flex-col">
                     <div className='flex items-center justify-between p-3' >
-                        <div className='text-lg font-medium text-black ' >Thêm mới thẻ</div>
+                        <div className='text-lg font-medium text-black ' >{form?.id ? "Cập nhật" : "Thêm mới thẻ"}</div>
                         <div onClick={handleClose} className='w-8 h-8 flex items-center justify-center hover:bg-gray-300 cursor-pointer rounded' >
                             <IoMdClose size={25} />
                         </div>
@@ -303,7 +310,7 @@ const ModalLabel: FC<IProps> = (props) => {
                     <div className='flex items-center justify-end h-14 px-7 gap-2.5 ' >
 
                         <Button onClick={handleClose} color='inherit' variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Đóng</Button>
-                        <Button loading={loading} onClick={handleSave} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>{form?.id ? "Cập nhật" : "Thêm thẻ"}</Button>
+                        <Button loading={loading} onClick={handleSave} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>{form?.id ? "Cập nhật" : "Lưu"}</Button>
                     </div>
                 </Box>
             </Fade>
