@@ -1,4 +1,5 @@
 import instance from "../helper/api.helper";
+import type { GetPagingUserPageQuery } from "../types/userPage";
 
 export const userPagesAPI = {
     getpaging,
@@ -28,7 +29,7 @@ async function createUserPage(body: any) {
     return respone.data.data
 }
 
-async function getPagingUserPageActive(query: any) {
-    const respone = await instance.get(`/user-pages/get-paging-user-page-active?pageIndex=${query.pageIndex}&pageSize=${query.pageSize}&search=${query.search}&page_id=${query.page_id}`);
-    return respone.data.data
+async function getPagingUserPageActive(query: GetPagingUserPageQuery) {
+    const respone = await instance.get(`/user-pages/get-paging-user-page-active?pageIndex=${query.pageIndex}&limit=${query.limit}&search=${query.search}&page_id=${query.page_id}`);
+    return respone.data
 }

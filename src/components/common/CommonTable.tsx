@@ -75,6 +75,7 @@ function CommonTable<T>({ columns, data, loading = "idle", emptyText = "Không c
                                     fontWeight: 600,
                                     color: "#475569",
                                     backgroundColor: "#f8fafc",
+                                    px: 1,
                                 }}
                             >
                                 {column.label}

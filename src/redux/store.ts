@@ -4,6 +4,7 @@ import { fanPagesReducer } from '../features/fanpagesSlice';
 import { conversationReducer } from '../features/conversationSlice';
 import { liveMessageReducer } from '../features/liveMessageSlice';
 import { labelReducer } from '../features/labelSlice';
+import { userPageReducer } from '../features/userPageSlice';
 
 
 export const store = configureStore({
@@ -13,6 +14,7 @@ export const store = configureStore({
     conversation: conversationReducer,
     message: liveMessageReducer,
     label: labelReducer,
+    userPage: userPageReducer,
   },
 });
 
