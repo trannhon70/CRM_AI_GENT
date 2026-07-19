@@ -4,7 +4,8 @@ import { isValidValue } from "../utils";
 
 export const labelAPI = {
     getPaging,
-    isDelete
+    isDelete,
+    create
 };
 
 async function getPaging(query: GetPagingLabelQuery) {
@@ -30,5 +31,10 @@ async function getPaging(query: GetPagingLabelQuery) {
 
 async function isDelete(id: number) {
     const response = await instance.delete(`/labels/${id}`);
+    return response.data
+}
+
+async function create(body: any) {
+    const response = await instance.post(`/labels`, body);
     return response.data
 }

@@ -1,4 +1,4 @@
-import { Chip, TextField } from '@mui/material';
+import { Checkbox, Chip, Popover, TextField } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,7 +8,17 @@ import type { FC } from "react";
 import * as React from 'react';
 import { IoMdClose } from "react-icons/io";
 import { HexColorPicker } from "react-colorful";
-
+import { VscSymbolColor } from "react-icons/vsc";
+import { FaCheck } from "react-icons/fa";
+import { getContrastTextColor } from '../../../utils/color';
+import type { Label } from '../../../types/label';
+import { useParams } from 'react-router-dom';
+import { labelAPI } from '../../../apis/label.api';
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../redux/store';
+import { currentTimestamp } from '../../../utils/date';
+import { insertItem } from '../../../features/labelSlice';
 interface FadeProps {
     children: React.ReactElement<any>;
     in?: boolean;
@@ -62,14 +72,60 @@ const style = {
     boxShadow: 24,
     borderRadius: 2
 };
+const colors = [
+    "#77149E",
+    "#FF7A45",
+    "#FA8C16",
+    "#13C2C2",
+    "#1890FF",
+    "#597EF7",
+    "#9254DE",
+    "#FFC53D",
+    "#1CAE67",
+];
 
+const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
 
 const ModalLabel: FC = () => {
+    const { id } = useParams();
     const [open, setOpen] = React.useState(false);
-    const [color, setColor] = React.useState("#aabbcc");
+
+    const dispatch = useDispatch<AppDispatch>();
+    const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+    const [form, setForm] = React.useState<any>({
+
+        color: colors[0],
+        page_id: id,
+        is_deleted: false,
+        name: "",
+
+    })
+
+    const openPopover = Boolean(anchorEl);
+    const idPopover = openPopover ? 'simple-popover' : undefined;
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    const handleClick = (event: any) => {
+        setAnchorEl(event.target);
+    };
+
+    const handleClosePopover = () => {
+        setAnchorEl(null);
+    };
+
+    const handleSave = () => {
+        if (form.name === "") return toast.warning("Tên thẻ không được bỏ trống!")
+        labelAPI.create(form).then((_res: any) => {
+            dispatch(insertItem(_res.data));
+            toast.success("Thêm thẻ hội thoại thành công!")
+        }).catch((_res: any) => {
+            toast.error(
+                _res.response?.data?.message || 'Lỗi khi kết nối!'
+            );
+        })
+    }
 
     return <div>
         <Button onClick={handleOpen} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Thêm thẻ</Button>
@@ -94,7 +150,7 @@ const ModalLabel: FC = () => {
                         </div>
                     </div>
                     <div className='flex-1 min-h-0 gap-2.5 px-7 py-2 box-border border-t border-b border-gray-300' >
-                        <div>
+                        <div className='mt-2' >
                             <TextField
                                 fullWidth
                                 id="outlined-basic"
@@ -115,19 +171,92 @@ const ModalLabel: FC = () => {
                                         top: "0px", // 👈 label sau khi focus/có giá trị thì về đúng vị trí chuẩn
                                     },
                                 }}
+                                onChange={(event) =>
+                                    setForm((prev: any) => ({
+                                        ...prev,
+                                        name: event.target.value,
+                                    }))
+                                }
+                                value={form.name}
+                                error={form.name === "" ? true : false}
                             />
                         </div>
                         <div className='mt-4' >
                             <div className='mb-2' >Bộ chọn màu</div>
-                            <HexColorPicker color={color} onChange={setColor} />
+                            <div className='flex items-center justify-between' >
+                                <div onClick={handleClick} aria-describedby={id} className='flex items-center justify-center h-9 w-9 rounded bg-gray-400 cursor-pointer' >
+                                    <VscSymbolColor color='white' size={20} />
+                                </div>
+                                <Popover
+                                    slotProps={{
+                                        paper: {
+                                            sx: {
+                                                width: 200,
+                                                height: 200,
+                                                p: 1,
+                                                overflow: "hidden",
+                                            },
+                                        },
+                                    }}
+                                    id={idPopover}
+                                    open={openPopover}
+                                    anchorEl={anchorEl}
+                                    onClose={handleClosePopover}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                >
+                                    <HexColorPicker
+                                        style={{ width: "100%", height: "100%" }}
+                                        color={form.color}
+                                        onChange={(newColor) =>
+                                            setForm((prev: any) => ({
+                                                ...prev,
+                                                color: newColor,
+                                            }))
+                                        }
+                                    />
+                                </Popover>
+                                {colors.map((color) => (
+                                    <div
+                                        key={color}
+                                        onClick={() => setForm((form: any) => ({ ...form, color: color }))}
+                                        className={`flex items-center justify-center h-9 w-9 rounded cursor-pointer transition-all ${form.color === color
+                                            ? "ring-2 ring-offset-2 ring-gray-400"
+                                            : ""
+                                            }`}
+                                        style={{ backgroundColor: color }}
+                                    >
+                                        {form.color === color && (
+                                            <FaCheck color="white" size={20} />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+
                             <div className='mt-2' >Màu chủ đề sẽ được hiển thị</div>
-                            <Chip size='small' label="Chip Filled" />
+                            <Chip sx={{ background: form.color, color: getContrastTextColor(form.color) }} size='small' label={form.color} />
+
                         </div>
+                        <div className='flex items-start mt-4' >
+                            <Checkbox checked={form.is_deleted} onChange={(event) => {
+                                setForm((prev: any) => ({
+                                    ...prev,
+                                    is_deleted: event.target.checked,
+                                }))
+                            }} {...label} defaultChecked />
+                            <div className='mt-2' >
+                                <div>Ngưng sử dụng thẻ này</div>
+                                <div className='text-sm' >Các thẻ ngừng sử dụng bị ẩn đi, sẽ được hiển thị ở cuối danh sách gắn thẻ tại</div>
+                            </div>
+                        </div>
+
                     </div>
                     <div className='flex items-center justify-end h-14 px-7 gap-2.5 ' >
 
                         <Button onClick={handleClose} color='inherit' variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Đóng</Button>
-                        <Button variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Thêm thẻ</Button>
+                        <Button onClick={handleSave} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Thêm thẻ</Button>
                     </div>
                 </Box>
             </Fade>

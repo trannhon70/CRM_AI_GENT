@@ -41,6 +41,10 @@ const labelSlice = createSlice({
         removeItem: (state, action: PayloadAction<number>) => {
             state.data = state.data.filter(item => item.id !== action.payload);
         },
+        insertItem: (state, action: PayloadAction<any>) => {
+            // thêm vào đầu danh sách
+            state.data.unshift(action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -69,5 +73,5 @@ const labelSlice = createSlice({
     },
 })
 
-export const { removeItem } = labelSlice.actions;
+export const { removeItem, insertItem } = labelSlice.actions;
 export const labelReducer = labelSlice.reducer;
