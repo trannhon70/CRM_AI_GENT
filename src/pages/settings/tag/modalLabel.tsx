@@ -92,7 +92,7 @@ const ModalLabel: FC<IProps> = (props) => {
     const { item, setItem } = props
     const { id } = useParams();
     const [open, setOpen] = React.useState(false);
-
+    const [loading, setLoading] = React.useState<boolean>(false)
     const dispatch = useDispatch<AppDispatch>();
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [form, setForm] = React.useState<any>({
@@ -133,8 +133,10 @@ const ModalLabel: FC<IProps> = (props) => {
 
     const handleSave = () => {
         if (form.name === "") return toast.warning("Tên thẻ không được bỏ trống!")
+        setLoading(true)
         if (item?.id) {
             labelAPI.update({ id: form?.id, color: form.color, page_id: form.page_id, is_deleted: form.is_deleted, name: form.name }).then((_res: any) => {
+                setLoading(false)
                 dispatch(updateItemLabel(_res.data[0]));
                 toast.success("Cập nhật thẻ hội thoại thành công!");
                 handleClose()
@@ -145,12 +147,14 @@ const ModalLabel: FC<IProps> = (props) => {
                     name: "",
                 })
             }).catch((_res: any) => {
+                setLoading(false)
                 toast.error(
                     _res.response?.data?.message || 'Lỗi khi kết nối!'
                 );
             })
         } else {
             labelAPI.create(form).then((_res: any) => {
+                setLoading(false)
                 dispatch(insertItem(_res.data));
                 toast.success("Thêm thẻ hội thoại thành công!");
                 handleClose()
@@ -161,12 +165,13 @@ const ModalLabel: FC<IProps> = (props) => {
                     name: "",
                 })
             }).catch((_res: any) => {
+                setLoading(false)
                 toast.error(
                     _res.response?.data?.message || 'Lỗi khi kết nối!'
                 );
             })
         }
-
+        setLoading(false)
     }
 
     return <div>
@@ -298,7 +303,7 @@ const ModalLabel: FC<IProps> = (props) => {
                     <div className='flex items-center justify-end h-14 px-7 gap-2.5 ' >
 
                         <Button onClick={handleClose} color='inherit' variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Đóng</Button>
-                        <Button onClick={handleSave} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>{form?.id ? "Cập nhật" : "Thêm thẻ"}</Button>
+                        <Button loading={loading} onClick={handleSave} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>{form?.id ? "Cập nhật" : "Thêm thẻ"}</Button>
                     </div>
                 </Box>
             </Fade>
