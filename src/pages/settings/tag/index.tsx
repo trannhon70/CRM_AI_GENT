@@ -38,7 +38,7 @@ const PageSettingTag: FC = () => {
     const [item, setItem] = React.useState<any>(null)
 
     React.useEffect(() => {
-        dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 20, search: searchDebounce }))
+        dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 100, search: searchDebounce }))
     }, [id, active, searchDebounce, dispatch])
 
     const handleChange = (_: React.SyntheticEvent, newValue: boolean) => {
