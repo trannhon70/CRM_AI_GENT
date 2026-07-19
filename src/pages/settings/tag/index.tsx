@@ -18,13 +18,14 @@ import { toast } from 'react-toastify';
 import { labelAPI } from '../../../apis/label.api';
 import ActionFab from '../../../components/common/ActionFab';
 import CommonTable from '../../../components/common/CommonTable';
-import { getPagingLabel, removeItem } from '../../../features/labelSlice';
+import { getPagingLabel, removeItem, updateItemLabel } from '../../../features/labelSlice';
 import { useDebounce } from '../../../hooks/useDebounce';
 import type { AppDispatch, RootState } from '../../../redux/store';
 import type { Label } from '../../../types/label';
 import { getContrastTextColor } from '../../../utils/color';
 import { formatUnixTime } from '../../../utils/date';
 import ModalLabel from './modalLabel';
+import { LuUndo2 } from "react-icons/lu";
 
 const PageSettingTag: FC = () => {
     const { id } = useParams();
@@ -115,6 +116,22 @@ const PageSettingTag: FC = () => {
         setItem(item)
     }
 
+    const onclickRestore = (event: Label) => {
+        labelAPI.restore(event.id).then((_res: any) => {
+            dispatch(
+                updateItemLabel({
+                    item: _res.data[0],
+                    currentDeleted: active
+                })
+            );
+            toast.success("Khôi phục thẻ hội thoại thành công!")
+        }).catch((_res: any) => {
+            toast.error(
+                _res.response?.data?.message || 'Lỗi khi kết nối!'
+            );
+        })
+    }
+
     return <div className="h-full">
         <div className="text-2xl font-bold text-black mb-5">
             Thẻ hội thoại
@@ -194,11 +211,21 @@ const PageSettingTag: FC = () => {
                             <TableCell> <Chip label={item.color} size="small" sx={{ backgroundColor: item.color, color: getContrastTextColor(item.color) }} /></TableCell>
                             <TableCell>{formatUnixTime(item.created_at)}</TableCell>
                             <TableCell sx={{ display: "flex", gap: "10px" }} align="center">
-                                <Tooltip title="Chỉnh sửa" >
-                                    <ActionFab onClick={() => onclickEdit(item)} color='success'>
-                                        <FiEdit size={22} />
-                                    </ActionFab>
-                                </Tooltip>
+                                {
+                                    active === 'false' ?
+                                        <Tooltip title="Chỉnh sửa" >
+                                            <ActionFab onClick={() => onclickEdit(item)} color='success'>
+                                                <FiEdit size={22} />
+                                            </ActionFab>
+                                        </Tooltip>
+                                        :
+                                        <Tooltip title="Khôi phục" >
+                                            <ActionFab onClick={() => onclickRestore(item)} color='success'>
+                                                <LuUndo2 size={22} />
+                                            </ActionFab>
+                                        </Tooltip>
+                                }
+
                                 <Tooltip title="Xóa" >
                                     <ActionFab onClick={() => onclickDelete(item)} color='error'>
                                         <MdDelete size={22} color="red" />

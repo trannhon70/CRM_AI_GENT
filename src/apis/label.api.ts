@@ -6,7 +6,8 @@ export const labelAPI = {
     getPaging,
     isDelete,
     create,
-    update
+    update,
+    restore
 };
 
 async function getPaging(query: GetPagingLabelQuery) {
@@ -42,5 +43,10 @@ async function create(body: any) {
 
 async function update(body: any) {
     const response = await instance.put(`/labels`, body);
+    return response.data
+}
+
+async function restore(id: number) {
+    const response = await instance.put(`/labels/restore/${id}`);
     return response.data
 }
