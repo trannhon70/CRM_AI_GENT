@@ -6,19 +6,17 @@ import Modal from '@mui/material/Modal';
 import { animated, useSpring } from '@react-spring/web';
 import type { FC } from "react";
 import * as React from 'react';
-import { IoMdClose } from "react-icons/io";
 import { HexColorPicker } from "react-colorful";
-import { VscSymbolColor } from "react-icons/vsc";
 import { FaCheck } from "react-icons/fa";
-import { getContrastTextColor } from '../../../utils/color';
-import type { Label } from '../../../types/label';
+import { IoMdClose } from "react-icons/io";
+import { VscSymbolColor } from "react-icons/vsc";
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { labelAPI } from '../../../apis/label.api';
 import { toast } from 'react-toastify';
-import { useDispatch, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from '../../../redux/store';
-import { currentTimestamp } from '../../../utils/date';
-import { insertItem } from '../../../features/labelSlice';
+import { labelAPI } from '../../../apis/label.api';
+import { insertItem, updateItemLabel } from '../../../features/labelSlice';
+import type { AppDispatch } from '../../../redux/store';
+import { getContrastTextColor } from '../../../utils/color';
 interface FadeProps {
     children: React.ReactElement<any>;
     in?: boolean;
@@ -86,27 +84,45 @@ const colors = [
 
 const label = { slotProps: { input: { 'aria-label': 'Checkbox demo' } } };
 
-const ModalLabel: FC = () => {
+interface IProps {
+    item?: any,
+    setItem?: any
+}
+const ModalLabel: FC<IProps> = (props) => {
+    const { item, setItem } = props
     const { id } = useParams();
     const [open, setOpen] = React.useState(false);
 
     const dispatch = useDispatch<AppDispatch>();
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [form, setForm] = React.useState<any>({
-
         color: colors[0],
         page_id: id,
         is_deleted: false,
         name: "",
-
     })
 
     const openPopover = Boolean(anchorEl);
     const idPopover = openPopover ? 'simple-popover' : undefined;
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    React.useEffect(() => {
+        if (item?.id) {
+            setForm(item)
+            handleOpen()
+        }
+    }, [item?.id])
 
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => {
+        setOpen(false);
+        setForm({
+            color: colors[0],
+            page_id: id,
+            is_deleted: false,
+            name: "",
+        });
+        setItem(null)
+    }
     const handleClick = (event: any) => {
         setAnchorEl(event.target);
     };
@@ -117,14 +133,40 @@ const ModalLabel: FC = () => {
 
     const handleSave = () => {
         if (form.name === "") return toast.warning("Tên thẻ không được bỏ trống!")
-        labelAPI.create(form).then((_res: any) => {
-            dispatch(insertItem(_res.data));
-            toast.success("Thêm thẻ hội thoại thành công!")
-        }).catch((_res: any) => {
-            toast.error(
-                _res.response?.data?.message || 'Lỗi khi kết nối!'
-            );
-        })
+        if (item?.id) {
+            labelAPI.update({ id: form?.id, color: form.color, page_id: form.page_id, is_deleted: form.is_deleted, name: form.name }).then((_res: any) => {
+                dispatch(updateItemLabel(_res.data[0]));
+                toast.success("Cập nhật thẻ hội thoại thành công!");
+                handleClose()
+                setForm({
+                    color: colors[0],
+                    page_id: id,
+                    is_deleted: false,
+                    name: "",
+                })
+            }).catch((_res: any) => {
+                toast.error(
+                    _res.response?.data?.message || 'Lỗi khi kết nối!'
+                );
+            })
+        } else {
+            labelAPI.create(form).then((_res: any) => {
+                dispatch(insertItem(_res.data));
+                toast.success("Thêm thẻ hội thoại thành công!");
+                handleClose()
+                setForm({
+                    color: colors[0],
+                    page_id: id,
+                    is_deleted: false,
+                    name: "",
+                })
+            }).catch((_res: any) => {
+                toast.error(
+                    _res.response?.data?.message || 'Lỗi khi kết nối!'
+                );
+            })
+        }
+
     }
 
     return <div>
@@ -256,7 +298,7 @@ const ModalLabel: FC = () => {
                     <div className='flex items-center justify-end h-14 px-7 gap-2.5 ' >
 
                         <Button onClick={handleClose} color='inherit' variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Đóng</Button>
-                        <Button onClick={handleSave} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Thêm thẻ</Button>
+                        <Button onClick={handleSave} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>{form?.id ? "Cập nhật" : "Thêm thẻ"}</Button>
                     </div>
                 </Box>
             </Fade>

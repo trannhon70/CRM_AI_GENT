@@ -34,6 +34,7 @@ const PageSettingTag: FC = () => {
     const [search, setSearch] = React.useState("");
     const searchDebounce = useDebounce(search, 500);
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
+    const [item, setItem] = React.useState<any>(null)
 
     React.useEffect(() => {
         dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 20, search: searchDebounce }))
@@ -110,6 +111,10 @@ const PageSettingTag: FC = () => {
         })
     }
 
+    const onclickEdit = (item: Label) => {
+        setItem(item)
+    }
+
     return <div className="h-full">
         <div className="text-2xl font-bold text-black mb-5">
             Thẻ hội thoại
@@ -169,7 +174,7 @@ const PageSettingTag: FC = () => {
                         }}
                     />
                     <div>
-                        <ModalLabel />
+                        <ModalLabel item={item} setItem={setItem} />
                     </div>
                 </div>
                 <CommonTable
@@ -190,7 +195,7 @@ const PageSettingTag: FC = () => {
                             <TableCell>{formatUnixTime(item.created_at)}</TableCell>
                             <TableCell sx={{ display: "flex", gap: "10px" }} align="center">
                                 <Tooltip title="Chỉnh sửa" >
-                                    <ActionFab color='success'>
+                                    <ActionFab onClick={() => onclickEdit(item)} color='success'>
                                         <FiEdit size={22} />
                                     </ActionFab>
                                 </Tooltip>
