@@ -245,7 +245,7 @@ const PageAddUser: FC = () => {
                             <TableCell> {item.user.email}</TableCell>
                             <TableCell>{item.role}</TableCell>
                             <TableCell>{formatUnixTime(item.created_at)}</TableCell>
-                            <TableCell sx={{ display: "flex", alignItems: "center", gap: "10px", justifyContent: "center" }} align="center">
+                            <TableCell align="center">
 
                                 <ActionFab
                                     color="error"

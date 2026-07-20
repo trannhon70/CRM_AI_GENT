@@ -37,7 +37,7 @@ const AuthProvider = ({ children }: Props) => {
     ) => {
         try {
             const result = await apiCall(form);
-            if (result?.data?.statusCode === 1) {
+            if (result?.data?.code === 1) {
                 setAuthenticated(true);
                 toast.success(result.data.message);
                 localStorage.setItem('token', result.data.token);

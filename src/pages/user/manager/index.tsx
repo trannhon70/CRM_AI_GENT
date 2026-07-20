@@ -129,7 +129,7 @@ const ManagerUser: FC = () => {
     const onClickCloseLock = async (id: number) => {
         try {
             const result = await userAPI.closeTheLock({ id, is_deleted: false })
-            if (result.statusCode === 1) {
+            if (result.code === 1) {
                 toast.success(`Khóa tài khoản thành công!`);
                 queryClient.invalidateQueries({ queryKey: ["users"] });
             }
@@ -142,7 +142,7 @@ const ManagerUser: FC = () => {
     const onClickOpenLock = async (id: number) => {
         try {
             const result = await userAPI.closeTheLock({ id, is_deleted: true })
-            if (result.statusCode === 1) {
+            if (result.code === 1) {
                 toast.success(`Mở khóa tài khoản thành công!`);
                 queryClient.invalidateQueries({ queryKey: ["users"] });
             }

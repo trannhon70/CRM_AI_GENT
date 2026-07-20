@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AuthContext } from '../../../context/AuthContext';
 import { fetchUserById } from '../../../features/usersSlice';
 import type { AppDispatch, RootState } from '../../../redux/store';
-import ModalTokenExpiration from '../../modal/modalTokenExpiration';
 
 
 
@@ -95,7 +94,6 @@ const HeaderComponent: FC<IHeaderProps> = ({ collapsed, setCollapsed }) => {
             </div>
 
         </div>
-        <ModalTokenExpiration />
     </Header>
 }
 

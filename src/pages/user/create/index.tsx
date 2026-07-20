@@ -70,7 +70,7 @@ const CreateUser: FC = () => {
             try {
 
                 const result = await userAPI.update(Number(param.id), body)
-                if (result.statusCode === 1) {
+                if (result.code === 1) {
                     toast.success(`Cập nhật thành công!`)
                     form.resetFields();
                     navige(-1);
@@ -83,7 +83,7 @@ const CreateUser: FC = () => {
             try {
 
                 const result = await userAPI.create(body)
-                if (result.data.statusCode === 1) {
+                if (result.data.code === 1) {
                     toast.success(`Thêm mới thành công!`)
                     form.resetFields();
                 }
