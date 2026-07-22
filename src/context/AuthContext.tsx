@@ -3,6 +3,10 @@ import type { ReactNode } from 'react';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { userAPI } from '../apis/user.api';
+import { HttpStatusCode } from 'axios';
+import type { AppDispatch } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import { setAccessToken } from '../features/usersSlice';
 type Props = {
     children?: ReactNode;
 }
@@ -28,21 +32,21 @@ const initialValue = {
 const AuthContext = createContext<IAuthContext>(initialValue)
 
 const AuthProvider = ({ children }: Props) => {
-    const [authenticated, setAuthenticated] = useState<boolean>(() => !!localStorage.getItem('token'));
+    const [authenticated, setAuthenticated] = useState<boolean>(() => !!localStorage.getItem('authenticated'));
     const navigate = useNavigate();
-
+    const dispatch = useDispatch<AppDispatch>();
     const handleLogin = async (
         apiCall: (data: any) => Promise<any>,
         form: any
     ) => {
         try {
             const result = await apiCall(form);
-            if (result?.data?.code === 1) {
+
+            if (result?.data?.code === HttpStatusCode.Ok) {
                 setAuthenticated(true);
                 toast.success(result.data.message);
-                localStorage.setItem('token', result.data.token);
-                localStorage.setItem('startTimeToken', result.data.startTime);
-                localStorage.setItem('endTimeToken', result.data.endTime);
+                localStorage.setItem('authenticated', "true");
+                dispatch(setAccessToken(result.data.access_token));
                 navigate('/');
             }
         } catch (error: any) {

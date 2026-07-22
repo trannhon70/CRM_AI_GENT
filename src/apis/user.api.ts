@@ -4,21 +4,26 @@ export const userAPI = {
     login,
     loginV1,
     getByIdUser,
-    logout
+    logout,
+    refresh
 };
 
 function login(data: any) {
-    return instance.post("/users/login", data);
+    return instance.post("/auth-service/users/login", data);
 }
 
 function loginV1(data: any) {
-    return instance.post("/users/login-v1", data);
+    return instance.post("/auth-service/users/login-v1", data);
 }
 
 function getByIdUser() {
-    return instance.get("/users/get-by-id-user");
+    return instance.get("/auth-service/users/get-by-id-user");
 }
 
 function logout() {
-    return instance.post("/users/logout");
+    return instance.post("/auth-service/users/logout");
+}
+
+function refresh() {
+    return instance.post("/auth-service/users/refresh");
 }

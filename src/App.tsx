@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import LayoutComponentAdmin from './components/layout/layoutAdmin';
 import LayoutDashboard from './components/layout/layoutDashboard';
@@ -11,6 +11,10 @@ import { CheckRole } from './utils';
 import DataDeletion from './pages/dataDeletion';
 import LayoutConversation from './components/layout/layoutConversation';
 import LayoutSetting from './components/layout/layoutSetting';
+import { userAPI } from './apis/user.api';
+import { useDispatch } from 'react-redux';
+import type { AppDispatch } from './redux/store';
+import { setAccessToken } from './features/usersSlice';
 
 
 const CreateUser = React.lazy(() => import('./pages/user/create'));
@@ -25,6 +29,21 @@ const PageSettingTag = React.lazy(() => import('./pages/settings/tag'));
 
 
 function App() {
+  const dispatch = useDispatch<AppDispatch>();
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(() => !!localStorage.getItem('authenticated'));
+
+  useEffect(() => {
+    if (checkingAuth) {
+      userAPI.refresh().then((res: any) => {
+
+        dispatch(setAccessToken(res.data.access_token));
+
+      })
+    }
+
+
+
+  }, [checkingAuth]);
 
   return (
     <Routes>

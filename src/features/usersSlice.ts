@@ -25,7 +25,8 @@ interface UsersState {
   totalPages: number,
 
   user: any,
-  title: string
+  title: string,
+  access_token: string,
 }
 
 const initialState = {
@@ -39,6 +40,7 @@ const initialState = {
   totalPages: 0,
   user: {},
   title: "",
+  access_token: "",
 
 } satisfies UsersState as UsersState
 
@@ -46,8 +48,8 @@ const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    setInvalidToken(state, action) {
-      state.invalidToken = action.payload;
+    setAccessToken(state, action) {
+      state.access_token = action.payload;
     },
     setTitleInvalidToken(state, action) {
       state.title = action.payload;
@@ -69,5 +71,5 @@ const usersSlice = createSlice({
   },
 })
 
-export const { setInvalidToken, setTitleInvalidToken, setUser } = usersSlice.actions;
+export const { setAccessToken, setTitleInvalidToken, setUser } = usersSlice.actions;
 export const usersReducer = usersSlice.reducer;

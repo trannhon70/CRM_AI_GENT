@@ -6,6 +6,6 @@ export const rolesAPI = {
 };
 
 async function getAll() {
-    const respone = await instance.get("/roles/get-all");
+    const respone = await instance.get("/auth-service/roles/get-all");
     return respone.data
 }
