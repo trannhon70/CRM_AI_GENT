@@ -1,8 +1,8 @@
+import type { InternalAxiosRequestConfig } from "axios";
 import axios from "axios";
-import type { AxiosResponse, InternalAxiosRequestConfig } from "axios";
-import { store } from "../redux/store";
-import { setAccessToken } from "../features/usersSlice";
 import { userAPI } from "../apis/user.api";
+import { setAccessToken } from "../features/usersSlice";
+import { store } from "../redux/store";
 const apiUrl = import.meta.env.VITE_API_URL_API;
 
 const instance = axios.create({
@@ -47,7 +47,13 @@ instance.interceptors.response.use(
     response => response,
     async (error) => {
         const originalRequest = error.config;
-
+        const message = error.response?.data?.message;
+        if (message === "Phiên đăng nhập không tồn tại hoặc đã bị đăng xuất" || message === "Refresh token không hợp lệ hoặc đã hết hạn" || message === "Tài khoản đã đăng nhập nơi khác" || message === "Refresh token đã bị thu hồi") {
+            localStorage.clear();
+            window.location.href = "/login";
+            return Promise.reject(error);
+        }
+        console.log(error.response, 'error');
         if (error.response?.status === 401 && !originalRequest._retry) {
             if (isRefreshing) {
                 // Đang có 1 request khác refresh rồi → xếp hàng đợi, không gọi refresh thêm
@@ -75,13 +81,15 @@ instance.interceptors.response.use(
                 return instance(originalRequest);
             } catch (err) {
                 processQueue(err, null);
+
+                console.log(err, 'err');
+
                 window.location.href = '/login';
                 return Promise.reject(err);
             } finally {
                 isRefreshing = false;
             }
         }
-
         return Promise.reject(error);
     }
 );
