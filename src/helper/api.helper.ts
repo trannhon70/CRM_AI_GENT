@@ -66,16 +66,14 @@ instance.interceptors.request.use(async (config) => {
 
     if (!shouldSkip) {
         if (refreshPromise) {
-            // đang có 1 lần refresh chạy -> đợi xong rồi mới đi tiếp
             await refreshPromise;
         } else if (!hasBootstrapped) {
-            // request đầu tiên của app -> tự kích hoạt refresh 1 lần
             hasBootstrapped = true;
-            try {
-                await refreshAccessToken();
-            } catch {
-                // chưa login / chưa có refresh token hợp lệ -> để request tiếp tục,
-                // backend sẽ tự trả 401 nếu cần
+            const { access_token } = store.getState().users;
+            if (!access_token) {  // chỉ bootstrap khi CHƯA có access token
+                try {
+                    await refreshAccessToken();
+                } catch { }
             }
         }
     }

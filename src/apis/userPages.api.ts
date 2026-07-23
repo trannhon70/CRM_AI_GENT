@@ -10,26 +10,26 @@ export const userPagesAPI = {
 };
 
 async function getpaging(query: any) {
-    const respone = await instance.get(`/user-pages/get-paging?pageIndex=${query.pageIndex}&pageSize=${query.pageSize}&search=${query.search}&provider=${query.provider}`);
+    const respone = await instance.get(`/fanpage-service/user-pages/get-paging?pageIndex=${query.pageIndex}&pageSize=${query.pageSize}&search=${query.search}&provider=${query.provider}`);
     return respone.data.data
 }
 
 async function getCountProvider() {
-    const respone = await instance.get(`/user-pages/get-count-provider`);
+    const respone = await instance.get(`/fanpage-service/user-pages/get-count-provider`);
     return respone.data.data
 }
 
 async function deleteUserPage(id: number) {
-    const respone = await instance.delete(`/user-pages/delete/${id}`);
+    const respone = await instance.delete(`/fanpage-service/user-pages/delete/${id}`);
     return respone.data.data
 }
 
 async function createUserPage(body: any) {
-    const respone = await instance.post(`/user-pages/create`, body);
+    const respone = await instance.post(`/fanpage-service/user-pages/create`, body);
     return respone.data.data
 }
 
 async function getPagingUserPageActive(query: GetPagingUserPageQuery) {
-    const respone = await instance.get(`/user-pages/get-paging-user-page-active?pageIndex=${query.pageIndex}&limit=${query.limit}&search=${query.search}&page_id=${query.page_id}`);
+    const respone = await instance.get(`/fanpage-service/user-pages/get-paging-user-page-active?pageIndex=${query.pageIndex}&limit=${query.limit}&search=${query.search}&page_id=${query.page_id}`);
     return respone.data
 }
