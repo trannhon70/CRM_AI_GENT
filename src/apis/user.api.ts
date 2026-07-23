@@ -1,4 +1,5 @@
 import instance from "../helper/api.helper";
+import { api } from "../helper/axios";
 
 export const userAPI = {
     login,
@@ -25,5 +26,5 @@ function logout() {
 }
 
 function refresh() {
-    return instance.post("/auth-service/users/refresh");
+    return api.post("/auth-service/users/refresh");
 }
