@@ -5,6 +5,7 @@ import { setAccessToken } from "../features/usersSlice";
 import { store } from "../redux/store";
 
 const apiUrl = import.meta.env.VITE_API_URL_API;
+
 const instance: AxiosInstance = axios.create({
     baseURL: apiUrl,
     withCredentials: true,
@@ -13,17 +14,12 @@ const instance: AxiosInstance = axios.create({
         "ngrok-skip-browser-warning": "true",
     },
 });
+
 interface RetryRequest extends InternalAxiosRequestConfig {
     _retry?: boolean;
 }
 
-let isRefreshing = false;
 let isLoggingOut = false;
-
-let failedQueue: Array<{
-    resolve: (token: string) => void;
-    reject: (error: any) => void;
-}> = [];
 
 const INVALID_SESSION_MESSAGES = new Set([
     "Phiên đăng nhập không tồn tại hoặc đã bị đăng xuất",
@@ -32,14 +28,6 @@ const INVALID_SESSION_MESSAGES = new Set([
     "Tài khoản đã đăng nhập nơi khác",
 ]);
 
-const processQueue = (error?: any, token?: string) => {
-    failedQueue.forEach(({ resolve, reject }) => {
-        if (error) reject(error);
-        else resolve(token!);
-    });
-    failedQueue = [];
-};
-
 const logout = () => {
     if (isLoggingOut) return;
     isLoggingOut = true;
@@ -47,10 +35,52 @@ const logout = () => {
     window.location.replace("/login");
 };
 
-instance.interceptors.request.use((config) => {
-    const { access_token } = store.getState().users;
-    console.log(access_token, 'access_token');
+// Các endpoint không cần chờ refresh / không cần gắn token
+const SKIP_URLS = [
+    "/auth-service/users/login",
+    "/auth-service/users/login-v1",
+    "/auth-service/users/refresh",
+];
 
+let refreshPromise: Promise<string> | null = null;
+let hasBootstrapped = false;
+
+const refreshAccessToken = async (): Promise<string> => {
+    if (refreshPromise) return refreshPromise; // dedupe nếu đang refresh sẵn
+
+    refreshPromise = (async () => {
+        try {
+            const { data } = await userAPI.refresh();
+            store.dispatch(setAccessToken(data.access_token));
+            return data.access_token as string;
+        } finally {
+            refreshPromise = null;
+        }
+    })();
+
+    return refreshPromise;
+};
+
+instance.interceptors.request.use(async (config) => {
+    const shouldSkip = SKIP_URLS.some((u) => config.url?.includes(u));
+
+    if (!shouldSkip) {
+        if (refreshPromise) {
+            // đang có 1 lần refresh chạy -> đợi xong rồi mới đi tiếp
+            await refreshPromise;
+        } else if (!hasBootstrapped) {
+            // request đầu tiên của app -> tự kích hoạt refresh 1 lần
+            hasBootstrapped = true;
+            try {
+                await refreshAccessToken();
+            } catch {
+                // chưa login / chưa có refresh token hợp lệ -> để request tiếp tục,
+                // backend sẽ tự trả 401 nếu cần
+            }
+        }
+    }
+
+    const { access_token } = store.getState().users;
     if (access_token) {
         config.headers.Authorization = `Bearer ${access_token}`;
     }
@@ -69,7 +99,7 @@ instance.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        // refresh token invalid
+        // refresh token invalid / phiên bị thu hồi
         if (INVALID_SESSION_MESSAGES.has(message)) {
             logout();
             return Promise.reject(error);
@@ -79,33 +109,15 @@ instance.interceptors.response.use(
             return Promise.reject(error);
         }
 
-        if (isRefreshing) {
-            return new Promise((resolve, reject) => {
-                failedQueue.push({
-                    resolve,
-                    reject,
-                });
-            }).then((token) => {
-                originalRequest.headers.Authorization = `Bearer ${token}`;
-                return instance(originalRequest);
-            });
-        }
-
         originalRequest._retry = true;
-        isRefreshing = true;
 
         try {
-            const { data } = await userAPI.refresh();
-            store.dispatch(setAccessToken(data.access_token));
-            processQueue(undefined, data.access_token);
-            originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+            const newToken = await refreshAccessToken(); // tự dedupe nếu nhiều request 401 cùng lúc
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
             return instance(originalRequest);
         } catch (err) {
-            processQueue(err);
             logout();
             return Promise.reject(err);
-        } finally {
-            isRefreshing = false;
         }
     }
 );
