@@ -41,8 +41,9 @@ const Dashboard: FC = () => {
     const { setStorage } = useLocalStorage("pageId", null)
 
     const getPagingUserPage = async () => {
-        const result = await userPagesAPI.getpaging({ pageIndex, pageSize, search, provider });
-        setData(result.data)
+        const result = await userPagesAPI.getpaging({ pageIndex, limit: 10, search, provider });
+
+        setData(result.items)
     }
 
     const getCountProviderUserPage = async () => {
@@ -182,7 +183,7 @@ const Dashboard: FC = () => {
                 {/* Main content - chiếm hết phần còn lại */}
                 <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3 items-start gap-2.5">
                     {
-                        data.length > 0 && data.map((item: any, _index: number) => {
+                        data?.length > 0 && data.map((item: any, _index: number) => {
                             const remainingDays = Number(getRemainingDaysText(item.page.data_access_expires_at))
                             return <div
                                 key={item.id}

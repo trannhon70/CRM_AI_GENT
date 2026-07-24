@@ -10,7 +10,7 @@ export const userPagesAPI = {
 };
 
 async function getpaging(query: any) {
-    const respone = await instance.get(`/fanpage-service/user-pages/get-paging?pageIndex=${query.pageIndex}&pageSize=${query.pageSize}&search=${query.search}&provider=${query.provider}`);
+    const respone = await instance.get(`/fanpage-service/user-pages/get-paging?pageIndex=${query.pageIndex}&limit=${query.limit}&search=${query.search}&provider=${query.provider}`);
     return respone.data.data
 }
 

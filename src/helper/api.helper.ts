@@ -26,6 +26,8 @@ const INVALID_SESSION_MESSAGES = new Set([
     "Refresh token không hợp lệ hoặc đã hết hạn",
     "Refresh token đã bị thu hồi",
     "Tài khoản đã đăng nhập nơi khác",
+    "Refresh token không hợp lệ hoặc đã hết hạn",
+    "Token không tồn tại"
 ]);
 
 const logout = () => {
