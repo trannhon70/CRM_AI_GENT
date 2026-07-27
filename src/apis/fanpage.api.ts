@@ -8,21 +8,21 @@ export const fanPagesAPI = {
 };
 
 async function createConnectPageFacebook(body: any) {
-    const respone = await instance.post("/fanpages/connect-page-facebook", body);
+    const respone = await instance.post("/fanpage-service/fanpages/connect-page-facebook", body);
     return respone.data
 }
 
 async function getPagesId(id: any) {
-    const respone = await instance.get(`/fanpages/get-page-id/${id}`);
+    const respone = await instance.get(`/fanpage-service/fanpages/get-page-id/${id}`);
     return respone.data
 }
 
 async function tokenRenewal(body: any) {
-    const respone = await instance.post(`/fanpages/token-renewal`, body);
+    const respone = await instance.post(`/fanpage-service/fanpages/token-renewal`, body);
     return respone.data
 }
 
 async function syncing(body: any) {
-    const respone = await instance.post(`/fanpages/syncing`, body);
+    const respone = await instance.post(`/fanpage-service/fanpages/syncing`, body);
     return respone.data
 }

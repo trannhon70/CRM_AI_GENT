@@ -41,7 +41,7 @@ const Dashboard: FC = () => {
     const { setStorage } = useLocalStorage("pageId", null)
 
     const getPagingUserPage = async () => {
-        const result = await userPagesAPI.getpaging({ pageIndex, limit: 10, search, provider });
+        const result = await userPagesAPI.getpaging({ pageIndex, limit: 100, search, provider });
 
         setData(result.items)
     }
@@ -152,7 +152,7 @@ const Dashboard: FC = () => {
                     {
                         dataProvider.map((item: any, index: number) => {
                             return <div
-                                key={item.provider}
+                                key={index}
                                 onClick={() => {
                                     setActiveProvider(item.provider);
                                     setProvider(item.provider === 'Tất cả' ? '' : item.provider);
