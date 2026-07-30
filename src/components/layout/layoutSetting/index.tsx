@@ -6,11 +6,14 @@ import { Layout } from "antd";
 import { IoSettings } from "react-icons/io5";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { FaTag } from "react-icons/fa6";
+import { IoChatboxEllipsesOutline } from "react-icons/io5";
+
 
 const siderBar = [
     { id: 1, icon: <IoSettings />, title: "Cài đặt chung", url: "setting/general" },
     { id: 2, icon: <IoPersonAddSharp />, title: "Thêm người dùng", url: "setting/add-user-page" },
     { id: 3, icon: <FaTag />, title: "Thẻ hội thoại", url: "setting/tag" },
+    { id: 4, icon: <IoChatboxEllipsesOutline />, title: "Hỗ trợ trả lời", url: "setting/reply" },
 ]
 
 const LayoutSetting: FC = () => {
@@ -51,7 +54,7 @@ const LayoutSetting: FC = () => {
                     }
                 </div>
 
-                <div className="flex-1 bg-[#ECEDF4] px-10 py-5 overflow-auto box-border">
+                <div className="flex-1 bg-[#ECEDF4] px-5 py-5 overflow-auto box-border">
                     <Outlet />
                 </div>
             </div>

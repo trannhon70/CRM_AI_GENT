@@ -131,7 +131,8 @@ function CommonTable<T>({ columns, data, loading = "idle", emptyText = "Không c
                                 <TableCell colSpan={columns.length}>
                                     <Box
                                         sx={{
-                                            height: 300,
+                                            height: "100%",
+                                            minHeight: 200,
                                             display: "flex",
                                             justifyContent: "center",
                                             alignItems: "center",
