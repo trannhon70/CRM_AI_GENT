@@ -52,7 +52,7 @@ const HeaderComponentUser: FC<IProps> = (props) => {
 
             <div className="flex items-center gap-2">
                 <div>
-                    <Button className='flex items-center gap-2' aria-describedby={id} variant="outlined" color='inherit' onClick={handleClick}>
+                    <Button sx={{ height: "35px" }} className='flex items-center gap-2' aria-describedby={id} variant="outlined" color='inherit' onClick={handleClick}>
                         <Avatar
                             alt="Remy Sharp"
                             src={users.user.avatar}

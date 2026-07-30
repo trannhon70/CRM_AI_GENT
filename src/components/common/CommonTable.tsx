@@ -1,5 +1,5 @@
 import { Box, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, type SxProps, type TableContainerProps, type TableProps, } from "@mui/material";
-import { useCallback, type ReactNode } from "react";
+import { type ReactNode } from "react";
 export type LoadingState = | "idle" | "pending" | "succeeded" | "failed";
 export interface TableColumn {
     key: string;

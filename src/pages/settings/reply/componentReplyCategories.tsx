@@ -49,8 +49,8 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
             ),
         }
     ];
-    return <div className="flex flex-row flex-1 min-h-0 gap-2.5 mt-3">
-        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border  overflow-auto">
+    return <div className="flex flex-row flex-1 min-h-0 gap-2.5 mt-3 max-xl:block ">
+        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border  overflow-auto max-xl:mb-2.5">
             <div className="text-lg font-medium text-black shrink-0">
                 Chức năng & công cụ
             </div>
@@ -97,7 +97,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
             </div>
         </div>
 
-        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border">
+        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border ">
             <div className="text-lg font-medium text-black shrink-0 flex gap-1.5 items-center ">
                 Chủ đề câu trả lời nhanh
                 <Chip color="primary" label="0 chủ đề" size="small" />

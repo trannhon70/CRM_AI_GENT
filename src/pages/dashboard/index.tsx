@@ -120,7 +120,7 @@ const Dashboard: FC = () => {
     if (loading) return <LoadingLayout />
     return (
         <div className="bg-[#ECEDF4] h-[95vh] w-full flex flex-col">
-            <div className="w-[1000px] m-auto py-4 flex flex-col flex-1 min-h-0">
+            <div className="w-[1200px] m-auto py-4 flex flex-col flex-1 min-h-0">
                 {/* Header search */}
                 <div className="px-4 py-3 bg-white rounded">
                     <div className="text-lg font-bold text-black">Bảng điều khiển</div>

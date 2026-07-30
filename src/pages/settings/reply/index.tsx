@@ -49,7 +49,7 @@ const PageReply: FC = () => {
             ),
         }
     ];
-    return <div className="h-full flex flex-col overflow-hidden">
+    return <div className="h-full flex flex-col">
         <div className="text-2xl font-medium text-black shrink-0">
             Hỗ trợ trả lời
         </div>

@@ -19,7 +19,6 @@ const siderBar = [
 const LayoutSetting: FC = () => {
     const { id } = useParams();
     const location = useLocation();
-    const active = location.pathname.split("/").slice(1, 2);
     const navige = useNavigate();
 
 
@@ -33,7 +32,7 @@ const LayoutSetting: FC = () => {
             className="w-full"
             style={{ height: 'calc(100% - 5vh)' }}
         >
-            <div className="max-w-[1200px] mx-auto w-full flex h-full">
+            <div className="max-w-[1300px] mx-auto w-full flex h-full">
                 <div className="w-[280px] shrink-0 px-2.5 box-border">
                     <div className="text-3xl font-bold py-2" >
                         Cài đặt
