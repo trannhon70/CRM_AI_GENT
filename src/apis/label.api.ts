@@ -27,26 +27,26 @@ async function getPaging(query: GetPagingLabelQuery) {
     if (isValidValue(query.search)) {
         params.search = query.search;
     }
-    const respone = await instance.get(`/labels/get-paging`, { params });
+    const respone = await instance.get(`/chat-service/labels/get-paging`, { params });
     return respone.data
 }
 
 async function isDelete(id: number) {
-    const response = await instance.delete(`/labels/${id}`);
+    const response = await instance.delete(`/chat-service/labels/${id}`);
     return response.data
 }
 
 async function create(body: any) {
-    const response = await instance.post(`/labels`, body);
+    const response = await instance.post(`/chat-service/labels`, body);
     return response.data
 }
 
 async function update(body: any) {
-    const response = await instance.put(`/labels`, body);
+    const response = await instance.put(`/chat-service/labels`, body);
     return response.data
 }
 
 async function restore(id: number) {
-    const response = await instance.put(`/labels/restore/${id}`);
+    const response = await instance.put(`/chat-service/labels/restore/${id}`);
     return response.data
 }

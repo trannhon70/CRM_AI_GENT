@@ -50,13 +50,13 @@ const labelSlice = createSlice({
             action: PayloadAction<{ item: Label; currentDeleted: boolean }>
         ) => {
             const { item, currentDeleted } = action.payload;
-
+            const deleted = typeof currentDeleted === "string" ? currentDeleted === "true" : currentDeleted;
             const index = state.data.findIndex(
                 x => x.id === item.id
             );
 
             // Item không thuộc tab hiện tại => remove
-            if (item.is_deleted !== currentDeleted) {
+            if (item.is_deleted !== deleted) {
                 if (index !== -1) {
                     state.data.splice(index, 1);
                 }
