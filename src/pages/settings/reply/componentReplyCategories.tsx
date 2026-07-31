@@ -11,6 +11,7 @@ import { formatUnixTime } from "../../../utils/date";
 import ActionFab from "../../../components/common/ActionFab";
 import { FiEdit } from "react-icons/fi";
 import React from "react";
+import ModalAddCategories from "./modal/modalAddReplyCategories";
 
 
 interface IProps {
@@ -125,11 +126,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
                         },
                     }}
                 />
-                <Tooltip title="Thêm mới" >
-                    <div className="h-8 w-8 bg-[#EAECF0] rounded cursor-pointer hover:bg-[#b1b3b6] flex items-center justify-center" >
-                        <IoMdAdd size={20} />
-                    </div>
-                </Tooltip>
+                <ModalAddCategories />
             </div>
             <CommonTable
                 containerRef={tableContainerRef}
