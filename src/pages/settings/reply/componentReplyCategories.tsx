@@ -1,16 +1,19 @@
 import { Chip, InputAdornment, Skeleton, Switch, TableCell, TextField, Tooltip } from "@mui/material";
 import type { FC } from "react";
+import React from "react";
 import { BsChatDots } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa6";
+import { FiEdit } from "react-icons/fi";
 import { GrSearch } from "react-icons/gr";
 import { MdDelete, MdOutlineTopic } from "react-icons/md";
-import { IoMdAdd } from "react-icons/io";
-import CommonTable from "../../../components/common/CommonTable";
-import { getContrastTextColor } from "../../../utils/color";
-import { formatUnixTime } from "../../../utils/date";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import ActionFab from "../../../components/common/ActionFab";
-import { FiEdit } from "react-icons/fi";
-import React from "react";
+import CommonTable from "../../../components/common/CommonTable";
+import { getPagingQuickReplycategories } from "../../../features/quickReplycategoriesSlice";
+import { useDebounce } from "../../../hooks/useDebounce";
+import type { AppDispatch, RootState } from "../../../redux/store";
+import { getContrastTextColor } from "../../../utils/color";
 import ModalAddCategories from "./modal/modalAddReplyCategories";
 
 
@@ -18,7 +21,17 @@ interface IProps {
 
 }
 const ComponentReplyCategories: FC<IProps> = (props) => {
+    const { } = props
+    const { id } = useParams();
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
+    const dispatch = useDispatch<AppDispatch>();
+    const [search, setSearch] = React.useState<string>("");
+    const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReplycategories);
+    const searchDebounce = useDebounce(search, 500);
+
+    React.useEffect(() => {
+        dispatch(getPagingQuickReplycategories({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
+    }, [id, searchDebounce, dispatch])
     const columns: any = [
         {
             key: "stt",
@@ -50,8 +63,19 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
             ),
         }
     ];
-    return <div className="flex flex-row flex-1 min-h-0 gap-2.5 mt-3 max-xl:block ">
-        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border  overflow-auto max-xl:mb-2.5">
+
+    const handleScroll = React.useCallback(
+        (e: React.UIEvent<HTMLDivElement>) => {
+            const target = e.currentTarget;
+            const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+            if (distanceToBottom < 50 && hasMore && loading !== "pending") {
+                dispatch(getPagingQuickReplycategories({ page_id: String(id), pageIndex: Number(pageIndex) + 1, limit: 10, search: searchDebounce }))
+            }
+        },
+        [hasMore, loading]
+    );
+    return <div className="flex flex-row flex-1 min-h-0 gap-2.5 mt-3 max-xl:flex-col ">
+        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border  overflow-auto max-xl:mb-2.5 max-xl:min-h-[400px]">
             <div className="text-lg font-medium text-black shrink-0">
                 Chức năng & công cụ
             </div>
@@ -98,15 +122,15 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
             </div>
         </div>
 
-        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border ">
+        <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border flex flex-col min-h-0 max-xl:min-h-[500px]">
             <div className="text-lg font-medium text-black shrink-0 flex gap-1.5 items-center ">
                 Chủ đề câu trả lời nhanh
-                <Chip color="primary" label="0 chủ đề" size="small" />
+                <Chip color="primary" label={`${data.length} chủ đề`} size="small" />
             </div>
             <div className="text-lg font-medium text-black shrink-0 flex gap-1.5 items-center justify-between mt-1 ">
                 <TextField
-                    // onChange={handleSearch}
-                    // value={search}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => { setSearch(event.target.value) }}
+                    value={search}
                     size="small"
                     variant="outlined"
                     placeholder="Tìm kiếm tin nhắn"
@@ -130,20 +154,19 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
             </div>
             <CommonTable
                 containerRef={tableContainerRef}
-                // handleScroll={handleScroll}
+                handleScroll={handleScroll}
                 containerProps={{ sx: { mt: 1 } }}
                 skeletonCount={10}
                 columns={columns}
-                data={[]}
-                // loading={loading}
-                // getRowKey={(item) => item.id}
+                data={data}
+                loading={loading}
+                getRowKey={(item) => item.id}
                 emptyText="Coming soon"
                 renderRow={(item: any, index: number) => (
                     <>
                         <TableCell align="center"> {index + 1} </TableCell>
                         <TableCell><div className="font-medium"> {item.name}</div></TableCell>
                         <TableCell> <Chip label={item.color} size="small" sx={{ backgroundColor: item.color, color: getContrastTextColor(item.color) }} /></TableCell>
-                        <TableCell>{formatUnixTime(item.created_at)}</TableCell>
                         <TableCell sx={{ display: "flex", gap: "10px" }} align="center">
 
                             <Tooltip title="Chỉnh sửa" >

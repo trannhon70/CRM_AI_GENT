@@ -5,6 +5,7 @@ import { conversationReducer } from '../features/conversationSlice';
 import { liveMessageReducer } from '../features/liveMessageSlice';
 import { labelReducer } from '../features/labelSlice';
 import { userPageReducer } from '../features/userPageSlice';
+import { quickReplyCategoriesReducer } from '../features/quickReplycategoriesSlice';
 
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
     message: liveMessageReducer,
     label: labelReducer,
     userPage: userPageReducer,
+    quickReplycategories: quickReplyCategoriesReducer,
   },
 });
 
