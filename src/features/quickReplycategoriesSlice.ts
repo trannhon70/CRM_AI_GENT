@@ -41,6 +41,14 @@ const quickReplyCategoriesSlice = createSlice({
             // thêm vào đầu danh sách
             state.data.unshift(action.payload);
         },
+
+        updateItem: (state, action: PayloadAction<any>) => {
+            const item = action.payload;
+            const index = state.data.findIndex(x => x.id === item.id);
+            if (index !== -1) {
+                state.data[index] = item;
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -69,5 +77,5 @@ const quickReplyCategoriesSlice = createSlice({
     },
 })
 
-export const { insertItem, removeItem } = quickReplyCategoriesSlice.actions;
+export const { insertItem, removeItem, updateItem } = quickReplyCategoriesSlice.actions;
 export const quickReplyCategoriesReducer = quickReplyCategoriesSlice.reducer;

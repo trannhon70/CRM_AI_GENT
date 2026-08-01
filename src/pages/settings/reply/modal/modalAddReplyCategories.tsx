@@ -1,4 +1,4 @@
-import { Checkbox, Chip, Popover, TextField, Tooltip } from '@mui/material';
+import { Chip, Popover, TextField, Tooltip } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -13,10 +13,10 @@ import { VscSymbolColor } from "react-icons/vsc";
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { quickReplyCategoriessAPI } from '../../../../apis/quickReplyCategories.api';
+import { insertItem, updateItem } from '../../../../features/quickReplycategoriesSlice';
 import type { AppDispatch } from '../../../../redux/store';
 import { getContrastTextColor } from '../../../../utils/color';
-import { quickReplyCategoriessAPI } from '../../../../apis/quickReplyCategories.api';
-import { insertItem } from '../../../../features/quickReplycategoriesSlice';
 interface FadeProps {
     children: React.ReactElement<any>;
     in?: boolean;
@@ -125,9 +125,24 @@ const ModalAddCategories: FC<IProps> = (props) => {
 
     const handleSave = () => {
         if (form.name === "") return toast.warning("Tên chủ đề không được bỏ trống!")
+
         setLoading(true)
         if (item?.id) {
+            quickReplyCategoriessAPI.update({ id: form?.id, color: form.color, name: form.name })
+                .then((_res) => {
+                    console.log(_res);
 
+                    dispatch(updateItem({ id: form?.id, color: form.color, name: form.name }));
+                    toast.success("Cập nhật chủ đề thành công!");
+                    handleClose();
+                })
+                .catch((err) => {
+                    toast.error(err.response?.data?.message);
+                    return err;
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         } else {
             quickReplyCategoriessAPI.create(form)
                 .then((_res) => {
@@ -144,6 +159,13 @@ const ModalAddCategories: FC<IProps> = (props) => {
                 });
         }
     }
+
+    React.useEffect(() => {
+        if (item?.id) {
+            setForm(item)
+            handleOpen()
+        }
+    }, [item?.id])
 
     return <div>
         <Tooltip title="Thêm mới" >

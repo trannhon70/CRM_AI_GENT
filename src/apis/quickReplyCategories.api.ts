@@ -5,7 +5,8 @@ import { isValidValue } from "../utils";
 export const quickReplyCategoriessAPI = {
     create,
     getPaging,
-    isDelete
+    isDelete,
+    update
 };
 
 
@@ -37,4 +38,9 @@ async function getPaging(query: GetPagingQuickReplyCategoriesQuery) {
 async function isDelete(id: number) {
     const respone = await instance.delete(`/chat-service/quick-reply-categories/${id}`);
     return respone.data
+}
+
+async function update(body: any) {
+    const response = await instance.put(`/chat-service/quick-reply-categories`, body);
+    return response.data
 }

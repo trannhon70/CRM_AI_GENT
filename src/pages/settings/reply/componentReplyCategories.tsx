@@ -31,6 +31,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReplycategories);
     const searchDebounce = useDebounce(search, 500);
     const [loadingId, setLoadingId] = useState<number | null>(null);
+    const [item, setItem] = React.useState<any>(null)
 
     React.useEffect(() => {
         dispatch(getPagingQuickReplycategories({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
@@ -91,6 +92,12 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
             setLoadingId(null);
         })
     }
+
+    const onclickEdit = (item: any) => {
+        setItem(item)
+    }
+
+
     return <div className="flex flex-row flex-1 min-h-0 gap-2.5 mt-3 max-xl:flex-col ">
         <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border  overflow-auto max-xl:mb-2.5 max-xl:min-h-[400px]">
             <div className="text-lg font-medium text-black shrink-0">
@@ -167,7 +174,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
                         },
                     }}
                 />
-                <ModalAddCategories />
+                <ModalAddCategories item={item} setItem={setItem} />
             </div>
             <CommonTable
                 containerRef={tableContainerRef}
@@ -187,7 +194,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
                         <TableCell sx={{ display: "flex", gap: "10px" }} align="center">
 
                             <Tooltip title="Chỉnh sửa" >
-                                <ActionFab color='success'>
+                                <ActionFab onClick={() => onclickEdit(item)} color='success'>
                                     <FiEdit size={22} />
                                 </ActionFab>
                             </Tooltip>
