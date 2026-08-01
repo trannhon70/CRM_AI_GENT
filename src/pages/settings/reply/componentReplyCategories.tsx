@@ -1,6 +1,6 @@
 import { Chip, InputAdornment, Skeleton, Switch, TableCell, TextField, Tooltip } from "@mui/material";
 import type { FC } from "react";
-import React from "react";
+import React, { useState } from "react";
 import { BsChatDots } from "react-icons/bs";
 import { FaUsers } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
@@ -10,11 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ActionFab from "../../../components/common/ActionFab";
 import CommonTable from "../../../components/common/CommonTable";
-import { getPagingQuickReplycategories } from "../../../features/quickReplycategoriesSlice";
+import { getPagingQuickReplycategories, removeItem } from "../../../features/quickReplycategoriesSlice";
 import { useDebounce } from "../../../hooks/useDebounce";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { getContrastTextColor } from "../../../utils/color";
 import ModalAddCategories from "./modal/modalAddReplyCategories";
+import { quickReplyCategoriessAPI } from "../../../apis/quickReplyCategories.api";
+import { toast } from "react-toastify";
 
 
 interface IProps {
@@ -28,6 +30,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
     const [search, setSearch] = React.useState<string>("");
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReplycategories);
     const searchDebounce = useDebounce(search, 500);
+    const [loadingId, setLoadingId] = useState<number | null>(null);
 
     React.useEffect(() => {
         dispatch(getPagingQuickReplycategories({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
@@ -74,6 +77,20 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
         },
         [hasMore, loading]
     );
+
+    const onclickDelete = (event: any) => {
+        setLoadingId(event.id)
+        quickReplyCategoriessAPI.isDelete(event.id).then((_res: any) => {
+            dispatch(removeItem(event.id));
+            toast.success("Xóa chủ đề thành công!")
+        }).catch((_res: any) => {
+            toast.error(
+                _res.response?.data?.message || 'Lỗi khi kết nối!'
+            );
+        }).finally(() => {
+            setLoadingId(null);
+        })
+    }
     return <div className="flex flex-row flex-1 min-h-0 gap-2.5 mt-3 max-xl:flex-col ">
         <div className="flex-1 bg-white rounded-xl  px-6 py-3 shadow-sm box-border  overflow-auto max-xl:mb-2.5 max-xl:min-h-[400px]">
             <div className="text-lg font-medium text-black shrink-0">
@@ -177,7 +194,12 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
 
 
                             <Tooltip title="Xóa" >
-                                <ActionFab color='error'>
+                                <ActionFab
+                                    loading={loadingId === item.id}
+                                    disabled={loadingId !== null}
+                                    onClick={() => onclickDelete(item)}
+                                    color='error'
+                                >
                                     <MdDelete size={22} color="red" />
                                 </ActionFab>
                             </Tooltip>

@@ -16,6 +16,7 @@ import { toast } from 'react-toastify';
 import type { AppDispatch } from '../../../../redux/store';
 import { getContrastTextColor } from '../../../../utils/color';
 import { quickReplyCategoriessAPI } from '../../../../apis/quickReplyCategories.api';
+import { insertItem } from '../../../../features/quickReplycategoriesSlice';
 interface FadeProps {
     children: React.ReactElement<any>;
     in?: boolean;
@@ -130,6 +131,7 @@ const ModalAddCategories: FC<IProps> = (props) => {
         } else {
             quickReplyCategoriessAPI.create(form)
                 .then((_res) => {
+                    dispatch(insertItem(_res));
                     toast.success("Thêm chủ đề thành công!");
                     handleClose();
                 })

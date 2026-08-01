@@ -1,21 +1,27 @@
 import { forwardRef } from "react";
 import Fab, { type FabProps } from "@mui/material/Fab";
+import CircularProgress from "@mui/material/CircularProgress";
 import { alpha } from "@mui/material/styles";
 
-interface ActionFabProps extends FabProps { }
+interface ActionFabProps extends FabProps {
+    loading?: boolean;
+}
 
 const ActionFab = forwardRef<HTMLButtonElement, ActionFabProps>(
-    ({ sx, color = "primary", ...props }, ref) => {
+    ({ sx, color = "primary", loading = false, children, disabled, ...props }, ref) => {
         return (
             <Fab
                 ref={ref}
                 size="small"
                 color={color}
+                disabled={disabled || loading}
                 {...props}
                 sx={[
                     (theme: any) => {
                         const palette =
-                            color !== "inherit" ? theme.palette[color] : theme.palette.primary;
+                            color !== "inherit"
+                                ? theme.palette[color]
+                                : theme.palette.primary;
 
                         return {
                             width: 32,
@@ -35,10 +41,15 @@ const ActionFab = forwardRef<HTMLButtonElement, ActionFabProps>(
                             },
                         };
                     },
-                    // cho phép override từ ngoài truyền vào qua prop sx
                     ...(Array.isArray(sx) ? sx : [sx]),
                 ]}
-            />
+            >
+                {loading ? (
+                    <CircularProgress size={18} color="inherit" />
+                ) : (
+                    children
+                )}
+            </Fab>
         );
     }
 );

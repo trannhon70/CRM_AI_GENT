@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit'
 import { quickReplyCategoriessAPI } from '../apis/quickReplyCategories.api.ts'
 import type { GetPagingQuickReplyCategoriesQuery, QuickReplyCategories } from '../types/quickReplyCategories.ts'
 
@@ -34,7 +34,13 @@ const quickReplyCategoriesSlice = createSlice({
     name: 'quick-reply-categories',
     initialState,
     reducers: {
-
+        removeItem: (state, action: PayloadAction<number>) => {
+            state.data = state.data.filter(item => item.id !== action.payload);
+        },
+        insertItem: (state, action: PayloadAction<any>) => {
+            // thêm vào đầu danh sách
+            state.data.unshift(action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -63,5 +69,5 @@ const quickReplyCategoriesSlice = createSlice({
     },
 })
 
-export const { } = quickReplyCategoriesSlice.actions;
+export const { insertItem, removeItem } = quickReplyCategoriesSlice.actions;
 export const quickReplyCategoriesReducer = quickReplyCategoriesSlice.reducer;
