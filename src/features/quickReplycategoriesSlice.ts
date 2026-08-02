@@ -11,10 +11,19 @@ export const getPagingQuickReplycategories = createAsyncThunk(
     },
 )
 
+export const getAllQuickReplycategories = createAsyncThunk(
+    'quick-reply-categories/getAllQuickReplycategories',
+    async (thunkAPI: any) => {
+        const response = await quickReplyCategoriessAPI.getAll(thunkAPI)
+        return response.data
+    },
+)
+
 interface QuickReplyCategoriesState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
     currentRequestId: string | null,
     data: QuickReplyCategories[],
+    dataAll: QuickReplyCategories[],
     pageIndex?: number,
     limit?: number,
     hasMore: boolean,
@@ -24,6 +33,7 @@ const initialState = {
     loading: 'idle',
     currentRequestId: null,
     data: [],
+    dataAll: [],
     pageIndex: 1,
     limit: 5,
     hasMore: false,
@@ -72,7 +82,10 @@ const quickReplyCategoriesSlice = createSlice({
             })
             .addCase(getPagingQuickReplycategories.rejected, (state) => {
                 state.loading = "failed";
-            });
+            })
+            .addCase(getAllQuickReplycategories.fulfilled, (state, action) => {
+                state.dataAll = action.payload;
+            })
 
     },
 })

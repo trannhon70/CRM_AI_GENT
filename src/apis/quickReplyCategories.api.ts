@@ -6,7 +6,8 @@ export const quickReplyCategoriessAPI = {
     create,
     getPaging,
     isDelete,
-    update
+    update,
+    getAll
 };
 
 
@@ -43,4 +44,12 @@ async function isDelete(id: number) {
 async function update(body: any) {
     const response = await instance.put(`/chat-service/quick-reply-categories`, body);
     return response.data
+}
+
+async function getAll(query: any) {
+    const params: Record<string, any> = {
+        page_id: query.page_id
+    };
+    const respone = await instance.get(`/chat-service/quick-reply-categories/get-all`, { params });
+    return respone.data
 }
