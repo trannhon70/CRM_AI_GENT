@@ -18,6 +18,7 @@ import type { SelectChangeEvent } from "@mui/material/Select";
 import { TextareaAutosize } from '@mui/material';
 import { styled } from "@mui/material/styles";
 import { getAllQuickReplycategories } from '../../../../features/quickReplycategoriesSlice';
+import { quickReplyAPI } from '../../../../apis/quickReply.api';
 
 const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
     width: "100%",
@@ -169,19 +170,19 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
             //         setLoading(false);
             //     });
         } else {
-            // quickReplyCategoriessAPI.create(form)
-            //     .then((_res) => {
-            //         dispatch(insertItem(_res));
-            //         toast.success("Thêm chủ đề thành công!");
-            //         handleClose();
-            //     })
-            //     .catch((err) => {
-            //         toast.error(err.response?.data?.message);
-            //         return err;
-            //     })
-            //     .finally(() => {
-            //         setLoading(false);
-            //     });
+            quickReplyAPI.create(form)
+                .then((_res) => {
+                    // dispatch(insertItem(_res));
+                    toast.success("Thêm chủ đề thành công!");
+                    handleClose();
+                })
+                .catch((err) => {
+                    toast.error(err.response?.data?.message);
+                    return err;
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
     }
 
@@ -217,7 +218,7 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
             <Fade in={open}>
                 <Box sx={style} className="flex flex-col">
                     <div className='flex items-center justify-between p-3' >
-                        <div className='text-lg font-medium text-black ' >{form?.id ? "Cập nhật" : "Thêm mới chủ đề"}</div>
+                        <div className='text-lg font-medium text-black ' >{form?.id ? "Cập nhật" : "Thêm câu trả lời nhanh"}</div>
                         <div onClick={handleClose} className='w-8 h-8 flex items-center justify-center hover:bg-gray-300 cursor-pointer rounded' >
                             <IoMdClose size={25} />
                         </div>
