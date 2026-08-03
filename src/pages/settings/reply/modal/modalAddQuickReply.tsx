@@ -154,8 +154,6 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
         if (item?.id) {
             quickReplyAPI.update({ id: form?.id, quick_reply_category_id: form.quick_reply_category_id, content: form.content })
                 .then((_res) => {
-                    console.log(_res);
-
                     dispatch(updateItem(_res));
                     toast.success("Cập nhật thành công!");
                     handleClose();
@@ -190,8 +188,6 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
             handleOpen()
         }
     }, [item?.id])
-
-    console.log(form);
 
 
     const onChangeTextarea = (event: React.ChangeEvent<HTMLTextAreaElement, HTMLTextAreaElement>) => {
