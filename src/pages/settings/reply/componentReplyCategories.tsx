@@ -81,7 +81,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
 
     const onclickDelete = (event: any) => {
         setLoadingId(event.id)
-        quickReplyCategoriessAPI.isDelete(event.id).then((_res: any) => {
+        quickReplyCategoriessAPI.isDelete({ id: event.id, page_id: id }).then((_res: any) => {
             dispatch(removeItem(event.id));
             toast.success("Xóa chủ đề thành công!")
         }).catch((_res: any) => {

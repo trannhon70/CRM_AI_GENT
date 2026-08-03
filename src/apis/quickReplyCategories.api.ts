@@ -36,8 +36,8 @@ async function getPaging(query: GetPagingQuickReplyCategoriesQuery) {
 }
 
 
-async function isDelete(id: number) {
-    const respone = await instance.delete(`/chat-service/quick-reply-categories/${id}`);
+async function isDelete(body: any) {
+    const respone = await instance.post(`/chat-service/quick-reply-categories/delete`, body);
     return respone.data
 }
 
