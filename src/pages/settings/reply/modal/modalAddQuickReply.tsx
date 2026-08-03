@@ -130,6 +130,7 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
     const [form, setForm] = React.useState<any>({
         content: "",
         quick_reply_category_id: "",
+        page_id: id,
     })
 
     const handleOpen = () => setOpen(true);
@@ -138,6 +139,7 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
         setForm({
             content: "",
             quick_reply_category_id: "",
+            page_id: id,
         });
         setItem(null)
     }
