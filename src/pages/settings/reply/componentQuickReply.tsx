@@ -1,4 +1,4 @@
-import { Button, Chip, InputAdornment, Skeleton, Tab, TableCell, Tabs, TextField, Tooltip } from "@mui/material";
+import { Chip, InputAdornment, Skeleton, Tab, TableCell, Tabs, TextField, Tooltip } from "@mui/material";
 import type { FC } from "react";
 import React from "react";
 import { BsCloudDownloadFill, BsCloudUploadFill } from "react-icons/bs";
@@ -6,15 +6,40 @@ import { FiEdit } from "react-icons/fi";
 import { GrSearch } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
 import { RiFileCopy2Fill } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import ActionFab from "../../../components/common/ActionFab";
 import CommonTable from "../../../components/common/CommonTable";
+import { getPagingQuickReply } from "../../../features/quickReplySlice";
+import { useDebounce } from "../../../hooks/useDebounce";
+import type { AppDispatch, RootState } from "../../../redux/store";
 import { getContrastTextColor } from "../../../utils/color";
-import { formatUnixTime } from "../../../utils/date";
 import ModalAddQuickReply from "./modal/modalAddQuickReply";
 
 
 const ComponentQuickReply: FC = () => {
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
+    const { id } = useParams();
+    const dispatch = useDispatch<AppDispatch>();
+    const [search, setSearch] = React.useState<string>("");
+    const searchDebounce = useDebounce(search, 500);
+    const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReply);
+    const [item, setItem] = React.useState<any>(null)
+
+    React.useEffect(() => {
+        dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
+    }, [id, searchDebounce, dispatch])
+
+    const handleScroll = React.useCallback(
+        (e: React.UIEvent<HTMLDivElement>) => {
+            const target = e.currentTarget;
+            const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+            if (distanceToBottom < 50 && hasMore && loading !== "pending") {
+                dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: Number(pageIndex) + 1, limit: 10, search: searchDebounce }))
+            }
+        },
+        [hasMore, loading]
+    );
 
     const columns: any = [
         {
@@ -24,12 +49,12 @@ const ComponentQuickReply: FC = () => {
             width: 70
         },
         {
-            key: "name",
+            key: "quickReplyCategory",
             label: "Chủ đề",
             width: 200
         },
         {
-            key: "color",
+            key: "content",
             label: "Tin nhắn"
         },
         {
@@ -47,6 +72,11 @@ const ComponentQuickReply: FC = () => {
             ),
         }
     ];
+
+    const onclickEdit = (item: any) => {
+        setItem(item)
+    }
+
     return <div className="bg-white rounded-xl  px-6 py-3 shadow-sm mt-3 flex-1 min-h-0 flex flex-col">
         <div className="flex items-center justify-between shrink-0" >
             <Tabs
@@ -76,8 +106,8 @@ const ComponentQuickReply: FC = () => {
             </Tabs>
             <div className="flex items-center gap-2.5" >
                 <TextField
-                    // onChange={handleSearch}
-                    // value={search}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => { setSearch(event.target.value) }}
+                    value={search}
                     size="small"
                     variant="outlined"
                     placeholder="Tìm kiếm tin nhắn"
@@ -112,29 +142,42 @@ const ComponentQuickReply: FC = () => {
                         <RiFileCopy2Fill size={20} />
                     </div>
                 </Tooltip>
-                <ModalAddQuickReply />
+                <ModalAddQuickReply item={item} setItem={setItem} />
             </div>
         </div>
         <CommonTable
             containerRef={tableContainerRef}
-            // handleScroll={handleScroll}
+            handleScroll={handleScroll}
             containerProps={{ sx: { mt: 0 } }}
             skeletonCount={10}
             columns={columns}
-            data={[]}
-            // loading={loading}
-            // getRowKey={(item) => item.id}
+            data={data}
+            loading={loading}
+            getRowKey={(item) => item.id}
             emptyText="Coming soon"
             renderRow={(item: any, index: number) => (
                 <>
                     <TableCell align="center"> {index + 1} </TableCell>
-                    <TableCell><div className="font-medium"> {item.name}</div></TableCell>
-                    <TableCell> <Chip label={item.color} size="small" sx={{ backgroundColor: item.color, color: getContrastTextColor(item.color) }} /></TableCell>
-                    <TableCell>{formatUnixTime(item.created_at)}</TableCell>
+                    <TableCell>
+                        {item?.quickReplyCategory ? (
+                            <Chip
+                                label={item.quickReplyCategory.name}
+                                size="small"
+                                sx={{
+                                    backgroundColor: item.quickReplyCategory.color,
+                                    color: getContrastTextColor(item.quickReplyCategory.color),
+                                }}
+                            />
+                        ) : (
+                            <span>—</span> // hoặc để trống, tùy UX bạn muốn
+                        )}
+                    </TableCell>
+                    <TableCell><div className="font-medium"> {item.content}</div></TableCell>
+
                     <TableCell sx={{ display: "flex", gap: "10px" }} align="center">
 
                         <Tooltip title="Chỉnh sửa" >
-                            <ActionFab color='success'>
+                            <ActionFab onClick={() => onclickEdit(item)} color='success'>
                                 <FiEdit size={22} />
                             </ActionFab>
                         </Tooltip>

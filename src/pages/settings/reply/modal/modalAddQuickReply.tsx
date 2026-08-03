@@ -19,6 +19,7 @@ import { TextareaAutosize } from '@mui/material';
 import { styled } from "@mui/material/styles";
 import { getAllQuickReplycategories } from '../../../../features/quickReplycategoriesSlice';
 import { quickReplyAPI } from '../../../../apis/quickReply.api';
+import { insertItem, updateItem } from '../../../../features/quickReplySlice';
 
 const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
     width: "100%",
@@ -152,30 +153,28 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
 
     const handleSave = () => {
         if (form.content === "") return toast.warning("Nội dung không được bỏ trống!")
-        console.log(form);
-
-        // setLoading(true)
+        setLoading(true)
         if (item?.id) {
-            // quickReplyCategoriessAPI.update({ id: form?.id, color: form.color, name: form.name })
-            //     .then((_res) => {
-            //         console.log(_res);
+            quickReplyAPI.update({ id: form?.id, color: form.color, name: form.name })
+                .then((_res) => {
+                    console.log(_res);
 
-            //         dispatch(updateItem({ id: form?.id, color: form.color, name: form.name }));
-            //         toast.success("Cập nhật chủ đề thành công!");
-            //         handleClose();
-            //     })
-            //     .catch((err) => {
-            //         toast.error(err.response?.data?.message);
-            //         return err;
-            //     })
-            //     .finally(() => {
-            //         setLoading(false);
-            //     });
+                    dispatch(updateItem({ id: form?.id, color: form.color, name: form.name }));
+                    toast.success("Cập nhật thành công!");
+                    handleClose();
+                })
+                .catch((err) => {
+                    toast.error(err.response?.data?.message);
+                    return err;
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         } else {
             quickReplyAPI.create(form)
                 .then((_res) => {
-                    // dispatch(insertItem(_res));
-                    toast.success("Thêm chủ đề thành công!");
+                    dispatch(insertItem(_res));
+                    toast.success("Thêm thành công!");
                     handleClose();
                 })
                 .catch((err) => {
@@ -188,12 +187,12 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
         }
     }
 
-    // React.useEffect(() => {
-    //     if (item?.id) {
-    //         setForm(item)
-    //         handleOpen()
-    //     }
-    // }, [item?.id])
+    React.useEffect(() => {
+        if (item?.id) {
+            setForm(item)
+            handleOpen()
+        }
+    }, [item?.id])
 
     const handleChange = (event: SelectChangeEvent) => {
         setForm((value: any) => ({ ...value, quick_reply_category_id: event.target.value }))
@@ -272,6 +271,7 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
                             minRows={4}
                             placeholder="Nhập nội dung..."
                             onChange={onChangeTextarea}
+                            value={form.content}
                         />
 
                     </div>
