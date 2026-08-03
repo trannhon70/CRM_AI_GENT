@@ -4,20 +4,21 @@ import React from "react";
 import { BsCloudDownloadFill, BsCloudUploadFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { GrSearch } from "react-icons/gr";
+import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
-import { RiFileCopy2Fill } from "react-icons/ri";
+import { RiDeleteBin6Line, RiFileCopy2Fill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { quickReplyAPI } from "../../../apis/quickReply.api";
 import ActionFab from "../../../components/common/ActionFab";
 import CommonTable from "../../../components/common/CommonTable";
+import IconActionButton from "../../../components/icons/iconActionButton";
 import { getPagingQuickReply, removeItem } from "../../../features/quickReplySlice";
 import { useDebounce } from "../../../hooks/useDebounce";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { getContrastTextColor } from "../../../utils/color";
 import ModalAddQuickReply from "./modal/modalAddQuickReply";
-import { toast } from "react-toastify";
-import { quickReplyAPI } from "../../../apis/quickReply.api";
-
 
 const ComponentQuickReply: FC = () => {
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
@@ -28,6 +29,9 @@ const ComponentQuickReply: FC = () => {
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReply);
     const [item, setItem] = React.useState<any>(null)
     const [loadingId, setLoadingId] = React.useState<number | null>(null);
+    const [selectedKeys, setSelectedKeys] = React.useState<React.Key[]>([]);
+    const [selectable, setSelectable] = React.useState<boolean>(false)
+    // console.log(selectedKeys);
 
     React.useEffect(() => {
         dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
@@ -144,25 +148,63 @@ const ComponentQuickReply: FC = () => {
                         },
                     }}
                 />
-                <Tooltip title="Tải lên" >
-                    <div className="h-8 w-8 bg-[#EAECF0] rounded cursor-pointer hover:bg-[#b1b3b6] flex items-center justify-center" >
-                        <BsCloudUploadFill size={20} />
+                {
+                    selectedKeys.length > 0 && <div className="flex items-center gap-2.5" >
+                        <Chip variant="outlined" color="success" label={`Đã chọn ${selectedKeys.length}`} size="small" />
+                        <IconActionButton
+                            icon={<RiDeleteBin6Line size={20} />}
+                            tooltip=""
+                            color="error"
+                        // onClick={handleUpload}
+                        />
                     </div>
-                </Tooltip>
-                <Tooltip title="Tải tất cả danh sách QR" >
-                    <div className="h-8 w-8 bg-[#EAECF0] rounded cursor-pointer hover:bg-[#b1b3b6] flex items-center justify-center" >
-                        <BsCloudDownloadFill size={20} />
-                    </div>
-                </Tooltip>
-                <Tooltip title="Sao chép tất cả danh sách QR" >
-                    <div className="h-8 w-8 bg-[#EAECF0] rounded cursor-pointer hover:bg-[#b1b3b6] flex items-center justify-center" >
-                        <RiFileCopy2Fill size={20} />
-                    </div>
-                </Tooltip>
-                <ModalAddQuickReply item={item} setItem={setItem} />
+                }
+                <IconActionButton
+                    icon={<IoCheckmarkDoneOutline size={20} />}
+                    tooltip="Chọn mẫu trả lời"
+                    color={selectable ? "primary" : "default"}
+                    onClick={() => {
+                        setSelectable((prev) => {
+                            const next = !prev;
+                            if (!next) {
+                                setSelectedKeys([]); // tắt chế độ chọn thì clear luôn các dòng đã tick
+                            }
+                            return next;
+                        });
+                    }}
+                />
+                <IconActionButton
+                    icon={<BsCloudUploadFill size={20} />}
+                    tooltip="Tải lên"
+                    color="success"
+                    disabled={selectable}
+                // onClick={handleUpload}
+                />
+                <IconActionButton
+                    icon={<BsCloudDownloadFill size={20} />}
+                    tooltip="Tải tất cả danh sách QR"
+                    color="secondary"
+                    disabled={selectable}
+                // onClick={handleUpload}
+                />
+                <IconActionButton
+                    icon={<RiFileCopy2Fill size={20} />}
+                    tooltip="Sao chép tất cả danh sách QR"
+                    // bgColor="#fee2e2"
+                    // hoverColor="#fecaca"
+                    // textColor="#dc2626"
+                    color="info"
+                    disabled={selectable}
+                // onClick={handleUpload}
+                />
+
+                <ModalAddQuickReply item={item} setItem={setItem} disabled={selectable} />
             </div>
         </div>
         <CommonTable
+            selectable={selectable}
+            selectedKeys={selectedKeys}
+            onSelectedKeysChange={setSelectedKeys}
             containerRef={tableContainerRef}
             handleScroll={handleScroll}
             containerProps={{ sx: { mt: 0 } }}

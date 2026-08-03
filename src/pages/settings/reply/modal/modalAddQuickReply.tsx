@@ -116,10 +116,11 @@ const style = {
 interface IProps {
     item?: any,
     setItem?: any,
+    disabled?: boolean;
 }
 
 const ModalAddQuickReply: FC<IProps> = (props) => {
-    const { item, setItem } = props
+    const { item, setItem, disabled } = props
     const { id } = useParams();
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState<boolean>(false)
@@ -195,7 +196,7 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
     }
 
     return <div>
-        <Button onClick={handleOpen} variant="contained" sx={{ height: 32, px: 2, textTransform: "none" }}>Thêm mẫu</Button>
+        <Button disabled={disabled} onClick={handleOpen} variant="contained" sx={{ height: 32, px: 2, textTransform: "none" }}>Thêm mẫu</Button>
 
         <Modal
             aria-labelledby="spring-modal-title"
