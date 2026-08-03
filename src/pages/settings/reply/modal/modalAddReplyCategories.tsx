@@ -128,7 +128,7 @@ const ModalAddCategories: FC<IProps> = (props) => {
 
         setLoading(true)
         if (item?.id) {
-            quickReplyCategoriessAPI.update({ id: form?.id, color: form.color, name: form.name })
+            quickReplyCategoriessAPI.update({ id: form?.id, color: form.color, name: form.name, page_id: id })
                 .then((_res) => {
                     console.log(_res);
 
