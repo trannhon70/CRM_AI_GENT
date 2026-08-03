@@ -41,6 +41,6 @@ async function isDelete(id: number) {
 
 async function update(body: any) {
     const response = await instance.put(`/chat-service/quick-reply`, body);
-    return response.data
+    return response.data.data
 }
 

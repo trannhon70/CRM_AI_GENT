@@ -1,7 +1,10 @@
+import { TextareaAutosize } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
+import type { SelectChangeEvent } from "@mui/material/Select";
+import { styled } from "@mui/material/styles";
 import { animated, useSpring } from '@react-spring/web';
 import type { FC } from "react";
 import * as React from 'react';
@@ -9,17 +12,11 @@ import { IoMdClose } from "react-icons/io";
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import type { AppDispatch, RootState } from '../../../../redux/store';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from "@mui/material/Select";
-import type { SelectChangeEvent } from "@mui/material/Select";
-import { TextareaAutosize } from '@mui/material';
-import { styled } from "@mui/material/styles";
-import { getAllQuickReplycategories } from '../../../../features/quickReplycategoriesSlice';
 import { quickReplyAPI } from '../../../../apis/quickReply.api';
+import SelectWithClear from '../../../../components/select/selectWithClear';
+import { getAllQuickReplycategories } from '../../../../features/quickReplycategoriesSlice';
 import { insertItem, updateItem } from '../../../../features/quickReplySlice';
+import type { AppDispatch, RootState } from '../../../../redux/store';
 
 const StyledTextarea = styled(TextareaAutosize)(({ theme }) => ({
     width: "100%",
@@ -155,11 +152,11 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
         if (form.content === "") return toast.warning("Nội dung không được bỏ trống!")
         setLoading(true)
         if (item?.id) {
-            quickReplyAPI.update({ id: form?.id, color: form.color, name: form.name })
+            quickReplyAPI.update({ id: form?.id, quick_reply_category_id: form.quick_reply_category_id, content: form.content })
                 .then((_res) => {
                     console.log(_res);
 
-                    dispatch(updateItem({ id: form?.id, color: form.color, name: form.name }));
+                    dispatch(updateItem(_res));
                     toast.success("Cập nhật thành công!");
                     handleClose();
                 })
@@ -194,9 +191,8 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
         }
     }, [item?.id])
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setForm((value: any) => ({ ...value, quick_reply_category_id: event.target.value }))
-    };
+    console.log(form);
+
 
     const onChangeTextarea = (event: React.ChangeEvent<HTMLTextAreaElement, HTMLTextAreaElement>) => {
         setForm((value: any) => ({ ...value, content: event.target.value }))
@@ -226,45 +222,16 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
                     </div>
                     <div className='flex-1 min-h-0 gap-2.5 px-7 py-2 box-border border-t border-b border-gray-300' >
                         <div className='mt-2' >
-                            <FormControl fullWidth>
-                                <InputLabel sx={{ top: -8 }} id="demo-simple-select-label">Chủ đề</InputLabel>
-                                <Select
-                                    sx={{
-                                        height: 36,
-                                        "& .MuiSelect-select": {
-                                            py: 0.75,
-                                        },
-                                    }}
-                                    size='small'
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={form.quick_reply_category_id}
-                                    label="Chủ đề"
-                                    onChange={handleChange}
-                                    MenuProps={MenuProps}
-                                    renderValue={(selected) => {
-                                        const item = dataAll.find((d: any) => d.id === selected);
-                                        return (
-                                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                <div className="w-5 h-5 rounded shrink-0" style={{ backgroundColor: item?.color }} />
-                                                <span>{item?.name}</span>
-                                            </div>
-                                        );
-                                    }}
-                                >
-                                    {
-                                        dataAll.map((item: any) => {
-                                            return <MenuItem key={item.id} value={item.id} className='flex items-center gap-2.5'>
-                                                <div
-                                                    className="w-5 h-5 rounded shrink-0"
-                                                    style={{ backgroundColor: item.color }}
-                                                />
-                                                {item.name}
-                                            </MenuItem>
-                                        })
-                                    }
-                                </Select>
-                            </FormControl>
+                            <SelectWithClear
+                                label="Chủ đề"
+                                value={form.quick_reply_category_id}
+                                data={dataAll}
+                                onChange={(value) =>
+                                    setForm((prev: any) => ({ ...prev, quick_reply_category_id: value }))
+                                }
+                                MenuProps={MenuProps}
+                                placeholder="Chọn chủ đề"
+                            />
                         </div>
                         <StyledTextarea
                             className='mt-4'
