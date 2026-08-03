@@ -10,11 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import ActionFab from "../../../components/common/ActionFab";
 import CommonTable from "../../../components/common/CommonTable";
-import { getPagingQuickReply } from "../../../features/quickReplySlice";
+import { getPagingQuickReply, removeItem } from "../../../features/quickReplySlice";
 import { useDebounce } from "../../../hooks/useDebounce";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { getContrastTextColor } from "../../../utils/color";
 import ModalAddQuickReply from "./modal/modalAddQuickReply";
+import { toast } from "react-toastify";
+import { quickReplyAPI } from "../../../apis/quickReply.api";
 
 
 const ComponentQuickReply: FC = () => {
@@ -25,6 +27,7 @@ const ComponentQuickReply: FC = () => {
     const searchDebounce = useDebounce(search, 500);
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReply);
     const [item, setItem] = React.useState<any>(null)
+    const [loadingId, setLoadingId] = React.useState<number | null>(null);
 
     React.useEffect(() => {
         dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
@@ -75,6 +78,20 @@ const ComponentQuickReply: FC = () => {
 
     const onclickEdit = (item: any) => {
         setItem(item)
+    }
+
+    const onclickDelete = (event: any) => {
+        setLoadingId(event.id)
+        quickReplyAPI.isDelete(event.id).then((_res: any) => {
+            dispatch(removeItem(event.id));
+            toast.success("Xóa chủ đề thành công!")
+        }).catch((_res: any) => {
+            toast.error(
+                _res.response?.data?.message || 'Lỗi khi kết nối!'
+            );
+        }).finally(() => {
+            setLoadingId(null);
+        })
     }
 
     return <div className="bg-white rounded-xl  px-6 py-3 shadow-sm mt-3 flex-1 min-h-0 flex flex-col">
@@ -184,7 +201,12 @@ const ComponentQuickReply: FC = () => {
 
 
                         <Tooltip title="Xóa" >
-                            <ActionFab color='error'>
+                            <ActionFab
+                                loading={loadingId === item.id}
+                                disabled={loadingId !== null}
+                                onClick={() => onclickDelete(item)}
+                                color='error'
+                            >
                                 <MdDelete size={22} color="red" />
                             </ActionFab>
                         </Tooltip>
