@@ -52,6 +52,6 @@ async function getAll(query: any) {
     const params: Record<string, any> = {
         page_id: query.page_id
     };
-    const response = await instance.get(`/chat-service/quick-reply-categories/get-all`, { params });
-    return response.data
+    const response = await instance.get(`/chat-service/quick-reply-categories/get-all`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
