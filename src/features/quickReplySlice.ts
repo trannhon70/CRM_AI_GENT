@@ -5,7 +5,7 @@ import { quickReplyAPI } from '../apis/quickReply.api.ts'
 export const getPagingQuickReply = createAsyncThunk(
     'quick-reply/getPagingQuickReply',
     async (thunkAPI: any) => {
-        const response = await quickReplyAPI.getPaging(thunkAPI)
+        const response = await quickReplyAPI.getPaging(thunkAPI);
         return response.data
     },
 )

@@ -8,7 +8,7 @@ export const fetchUserById = createAsyncThunk(
   'users/getByIdUser',
   async (thunkAPI) => {
     const response = await userAPI.getByIdUser()
-    return response.data.data
+    return response.data
   },
 )
 
