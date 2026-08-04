@@ -1,5 +1,5 @@
 
-
+import CryptoJS from "crypto-js";
 export const CheckRole = {
   OWNER: 1,
   ADMIN_MANAGE: 2,
@@ -90,3 +90,19 @@ export const MAX_SIZE_BY_TYPE: Record<string, number> = {
 
 export const isValidValue = (value: unknown) =>
   value !== undefined && value !== null && value !== '' && value !== 'undefined' && value !== 'null';
+
+export function decryptResponse<T = unknown>(cipherText: string, key: string): T {
+  try {
+    const bytes = CryptoJS.AES.decrypt(cipherText, key);
+    const decryptedText = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (!decryptedText) {
+      throw new Error("Decryption failed: empty result");
+    }
+
+    return JSON.parse(decryptedText) as T;
+  } catch (error) {
+    console.error("Failed to decrypt response:", error);
+    throw new Error("Không thể giải mã dữ liệu từ server");
+  }
+}

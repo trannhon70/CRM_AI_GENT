@@ -3,8 +3,10 @@ import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axio
 import { userAPI } from "../apis/user.api";
 import { setAccessToken } from "../features/usersSlice";
 import { store } from "../redux/store";
+import { decryptResponse } from "../utils";
 
 const apiUrl = import.meta.env.VITE_API_URL_API;
+const VITE_SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 
 const instance: AxiosInstance = axios.create({
     baseURL: apiUrl,
@@ -88,7 +90,12 @@ instance.interceptors.request.use(async (config) => {
 });
 
 instance.interceptors.response.use(
-    (response) => response,
+    (response: any) => {
+        if (response.data.payload) {
+            response = decryptResponse(response.data.payload, VITE_SECRET_KEY);
+        }
+        return response;
+    },
     async (error: AxiosError<any>) => {
         const originalRequest = error.config as RetryRequest;
         const status = error.response?.status;

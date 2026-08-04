@@ -14,7 +14,7 @@ async function createConnectPageFacebook(body: any) {
 
 async function getPagesId(id: any) {
     const respone = await instance.get(`/fanpage-service/fanpages/get-page-id/${id}`);
-    return respone.data
+    return respone
 }
 
 async function tokenRenewal(body: any) {
