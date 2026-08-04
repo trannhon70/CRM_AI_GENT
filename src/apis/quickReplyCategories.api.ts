@@ -1,6 +1,8 @@
 import instance from "../helper/api.helper";
 import type { GetPagingQuickReplyCategoriesQuery } from "../types/quickReplyCategories";
 import { isValidValue } from "../utils";
+import { decryptArrayBuffer } from "../utils/crypto";
+const VITE_SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 
 export const quickReplyCategoriessAPI = {
     create,
@@ -31,14 +33,14 @@ async function getPaging(query: GetPagingQuickReplyCategoriesQuery) {
     if (isValidValue(query.search)) {
         params.search = query.search;
     }
-    const respone = await instance.get(`/chat-service/quick-reply-categories/get-paging`, { params });
-    return respone.data
+    const response = await instance.get(`/chat-service/quick-reply-categories/get-paging`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
 
 
 async function isDelete(body: any) {
-    const respone = await instance.post(`/chat-service/quick-reply-categories/delete`, body);
-    return respone.data
+    const response = await instance.post(`/chat-service/quick-reply-categories/delete`, body);
+    return response.data
 }
 
 async function update(body: any) {
@@ -50,6 +52,6 @@ async function getAll(query: any) {
     const params: Record<string, any> = {
         page_id: query.page_id
     };
-    const respone = await instance.get(`/chat-service/quick-reply-categories/get-all`, { params });
-    return respone.data
+    const response = await instance.get(`/chat-service/quick-reply-categories/get-all`, { params });
+    return response.data
 }

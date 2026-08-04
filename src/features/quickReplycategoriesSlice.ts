@@ -6,7 +6,7 @@ import type { GetPagingQuickReplyCategoriesQuery, QuickReplyCategories } from '.
 export const getPagingQuickReplycategories = createAsyncThunk(
     'quick-reply-categories/getPagingQuickReplycategories',
     async (thunkAPI: GetPagingQuickReplyCategoriesQuery) => {
-        const response = await quickReplyCategoriessAPI.getPaging(thunkAPI)
+        const response = await quickReplyCategoriessAPI.getPaging(thunkAPI);
         return response.data
     },
 )
