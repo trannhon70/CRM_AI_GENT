@@ -3,9 +3,9 @@ import CryptoJS from 'crypto-js';
 import * as pako from 'pako';
 
 /**
- * Giải mã response dạng ArrayBuffer đã qua gzip + AES encrypt từ backend.
- * Thứ tự backend xử lý: JSON -> gzip -> AES encrypt -> Buffer(IV + encrypted)
- * Thứ tự frontend xử lý (ngược lại): decrypt -> gunzip -> JSON.parse
+ * Giải mã response dạng ArrayBuffer đã qua deflate-raw + AES encrypt từ backend.
+ * Thứ tự backend xử lý: JSON -> deflateRaw -> AES encrypt -> Buffer(IV + encrypted)
+ * Thứ tự frontend xử lý (ngược lại): decrypt -> inflateRaw -> JSON.parse
  */
 export function decryptArrayBuffer<T = any>(arrayBuffer: ArrayBuffer, secretKey: string): T {
     try {
@@ -21,7 +21,8 @@ export function decryptArrayBuffer<T = any>(arrayBuffer: ArrayBuffer, secretKey:
         );
 
         const decryptedBytes = wordArrayToUint8Array(decrypted);
-        const decompressed = pako.ungzip(decryptedBytes);
+        // Đổi ungzip -> inflateRaw để khớp với deflateRawSync bên backend
+        const decompressed = pako.inflateRaw(decryptedBytes);
         const jsonStr = new TextDecoder('utf-8').decode(decompressed);
 
         return JSON.parse(jsonStr) as T;
