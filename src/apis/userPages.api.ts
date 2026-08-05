@@ -1,5 +1,8 @@
 import instance from "../helper/api.helper";
 import type { GetPagingUserPageQuery } from "../types/userPage";
+import { isValidValue } from "../utils";
+import { decryptArrayBuffer } from "../utils/crypto";
+const VITE_SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 
 export const userPagesAPI = {
     getpaging,
@@ -30,6 +33,18 @@ async function createUserPage(body: any) {
 }
 
 async function getPagingUserPageActive(query: GetPagingUserPageQuery) {
-    const respone = await instance.get(`/fanpage-service/user-pages/get-paging-user-page-active?pageIndex=${query.pageIndex}&limit=${query.limit}&search=${query.search}&page_id=${query.page_id}`);
-    return respone.data
+    const params: Record<string, any> = {
+        limit: query.limit ?? 20,
+        pageIndex: query.pageIndex ?? 1,
+    };
+
+    if (isValidValue(query.page_id)) {
+        params.page_id = query.page_id;
+    }
+
+    if (isValidValue(query.search)) {
+        params.search = query.search;
+    }
+    const response = await instance.get(`/fanpage-service/user-pages/get-paging-user-page-active`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
