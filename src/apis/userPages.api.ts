@@ -13,13 +13,25 @@ export const userPagesAPI = {
 };
 
 async function getpaging(query: any) {
-    const respone = await instance.get(`/fanpage-service/user-pages/get-paging?pageIndex=${query.pageIndex}&limit=${query.limit}&search=${query.search}&provider=${query.provider}`);
-    return respone.data.data
+    const params: Record<string, any> = {
+        limit: query.limit ?? 20,
+        pageIndex: query.pageIndex ?? 1,
+    };
+
+    if (isValidValue(query.search)) {
+        params.search = query.search;
+    }
+
+    if (isValidValue(query.provider)) {
+        params.provider = query.provider;
+    }
+    const response = await instance.get(`/fanpage-service/user-pages/get-paging`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
 
 async function getCountProvider() {
-    const respone = await instance.get(`/fanpage-service/user-pages/get-count-provider`);
-    return respone.data.data
+    const response = await instance.get(`/fanpage-service/user-pages/get-count-provider`, { responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
 
 async function deleteUserPage(id: number) {

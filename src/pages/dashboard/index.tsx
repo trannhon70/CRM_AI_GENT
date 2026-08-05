@@ -42,13 +42,12 @@ const Dashboard: FC = () => {
 
     const getPagingUserPage = async () => {
         const result = await userPagesAPI.getpaging({ pageIndex, limit: 100, search, provider });
-
-        setData(result.items)
+        setData(result.data.items)
     }
 
     const getCountProviderUserPage = async () => {
         const result = await userPagesAPI.getCountProvider();
-        setDataProvider(result)
+        setDataProvider(result.data)
     }
 
     useEffect(() => {
