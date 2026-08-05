@@ -6,7 +6,7 @@ export const fetchPaging = createAsyncThunk(
     'conversation/getPaging',
     async (query: any) => {
         const response = await conversationAPI.getPaging(query)
-        return response
+        return response.data
     },
 )
 

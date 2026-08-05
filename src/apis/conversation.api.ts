@@ -1,5 +1,7 @@
 import instance from "../helper/api.helper";
 import { isValidValue } from "../utils";
+import { decryptArrayBuffer } from "../utils/crypto";
+const VITE_SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 
 export const conversationAPI = {
     getAll,
@@ -46,8 +48,8 @@ async function getPaging(query: any) {
         params.search = query.search;
     }
 
-    const response = await instance.get(`/chat-service/conversation/get-paging`, { params });
-    return response.data?.data;
+    const response = await instance.get(`/chat-service/conversation/get-paging`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
 
 async function updateLabel(body: any) {

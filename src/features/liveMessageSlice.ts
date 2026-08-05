@@ -5,8 +5,8 @@ import { LiveMessageAPI } from '../apis/liveMessage.api.ts'
 export const fetchPagingLivemessage = createAsyncThunk(
     'live-message/getPaging',
     async (query: any) => {
-        const response = await LiveMessageAPI.getPaging(query)
-        return response
+        const response = await LiveMessageAPI.getPaging(query);
+        return response.data
     },
 )
 
