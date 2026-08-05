@@ -1,4 +1,6 @@
 import instance from "../helper/api.helper";
+import { decryptArrayBuffer } from "../utils/crypto";
+const VITE_SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 
 export const fanPagesAPI = {
     createConnectPageFacebook,
@@ -13,8 +15,8 @@ async function createConnectPageFacebook(body: any) {
 }
 
 async function getPagesId(id: any) {
-    const respone = await instance.get(`/fanpage-service/fanpages/get-page-id/${id}`);
-    return respone
+    const response = await instance.get(`/fanpage-service/fanpages/get-page-id/${id}`, { responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
 
 async function tokenRenewal(body: any) {

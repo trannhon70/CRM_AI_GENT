@@ -1,6 +1,8 @@
 import instance from "../helper/api.helper";
 import type { GetPagingLabelQuery } from "../types/label";
 import { isValidValue } from "../utils";
+import { decryptArrayBuffer } from "../utils/crypto";
+const VITE_SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
 
 export const labelAPI = {
     getPaging,
@@ -27,8 +29,8 @@ async function getPaging(query: GetPagingLabelQuery) {
     if (isValidValue(query.search)) {
         params.search = query.search;
     }
-    const respone = await instance.get(`/chat-service/labels/get-paging`, { params });
-    return respone.data
+    const response = await instance.get(`/chat-service/labels/get-paging`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
 
 async function isDelete(id: number) {
