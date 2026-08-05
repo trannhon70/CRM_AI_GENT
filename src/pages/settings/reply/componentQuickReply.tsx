@@ -6,7 +6,7 @@ import { FiEdit } from "react-icons/fi";
 import { GrSearch } from "react-icons/gr";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
-import { RiDeleteBin6Line, RiFileCopy2Fill } from "react-icons/ri";
+import { RiFileCopy2Fill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,6 +19,7 @@ import { useDebounce } from "../../../hooks/useDebounce";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { getContrastTextColor } from "../../../utils/color";
 import ModalAddQuickReply from "./modal/modalAddQuickReply";
+import ModalDeleteAll from "./modal/modalDeleteAll";
 
 const ComponentQuickReply: FC = () => {
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
@@ -31,7 +32,7 @@ const ComponentQuickReply: FC = () => {
     const [loadingId, setLoadingId] = React.useState<number | null>(null);
     const [selectedKeys, setSelectedKeys] = React.useState<React.Key[]>([]);
     const [selectable, setSelectable] = React.useState<boolean>(false)
-    // console.log(selectedKeys);
+
 
     React.useEffect(() => {
         dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
@@ -151,12 +152,7 @@ const ComponentQuickReply: FC = () => {
                 {
                     selectedKeys.length > 0 && <div className="flex items-center gap-2.5" >
                         <Chip variant="outlined" color="success" label={`Đã chọn ${selectedKeys.length}`} size="small" />
-                        <IconActionButton
-                            icon={<RiDeleteBin6Line size={20} />}
-                            tooltip=""
-                            color="error"
-                        // onClick={handleUpload}
-                        />
+                        <ModalDeleteAll selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} />
                     </div>
                 }
                 <IconActionButton

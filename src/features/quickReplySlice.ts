@@ -37,6 +37,11 @@ const quickReplySlice = createSlice({
         removeItem: (state, action: PayloadAction<number>) => {
             state.data = state.data.filter(item => item.id !== action.payload);
         },
+
+        removeItemAll: (state, action: PayloadAction<any>) => {
+            const idsToRemove = new Set(action.payload);
+            state.data = state.data.filter(item => !idsToRemove.has(item.id));
+        },
         insertItem: (state, action: PayloadAction<any>) => {
             // thêm vào đầu danh sách
             state.data.unshift(action.payload);
@@ -77,5 +82,5 @@ const quickReplySlice = createSlice({
     },
 })
 
-export const { insertItem, removeItem, updateItem } = quickReplySlice.actions;
+export const { insertItem, removeItem, updateItem, removeItemAll } = quickReplySlice.actions;
 export const quickReplyReducer = quickReplySlice.reducer;
