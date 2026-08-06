@@ -20,6 +20,7 @@ import type { AppDispatch, RootState } from "../../../redux/store";
 import { getContrastTextColor } from "../../../utils/color";
 import ModalAddQuickReply from "./modal/modalAddQuickReply";
 import ModalDeleteAll from "./modal/modalDeleteAll";
+import ModalCopyQuickReply from "./modal/modalCopyQuickReply";
 
 const ComponentQuickReply: FC = () => {
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
@@ -35,7 +36,7 @@ const ComponentQuickReply: FC = () => {
 
 
     React.useEffect(() => {
-        dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 10, search: searchDebounce }))
+        dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 100, search: searchDebounce }))
     }, [id, searchDebounce, dispatch])
 
     const handleScroll = React.useCallback(
@@ -43,7 +44,7 @@ const ComponentQuickReply: FC = () => {
             const target = e.currentTarget;
             const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
             if (distanceToBottom < 50 && hasMore && loading !== "pending") {
-                dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: Number(pageIndex) + 1, limit: 10, search: searchDebounce }))
+                dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: Number(pageIndex) + 1, limit: 100, search: searchDebounce }))
             }
         },
         [hasMore, loading]
@@ -183,16 +184,8 @@ const ComponentQuickReply: FC = () => {
                     disabled={selectable}
                 // onClick={handleUpload}
                 />
-                <IconActionButton
-                    icon={<RiFileCopy2Fill size={20} />}
-                    tooltip="Sao chép tất cả danh sách QR"
-                    // bgColor="#fee2e2"
-                    // hoverColor="#fecaca"
-                    // textColor="#dc2626"
-                    color="info"
-                    disabled={selectable}
-                // onClick={handleUpload}
-                />
+                <ModalCopyQuickReply selectable={selectable} />
+
 
                 <ModalAddQuickReply item={item} setItem={setItem} disabled={selectable} />
             </div>
