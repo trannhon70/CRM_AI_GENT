@@ -29,7 +29,7 @@ const ComponentReplyCategories: FC<IProps> = (props) => {
     const dispatch = useDispatch<AppDispatch>();
     const [search, setSearch] = React.useState<string>("");
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReplycategories);
-    const searchDebounce = useDebounce(search, 500);
+    const { searchDebounce } = useDebounce(search, 500);
     const [loadingId, setLoadingId] = useState<number | null>(null);
     const [item, setItem] = React.useState<any>(null)
 

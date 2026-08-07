@@ -36,7 +36,7 @@ const PageAddUser: FC = () => {
 
     const [search, setSearch] = useState<string>("");
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.userPage);
-    const searchDebounce = useDebounce(search, 500);
+    const { searchDebounce } = useDebounce(search, 500);
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {

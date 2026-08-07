@@ -108,7 +108,7 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
     const [mode, setMode] = React.useState<'append' | 'replace'>('append');
     const [selectedKeys, setSelectedKeys] = React.useState<React.Key[]>([]);
     const [search, setSearch] = React.useState<string>("");
-    const searchDebounce = useDebounce(search, 500);
+    const { searchDebounce } = useDebounce(search, 500);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {

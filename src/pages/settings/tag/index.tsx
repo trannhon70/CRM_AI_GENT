@@ -33,7 +33,7 @@ const PageSettingTag: FC = () => {
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.label);
     const [active, setActive] = React.useState<any>("false");
     const [search, setSearch] = React.useState("");
-    const searchDebounce = useDebounce(search, 500);
+    const { searchDebounce } = useDebounce(search, 500);
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
     const [item, setItem] = React.useState<any>(null)
 

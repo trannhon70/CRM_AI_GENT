@@ -28,7 +28,7 @@ const ComponentLeftConversation: FC = () => {
     const fanPages = useSelector((state: RootState) => state.fanPages);
     const { data, lastId, limit, lastUpdatedAt } = useSelector((state: RootState) => state.conversation);
     const [search, setSearch] = useState("");
-    const searchDebounce = useDebounce(search, 500);
+    const { searchDebounce } = useDebounce(search, 500);
 
     useEffect(() => {
         if (!id) return;

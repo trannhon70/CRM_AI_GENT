@@ -57,7 +57,7 @@ const ComponentGifPicker: FC = () => {
     const conversation = useSelector((state: RootState) => state.conversation);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const [search, setSearch] = React.useState<string>("")
-    const searchDebounce = useDebounce(search, 500);
+    const { searchDebounce } = useDebounce(search, 500);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };

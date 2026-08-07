@@ -27,7 +27,7 @@ const ComponentQuickReply: FC = () => {
     const { id } = useParams();
     const dispatch = useDispatch<AppDispatch>();
     const [search, setSearch] = React.useState<string>("");
-    const searchDebounce = useDebounce(search, 500);
+    const { searchDebounce } = useDebounce(search, 500);
     const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReply);
     const [item, setItem] = React.useState<any>(null)
     const [loadingId, setLoadingId] = React.useState<number | null>(null);
