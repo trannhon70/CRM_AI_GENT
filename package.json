@@ -37,6 +37,7 @@
     "dompurify": "^3.2.6",
     "emoji-picker-react": "^4.19.1",
     "file-saver": "^2.0.5",
+    "idb": "^8.0.3",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "pako": "^3.0.1",

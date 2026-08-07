@@ -4,6 +4,7 @@ import { userAPI } from "../apis/user.api";
 import { setAccessToken } from "../features/usersSlice";
 import { store } from "../redux/store";
 import { decryptResponse } from "../utils";
+import { networkStatus } from "../utils/networkStatus";
 
 const apiUrl = import.meta.env.VITE_API_URL_API;
 const VITE_SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
@@ -66,6 +67,13 @@ const refreshAccessToken = async (): Promise<string> => {
 };
 
 instance.interceptors.request.use(async (config) => {
+    if (!networkStatus.isOnline) {
+        // huỷ request ngay, không cần chờ timeout
+        return Promise.reject({
+            isOffline: true,
+            message: "Không có kết nối Internet",
+        });
+    }
     const shouldSkip = SKIP_URLS.some((u) => config.url?.includes(u));
 
     if (!shouldSkip) {
@@ -97,6 +105,10 @@ instance.interceptors.response.use(
         return response;
     },
     async (error: AxiosError<any>) => {
+        const isNetworkError = !error.response;
+        if (isNetworkError) {
+            error.isOffline = true;
+        }
         const originalRequest = error.config as RetryRequest;
         const status = error.response?.status;
         const message = error.response?.data?.message;

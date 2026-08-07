@@ -17,6 +17,9 @@ import ModalConnect from "../../components/modal/modalConnect";
 import { getRemainingDaysText } from '../../utils/date';
 import LoadingLayout from '../../components/loadingLayout';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { userPageRepository } from '../../storage';
+import { useDebounce } from '../../hooks/useDebounce';
+import { CircularProgress } from '@mui/material';
 
 
 const providerIcons: Record<string, string> = {
@@ -33,37 +36,42 @@ const Dashboard: FC = () => {
     const [search, setSearch] = useState<string>("");
     const [provider, setProvider] = useState<string>("");
     const [dataProvider, setDataProvider] = useState<any>([]);
-    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [activeProvider, setActiveProvider] = useState('Tất cả');
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [selectedItem, setSelectedItem] = useState<any>(null);
-    const [loading, setLoading] = useState<boolean>(false);
-    const { setStorage } = useLocalStorage("pageId", null)
+    const [apiLoading, setApiLoading] = useState(false);
+    const { setStorage } = useLocalStorage("pageId", null);
+    const { searchDebounce, loading } = useDebounce(search, 500);
 
     const getPagingUserPage = async () => {
-        const result = await userPagesAPI.getpaging({ pageIndex, limit: 100, search, provider });
-        setData(result.data.items)
-    }
+        try {
+            const result = await userPagesAPI.getpaging({ pageIndex, limit: pageSize, search: searchDebounce, provider });
+            setData(result.data.items);
+            await userPageRepository.putMany(result.data.items);
+        } catch (err) {
+            // mất mạng hoặc API lỗi -> fallback dùng dữ liệu cache trong IndexedDB
+            const cached = await userPageRepository.search({ search: searchDebounce, provider });
+            setData(cached);
+        }
+    };
 
     const getCountProviderUserPage = async () => {
-        const result = await userPagesAPI.getCountProvider();
-        setDataProvider(result.data)
+        try {
+            const result = await userPagesAPI.getCountProvider();
+            setDataProvider(result.data)
+        } catch (error) {
+
+        }
+
     }
 
     useEffect(() => {
         getCountProviderUserPage()
     }, [])
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedSearch(search);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, [search]);
 
     useEffect(() => {
         getPagingUserPage()
-    }, [pageSize, pageIndex, debouncedSearch, provider])
+    }, [pageSize, pageIndex, searchDebounce, provider])
 
     const onChangeSearch = (event: any) => {
         setSearch(event.target.value)
@@ -89,34 +97,34 @@ const Dashboard: FC = () => {
     };
 
     const handleRenewToken = (item: any) => {
-        setLoading(true);
+        setApiLoading(true);
         fanPagesAPI.tokenRenewal({ access_token: item.page.access_token, fanpage_id: item.fanpage_id }).then((_res: any) => {
             toast.success('Gia hạn thành công!');
             handleClose();
             getPagingUserPage();
-            setLoading(false);
+            setApiLoading(false);
         }).catch((_err: any) => {
-            setLoading(false);
+            setApiLoading(false);
             handleClose();
             toast.error('Lỗi khi kết nối!')
         })
     }
 
     const handleDelete = (item: any) => {
-        setLoading(true);
+        setApiLoading(true);
         userPagesAPI.deleteUserPage(item.id).then((_res: any) => {
             toast.success('Xóa page thành công!');
             handleClose();
             getPagingUserPage();
-            setLoading(false);
+            setApiLoading(false);
         }).catch((_err: any) => {
-            setLoading(false);
+            setApiLoading(false);
             handleClose();
             toast.error('Lỗi khi kết nối!')
         })
     }
 
-    if (loading) return <LoadingLayout />
+    if (apiLoading) return <LoadingLayout />
     return (
         <div className="bg-[#ECEDF4] h-[95vh] w-full flex flex-col">
             <div className="w-[1200px] m-auto py-4 flex flex-col flex-1 min-h-0">
@@ -133,7 +141,11 @@ const Dashboard: FC = () => {
                                 input: {
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <IoSearch size={20} />
+                                            {loading ? (
+                                                <CircularProgress size={18} />
+                                            ) : (
+                                                <IoSearch size={20} />
+                                            )}
                                         </InputAdornment>
                                     ),
                                 },

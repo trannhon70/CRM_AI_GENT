@@ -14,6 +14,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/vi';
+import { OnlineStatusProvider } from './context/OnlineStatusContext.tsx'
+import OfflineBanner from './components/offlineBanner/index.tsx'
 
 dayjs.extend(relativeTime);
 dayjs.locale('vi');
@@ -23,20 +25,23 @@ const queryClient = new QueryClient()
 window.global = window;
 createRoot(document.getElementById('root')!).render(
   <>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <AuthProvider>
-            <GoogleOAuthProvider clientId="711281269065-crdj44ccla7g1dc98kip035lm86a5nd4.apps.googleusercontent.com">
-              <App />
-            </GoogleOAuthProvider>
+    <OnlineStatusProvider>
+      <OfflineBanner />
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <AuthProvider>
+              <GoogleOAuthProvider clientId="711281269065-crdj44ccla7g1dc98kip035lm86a5nd4.apps.googleusercontent.com">
+                <App />
+              </GoogleOAuthProvider>
 
-          </AuthProvider>
+            </AuthProvider>
+            <ToastContainer />
+          </Provider>
           <ToastContainer />
-        </Provider>
-        <ToastContainer />
-      </QueryClientProvider>
-    </BrowserRouter>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </OnlineStatusProvider>
 
   </>,
 )
