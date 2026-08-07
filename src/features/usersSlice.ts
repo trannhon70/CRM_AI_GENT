@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { userAPI } from '../apis/user.api.ts'
+import { cacheRepository } from '../storage/core/keyValueRepository.ts';
 
 
 
@@ -7,8 +8,14 @@ import { userAPI } from '../apis/user.api.ts'
 export const fetchUserById = createAsyncThunk(
   'users/getByIdUser',
   async (thunkAPI) => {
-    const response = await userAPI.getByIdUser()
-    return response.data
+    try {
+      const response = await userAPI.getByIdUser();
+      await cacheRepository.set("user_by_id", response.data);
+      return response.data
+    } catch (error) {
+      return cacheRepository.get("user_by_id");
+    }
+
   },
 )
 

@@ -11,6 +11,6 @@ export function migrate(db: IDBPDatabase<unknown>, oldVersion: number) {
 
     //Sau này version 2
     if (oldVersion < 2) {
-
+        db.createObjectStore(STORE.CACHE, { keyPath: "key" });
     }
 }

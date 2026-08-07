@@ -30,6 +30,16 @@ export class UserPageRepository extends Repository<UserPageModel> {
             return true;
         });
     }
+
+    async countByProvider(): Promise<Record<string, number>> {
+        const all = await this.getAll();
+
+        return all.reduce((acc, item) => {
+            const key = item.provider ?? "unknown";
+            acc[key] = (acc[key] ?? 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+    }
 }
 
 export const userPageRepository = new UserPageRepository();

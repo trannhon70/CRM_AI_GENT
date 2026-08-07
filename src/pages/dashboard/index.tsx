@@ -20,6 +20,7 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { userPageRepository } from '../../storage';
 import { useDebounce } from '../../hooks/useDebounce';
 import { CircularProgress } from '@mui/material';
+import { cacheRepository } from '../../storage/core/keyValueRepository';
 
 
 const providerIcons: Record<string, string> = {
@@ -59,10 +60,12 @@ const Dashboard: FC = () => {
         try {
             const result = await userPagesAPI.getCountProvider();
             setDataProvider(result.data)
+            await cacheRepository.set("provider_count", result.data);
         } catch (error) {
-
+            // fallback: tự đếm provider từ cache
+            const cached = await cacheRepository.get("provider_count");
+            setDataProvider(cached);
         }
-
     }
 
     useEffect(() => {

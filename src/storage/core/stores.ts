@@ -5,6 +5,7 @@ export const STORE = {
     QUICK_REPLY: "quick_reply",
     QUICK_REPLY_CATEGORY: "quick_reply_category",
     TAG: "tag",
+    CACHE: "cache",
 } as const;
 
 export type StoreName = (typeof STORE)[keyof typeof STORE];
