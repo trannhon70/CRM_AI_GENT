@@ -70,7 +70,7 @@ const HeaderConversation: FC = () => {
         onSyncStatus: (event: any) => {
             dispatch(updateSyncStatus(event));
             if (event.syncStatus === 'success') {
-                dispatch(fetchPaging({ limit: 1000, page_id: id, search: "" }));
+                dispatch(fetchPaging({ limit: 100, page_id: id, search: "", pageIndex: 1 }));
             }
         },
         onNewMessage(event: any) {

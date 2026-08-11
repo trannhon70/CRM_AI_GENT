@@ -5,7 +5,7 @@ import { conversationAPI } from '../apis/conversation.api.ts'
 export const fetchPaging = createAsyncThunk(
     'conversation/getPaging',
     async (query: any) => {
-        const response = await conversationAPI.getPaging(query)
+        const response = await conversationAPI.getPaging(query);
         return response.data
     },
 )
@@ -27,8 +27,7 @@ interface conversationState {
     search: string;
     data: any,
     limit: number,
-    lastId: number,
-    lastUpdatedAt: number,
+    pageIndex: number,
     hasMore: boolean,
     active: ConversationActive;
 }
@@ -38,8 +37,7 @@ const initialState = {
     search: '',
     data: [],
     limit: 5,
-    lastUpdatedAt: 0,
-    lastId: 1,
+    pageIndex: 1,
     hasMore: false,
     active: { id: 0, full_name: '', avatar: '', unread_count: 0, last_message_at: 0, updated_at: 0, customer_id: '', page_id: '' },
 
@@ -71,26 +69,29 @@ const conversationSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchPaging.fulfilled, (state, action) => {
-            const currentSearch = action.meta.arg.search ?? '';
-            if (state.search !== currentSearch) {
-                state.data = action.payload.data;
-            }
-            else if (!action.payload.lastId) {
-                // Lần đầu load hoặc search mới → reset
-                state.data = action.payload.data;
-            } else {
-                // Scroll load thêm → append
-                state.data = [...state.data, ...action.payload.data];
-            }
-            state.search = currentSearch;
-            state.lastId = action.payload.lastId;
-            state.limit = action.payload.limit;
-            state.lastUpdatedAt = action.payload.lastUpdatedAt;
-            state.hasMore = action.payload.hasMore;
-            state.loading = 'succeeded';
 
-        });
+        builder
+            .addCase(fetchPaging.pending, (state, action) => {
+                state.loading = "pending";
+            })
+            .addCase(fetchPaging.fulfilled, (state, action) => {
+                // if (state.currentRequestId !== action.meta.requestId) {
+                //     return; // bỏ qua request cũ
+                // }
+                if (action.meta.arg.pageIndex === 1) {
+                    state.data = action.payload.data;
+                } else {
+                    state.data = [...action.payload.data, ...state.data];
+                }
+                state.pageIndex = action.meta.arg.pageIndex;
+                state.limit = action.payload.limit;
+                state.hasMore = action.payload.hasMore;
+                state.loading = 'succeeded';
+
+            })
+            .addCase(fetchPaging.rejected, (state, action) => {
+                state.loading = "failed";
+            })
 
     },
 })

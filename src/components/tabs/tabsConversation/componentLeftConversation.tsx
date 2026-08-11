@@ -1,39 +1,35 @@
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
-import { useEffect, useMemo, useState, type FC } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import React, { useEffect, useMemo, useRef, useState, type FC } from "react";
 import { GrSearch } from "react-icons/gr";
 import { PiSortDescending } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { fetchPaging } from "../../../features/conversationSlice";
+import { useDebounce } from "../../../hooks/useDebounce";
 import ConversationItem from "../../../pages/conversation/conversationItem";
 import PendingSyncComponent from "../../../pages/conversation/pendingSync";
 import SyncFailedComponent from "../../../pages/conversation/syncFailed";
 import SyncingComponent from "../../../pages/conversation/syncing";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { SyncStatus } from "../../../utils";
-import { useParams } from "react-router-dom";
-import { fetchPaging } from "../../../features/conversationSlice";
-import { useDebounce } from "../../../hooks/useDebounce";
-import { useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { CircularProgress } from "@mui/material";
 
 
 const ComponentLeftConversation: FC = () => {
     const { id } = useParams();
     const parentRef = useRef<HTMLDivElement>(null);
-    const [isFetching, setIsFetching] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-
     const dispatch = useDispatch<AppDispatch>();
     const fanPages = useSelector((state: RootState) => state.fanPages);
-    const { data, lastId, limit, lastUpdatedAt } = useSelector((state: RootState) => state.conversation);
+    const { data, pageIndex, limit, loading, hasMore } = useSelector((state: RootState) => state.conversation);
     const [search, setSearch] = useState("");
     const { searchDebounce } = useDebounce(search, 500);
 
     useEffect(() => {
         if (!id) return;
-
-        dispatch(fetchPaging({ lastId: undefined, limit: 20, page_id: id, search: searchDebounce }));
+        dispatch(fetchPaging({ pageIndex: 1, limit: 20, page_id: id, search: searchDebounce }));
     }, [id, searchDebounce, dispatch]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,18 +49,17 @@ const ComponentLeftConversation: FC = () => {
         overscan: 10,
     });
 
-    const onScroll = async (e: React.UIEvent<HTMLDivElement>) => {
-        const el = e.currentTarget;
-        const { scrollTop, scrollHeight, clientHeight } = el;
 
-        if (scrollTop + clientHeight >= scrollHeight - 200 && !isFetching && hasMore) {
-            setIsFetching(true);
-            const result = await dispatch(fetchPaging({ lastId: lastId, lastUpdatedAt: lastUpdatedAt, limit: limit, page_id: id, search: searchDebounce }));
-            if (!result.payload?.hasMore) setHasMore(false);
-            setIsFetching(false);
-        }
-    };
-
+    const handleScroll = React.useCallback(
+        (e: React.UIEvent<HTMLDivElement>) => {
+            const target = e.currentTarget;
+            const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+            if (distanceToBottom < 50 && hasMore && loading !== "pending") {
+                dispatch(fetchPaging({ pageIndex: Number(pageIndex) + 1, limit: limit, page_id: id, search: searchDebounce }));
+            }
+        },
+        [hasMore, loading]
+    );
 
     return <div className="flex flex-col h-full" >
         <div className="flex items-center gap-2 p-3 w-full">
@@ -79,7 +74,11 @@ const ComponentLeftConversation: FC = () => {
                     input: {
                         startAdornment: (
                             <InputAdornment position="start">
-                                <GrSearch />
+                                {loading !== "succeeded" ? (
+                                    <CircularProgress size={18} />
+                                ) : (
+                                    <GrSearch size={20} />
+                                )}
                             </InputAdornment>
                         ),
                     },
@@ -120,7 +119,7 @@ const ComponentLeftConversation: FC = () => {
                 <div
                     ref={parentRef}
                     className="h-full overflow-auto"
-                    onScroll={onScroll}
+                    onScroll={handleScroll}
                 >
                     <div
                         style={{

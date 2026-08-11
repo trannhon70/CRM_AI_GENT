@@ -36,12 +36,8 @@ async function getPaging(query: any) {
         params.page_id = query.page_id;
     }
 
-    if (isValidValue(query.lastId)) {
-        params.lastId = Number(query.lastId);
-    }
-
-    if (isValidValue(query.lastUpdatedAt)) {
-        params.lastUpdatedAt = Number(query.lastUpdatedAt);
+    if (isValidValue(query.pageIndex)) {
+        params.pageIndex = Number(query.pageIndex);
     }
 
     if (isValidValue(query.search)) {
