@@ -6,7 +6,6 @@ import { FiEdit } from "react-icons/fi";
 import { GrSearch } from "react-icons/gr";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
-import { RiFileCopy2Fill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,8 +18,8 @@ import { useDebounce } from "../../../hooks/useDebounce";
 import type { AppDispatch, RootState } from "../../../redux/store";
 import { getContrastTextColor } from "../../../utils/color";
 import ModalAddQuickReply from "./modal/modalAddQuickReply";
-import ModalDeleteAll from "./modal/modalDeleteAll";
 import ModalCopyQuickReply from "./modal/modalCopyQuickReply";
+import ModalDeleteAll from "./modal/modalDeleteAll";
 
 const ComponentQuickReply: FC = () => {
     const tableContainerRef = React.useRef<HTMLDivElement>(null);

@@ -21,6 +21,7 @@ import { userPageRepository } from '../../storage';
 import { useDebounce } from '../../hooks/useDebounce';
 import { CircularProgress } from '@mui/material';
 import { cacheRepository } from '../../storage/core/keyValueRepository';
+import { SocialIcon } from '../../components/icons/SocialIcon';
 
 
 const providerIcons: Record<string, string> = {
@@ -198,6 +199,8 @@ const Dashboard: FC = () => {
                 <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3 items-start gap-2.5">
                     {
                         data?.length > 0 && data.map((item: any, _index: number) => {
+                            console.log(item);
+
                             const remainingDays = Number(getRemainingDaysText(item.page.data_access_expires_at))
                             return <div
                                 key={item.id}
@@ -217,12 +220,8 @@ const Dashboard: FC = () => {
                                         <h3 className="font-semibold text-gray-900 truncate text-base">
                                             {item.page.page_name}
                                         </h3>
+                                        <SocialIcon value={item.page.page_platform} />
 
-                                        <img
-                                            src={facebook}
-                                            alt="facebook"
-                                            className="w-5 h-5"
-                                        />
                                     </div>
 
                                     <div className=" flex flex-col gap-1 text-sm text-gray-500">

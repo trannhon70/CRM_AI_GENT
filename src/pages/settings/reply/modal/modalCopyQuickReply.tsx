@@ -1,4 +1,4 @@
-import { Alert, Avatar, Chip, FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TableCell, TextField, Tooltip } from '@mui/material';
+import { Alert, Avatar, Chip, CircularProgress, FormControl, FormControlLabel, InputAdornment, Radio, RadioGroup, TableCell, TextField, Tooltip } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -7,18 +7,19 @@ import { styled } from '@mui/material/styles';
 import type { TooltipProps } from '@mui/material/Tooltip';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import { animated, useSpring } from '@react-spring/web';
-import React, { Fragment, type FC } from "react";
-import { GrSearch } from 'react-icons/gr';
+import React, { Fragment, useLayoutEffect, useState, type FC } from "react";
 import { IoMdClose } from "react-icons/io";
+import { IoSearch } from 'react-icons/io5';
 import { RiFileCopy2Fill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
-import facebook from "../../../../assets/images/facebook.png";
 import CommonTable from '../../../../components/common/CommonTable';
 import IconActionButton from "../../../../components/icons/iconActionButton";
+import { SocialIcon } from '../../../../components/icons/SocialIcon';
 import { getPagingQuickReply } from '../../../../features/quickReplySlice';
 import { useDebounce } from '../../../../hooks/useDebounce';
 import type { AppDispatch, RootState } from "../../../../redux/store";
+import { cacheRepository } from '../../../../storage/core/keyValueRepository';
 import { getContrastTextColor } from '../../../../utils/color';
 import ComponentSelect from '../select';
 
@@ -109,18 +110,31 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
     const [selectedKeys, setSelectedKeys] = React.useState<React.Key[]>([]);
     const [search, setSearch] = React.useState<string>("");
     const { searchDebounce } = useDebounce(search, 500);
+    const [source_page, setSource_page] = useState<any>({})
+    console.log(loading);
+
+    const getDataCache = async () => {
+        const result = await cacheRepository.get("getFanPagesId");
+        setSource_page(result)
+    }
+
+    useLayoutEffect(() => {
+        if (open) {
+            getDataCache()
+        }
+    }, [open])
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
-        dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 10, search: "" }));
         setSelectedKeys([])
         setSearch("");
         setOpen(false);
     }
 
     React.useEffect(() => {
-        dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 100, search: searchDebounce }))
-    }, [id, searchDebounce, dispatch])
+        if (!open) return;
+        dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 100, search: searchDebounce, }));
+    }, [id, searchDebounce, dispatch, open]);
 
     const handleScroll = React.useCallback(
         (e: React.UIEvent<HTMLDivElement>) => {
@@ -182,15 +196,15 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
                         <div className='flex items-center gap-5 shrink-0 ' >
                             <div className='flex-1 bg-white rounded px-5 p-3' >
                                 <div className='flex items-center gap-3' >
-                                    <Avatar src={undefined}>
-                                        {/* {item.full_name?.charAt(0).toUpperCase()} */} A
+                                    <Avatar src={source_page.page_avatar}>
+                                        {source_page.page_name?.charAt(0).toUpperCase()}
                                     </Avatar>
                                     <div className='leading-1' >
                                         <div className='text-[#4a4b4d] text-sm font-semibold'>Trang nguồn</div>
-                                        <div className='text-xl text-black font-medium' >Tư vấn nam khoa HCM</div>
+                                        <div className='text-xl text-black font-medium' > {source_page.page_name}</div>
                                         <div className='flex items-center gap-2.5 text-[#4a4b4d] text-sm'>
-                                            <img src={facebook} alt="facebook" className="w-4 h-4" />
-                                            tuvannamkhoahcm88
+                                            <SocialIcon value={source_page.page_platform} />
+                                            {source_page.page_id}
                                         </div>
                                     </div>
                                 </div>
@@ -218,7 +232,11 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
                                         input: {
                                             startAdornment: (
                                                 <InputAdornment position="start">
-                                                    <GrSearch />
+                                                    {loading !== "succeeded" ? (
+                                                        <CircularProgress size={18} />
+                                                    ) : (
+                                                        <IoSearch size={20} />
+                                                    )}
                                                 </InputAdornment>
                                             ),
                                         },

@@ -61,6 +61,9 @@ const conversationSlice = createSlice({
                     ...state.data[index],
                     ...data,
                 };
+            } else {
+                // Chưa tồn tại → thêm vào đầu danh sách
+                state.data.unshift(data);
             }
             //cập nhật lại active
             if (state.active) {

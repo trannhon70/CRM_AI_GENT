@@ -1,15 +1,22 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { fanPagesAPI } from '../apis/fanpage.api.ts'
+import { cacheRepository } from '../storage/core/keyValueRepository.ts';
 
 
 
 // First, create the thunk
 export const fetchPageId = createAsyncThunk(
     'fanPages/getFanPagesId',
-    async (thunkAPI: any) => {
-        const response = await fanPagesAPI.getPagesId(thunkAPI)
+    async (params: any, thunkAPI) => {
+        try {
+            const response = await fanPagesAPI.getPagesId(params)
 
-        return response.data
+            await cacheRepository.set("getFanPagesId", response.data);
+            return response.data
+        } catch (error) {
+            return cacheRepository.get("getFanPagesId");
+        }
+
     },
 )
 
