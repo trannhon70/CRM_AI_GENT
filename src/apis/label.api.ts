@@ -10,7 +10,8 @@ export const labelAPI = {
     create,
     update,
     restore,
-    copy
+    copy,
+    isDeleteAll
 };
 
 async function getPaging(query: GetPagingLabelQuery) {
@@ -57,4 +58,9 @@ async function restore(id: number) {
 async function copy(body: any) {
     const response = await instance.post(`/chat-service/labels/copy`, body);
     return response.data.data
+}
+
+async function isDeleteAll(body: any) {
+    const respone = await instance.post(`/chat-service/labels/delete-all`, body);
+    return respone.data
 }

@@ -27,6 +27,9 @@ import { formatUnixTime } from '../../../utils/date';
 import ModalLabel from './modalLabel';
 import { LuUndo2 } from "react-icons/lu";
 import ModalCopyLabel from './modalCopyLabel';
+import IconActionButton from '../../../components/icons/iconActionButton';
+import { IoCheckmarkDoneOutline } from 'react-icons/io5';
+import ModalDeleteAll from './modalDeleteAll';
 
 const PageSettingTag: FC = () => {
     const { id } = useParams();
@@ -36,7 +39,9 @@ const PageSettingTag: FC = () => {
     const [search, setSearch] = React.useState("");
     const { searchDebounce } = useDebounce(search, 500);
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
-    const [item, setItem] = React.useState<any>(null)
+    const [item, setItem] = React.useState<any>(null);
+    const [selectable, setSelectable] = React.useState<boolean>(false);
+    const [selectedKeys, setSelectedKeys] = React.useState<React.Key[]>([]);
 
     React.useEffect(() => {
         dispatch(getPagingLabel({ page_id: String(id), is_deleted: active, pageIndex: 1, limit: 100, search: searchDebounce }))
@@ -195,11 +200,34 @@ const PageSettingTag: FC = () => {
                         }}
                     />
                     <div className='flex items-center gap-2.5' >
-                        <ModalCopyLabel />
+                        {
+                            selectedKeys.length > 0 && <div className="flex items-center gap-2.5" >
+                                <Chip variant="outlined" color="success" label={`Đã chọn ${selectedKeys.length}`} size="small" />
+                                <ModalDeleteAll selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} />
+                            </div>
+                        }
+                        <IconActionButton
+                            icon={<IoCheckmarkDoneOutline size={20} />}
+                            tooltip="Chọn mẫu trả lời"
+                            color={selectable ? "primary" : "default"}
+                            onClick={() => {
+                                setSelectable((prev) => {
+                                    const next = !prev;
+                                    if (!next) {
+                                        setSelectedKeys([]); // tắt chế độ chọn thì clear luôn các dòng đã tick
+                                    }
+                                    return next;
+                                });
+                            }}
+                        />
+                        <ModalCopyLabel selectable={selectable} />
                         <ModalLabel item={item} setItem={setItem} active={active} />
                     </div>
                 </div>
                 <CommonTable
+                    selectable={selectable}
+                    selectedKeys={selectedKeys}
+                    onSelectedKeysChange={setSelectedKeys}
                     containerRef={tableContainerRef}
                     handleScroll={handleScroll}
                     containerProps={{ sx: { mt: 2 } }}
