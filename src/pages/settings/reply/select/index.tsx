@@ -7,16 +7,18 @@ import { SocialIcon } from "../../../../components/icons/SocialIcon";
 import { useDebounce } from "../../../../hooks/useDebounce";
 import { userPageRepository } from "../../../../storage";
 
+interface ComponentSelectProps {
+    onSelect?: (item: any) => void;
+    source_page?: any;
+}
 
-const ComponentSelect: FC = () => {
+const ComponentSelect: FC<ComponentSelectProps> = ({ onSelect, source_page }) => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
     const open = Boolean(anchorEl);
     const [search, setSearch] = React.useState<string>("");
     const { searchDebounce, loading } = useDebounce(search, 500);
     const [data, setData] = useState<any>([]);
     const [selectedPage, setSelectedPage] = useState<any>(null);
-
-    console.log(selectedPage);
 
     useLayoutEffect(() => {
         getDataCache()
@@ -37,6 +39,7 @@ const ComponentSelect: FC = () => {
 
     const handleSelectItem = (item: any) => {
         setSelectedPage(item);
+        onSelect?.(item);
         // Nếu muốn chọn xong thì đóng luôn popper:
         // handleClose();
     };
@@ -44,22 +47,41 @@ const ComponentSelect: FC = () => {
     return (
         <Fragment>
             <div className="flex-1 bg-white rounded px-5 py-3">
-                <div className="flex items-center gap-3">
-                    <Avatar>A</Avatar>
-                    <div className="flex-1">
-                        <div className="text-sm font-semibold text-[#4a4b4d]">Trang đích</div>
-                        {
-                            selectedPage ? <>
-                                <div className="text-xl font-medium"> {selectedPage.page.page_name}</div>
-                                <div className="flex items-center gap-2 text-sm text-[#4a4b4d]">
-                                    <SocialIcon value={selectedPage.page.page_platform} />  {selectedPage.page.page_id}
-                                </div>
-                            </> : <div className="flex items-center gap-2 text-lg font-medium text-[#4a4b4d]">Chưa chọn trang</div>
-                        }
+                {
+                    selectedPage ?
+                        <div className="flex items-center gap-3">
+                            <Avatar src={selectedPage.page.page_avatar}>
+                                {selectedPage.page.page_name?.charAt(0).toUpperCase()}
+                            </Avatar>
+                            <div className="flex-1">
+                                <div className="text-sm font-semibold text-[#4a4b4d]">Trang đích</div>
+                                <>
+                                    <div className="text-xl font-medium"> {selectedPage.page.page_name}</div>
+                                    <div className="flex items-center gap-2 text-sm text-[#4a4b4d]">
+                                        <SocialIcon value={selectedPage.page.page_platform} />  {selectedPage.page.page_id}
+                                    </div>
+                                </>
 
-                    </div>
-                    <IconActionButton icon={!open ? <FaAngleDown size={20} /> : <FaAngleUp size={20} />} tooltip="" color="default" onClick={handleClick} />
-                </div>
+                            </div>
+
+
+                            <IconActionButton icon={!open ? <FaAngleDown size={20} /> : <FaAngleUp size={20} />} tooltip="" color="default" onClick={handleClick} />
+                        </div>
+                        : <div className="flex items-center gap-3">
+                            <Avatar >
+                                ?
+                            </Avatar>
+                            <div className="flex-1">
+                                <div className="text-sm font-semibold text-[#4a4b4d]">Trang đích</div>
+                                <div className="flex items-center gap-2 text-lg font-medium text-[#4a4b4d]">Chưa chọn trang</div>
+
+                            </div>
+
+
+                            <IconActionButton icon={!open ? <FaAngleDown size={20} /> : <FaAngleUp size={20} />} tooltip="" color="default" onClick={handleClick} />
+                        </div>
+
+                }
             </div>
 
             <Popper open={open} anchorEl={anchorEl} placement="bottom-end" transition
@@ -91,7 +113,7 @@ const ComponentSelect: FC = () => {
                                     </Box>
 
                                     <Box sx={{ maxHeight: 320, overflowY: "auto" }}>
-                                        {data.map((item: any) => {
+                                        {data.filter((item: any) => item.fanpage_id !== source_page?.id).map((item: any) => {
                                             const isActive = selectedPage?.id === item.id;
                                             return (
                                                 <Box

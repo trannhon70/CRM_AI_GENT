@@ -8,7 +8,8 @@ export const quickReplyAPI = {
     getPaging,
     isDelete,
     update,
-    isDeleteAll
+    isDeleteAll,
+    copy
 };
 
 async function create(body: any) {
@@ -46,4 +47,9 @@ async function update(body: any) {
 async function isDeleteAll(body: any) {
     const respone = await instance.post(`/chat-service/quick-reply/delete-all`, body);
     return respone.data
+}
+
+async function copy(body: any) {
+    const response = await instance.post(`/chat-service/quick-reply/copy`, body);
+    return response.data.data
 }
