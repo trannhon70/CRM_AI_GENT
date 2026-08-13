@@ -26,6 +26,7 @@ import { getContrastTextColor } from '../../../utils/color';
 import { formatUnixTime } from '../../../utils/date';
 import ModalLabel from './modalLabel';
 import { LuUndo2 } from "react-icons/lu";
+import ModalCopyLabel from './modalCopyLabel';
 
 const PageSettingTag: FC = () => {
     const { id } = useParams();
@@ -144,7 +145,7 @@ const PageSettingTag: FC = () => {
             </div>
             <div>Sử dụng thẻ hội thoại giúp phân biệt các hội thoại hoặc khách hàng </div>
 
-            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, mt: 2, }}>
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0, mt: 0, }}>
                 <Tabs
                     value={active}
                     onChange={handleChange}
@@ -189,11 +190,12 @@ const PageSettingTag: FC = () => {
                         sx={{
                             width: 250,
                             "& .MuiOutlinedInput-root": {
-                                height: 35,
+                                height: 32,
                             },
                         }}
                     />
-                    <div>
+                    <div className='flex items-center gap-2.5' >
+                        <ModalCopyLabel />
                         <ModalLabel item={item} setItem={setItem} active={active} />
                     </div>
                 </div>

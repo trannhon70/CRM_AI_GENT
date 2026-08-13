@@ -182,7 +182,7 @@ const ModalLabel: FC<IProps> = (props) => {
     }
 
     return <div>
-        <Button onClick={handleOpen} variant="contained" sx={{ height: 35, px: 2, textTransform: "none" }}>Thêm thẻ</Button>
+        <Button onClick={handleOpen} variant="contained" sx={{ height: 32, px: 2, textTransform: "none" }}>Thêm thẻ</Button>
 
         <Modal
             aria-labelledby="spring-modal-title"

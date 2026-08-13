@@ -7,23 +7,23 @@ import { styled } from '@mui/material/styles';
 import type { TooltipProps } from '@mui/material/Tooltip';
 import { tooltipClasses } from '@mui/material/Tooltip';
 import { animated, useSpring } from '@react-spring/web';
-import React, { Fragment, useLayoutEffect, useState, type FC } from "react";
+import React, { Fragment, type FC } from "react";
 import { IoMdClose } from "react-icons/io";
 import { IoSearch } from 'react-icons/io5';
 import { RiFileCopy2Fill } from "react-icons/ri";
-import { useDispatch, useSelector } from "react-redux";
+import IconActionButton from "../../../components/icons/iconActionButton";
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../redux/store';
+import CommonTable from '../../../components/common/CommonTable';
+import { cacheRepository } from '../../../storage/core/keyValueRepository';
 import { useParams } from 'react-router-dom';
-import CommonTable from '../../../../components/common/CommonTable';
-import IconActionButton from "../../../../components/icons/iconActionButton";
-import { SocialIcon } from '../../../../components/icons/SocialIcon';
-import { getPagingQuickReply } from '../../../../features/quickReplySlice';
-import { useDebounce } from '../../../../hooks/useDebounce';
-import type { AppDispatch, RootState } from "../../../../redux/store";
-import { cacheRepository } from '../../../../storage/core/keyValueRepository';
-import { getContrastTextColor } from '../../../../utils/color';
-import ComponentSelect from '../select';
+import { SocialIcon } from '../../../components/icons/SocialIcon';
+import ComponentSelect from '../reply/select';
+import { getPagingLabel } from '../../../features/labelSlice';
+import { useDebounce } from '../../../hooks/useDebounce';
+import { getContrastTextColor } from '../../../utils/color';
 import { toast } from 'react-toastify';
-import { quickReplyAPI } from '../../../../apis/quickReply.api';
+import { labelAPI } from '../../../apis/label.api';
 
 interface FadeProps {
     children: React.ReactElement<any>;
@@ -100,23 +100,29 @@ const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
 interface IProps {
     selectable?: boolean
 }
-const ModalCopyQuickReply: FC<IProps> = (props) => {
+const ModalCopyLabel: FC<IProps> = (props) => {
     const { selectable } = props;
     const { id } = useParams();
+    const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.label);
     const [open, setOpen] = React.useState(false);
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
     const dispatch = useDispatch<AppDispatch>();
-    const { data, loading, hasMore, pageIndex } = useSelector((state: RootState) => state.quickReply);
+    const [source_page, setSource_page] = React.useState<any>({});
     const [search, setSearch] = React.useState<string>("");
     const { searchDebounce } = useDebounce(search, 500);
-    const [source_page, setSource_page] = useState<any>({});
-    const [loadingCopy, setLoadingCopy] = useState<boolean>(false);
-    const [form, setForm] = useState<any>({
+    const [form, setForm] = React.useState<any>({
         source_id: "",
         landing_id: '',
         selectedKeys: [],
         mode: 'append',
     });
+    const [loadingCopy, setLoadingCopy] = React.useState<boolean>(false);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => {
+
+        setOpen(false);
+    }
 
     const getDataCache = async () => {
         const result: any = await cacheRepository.get(`getFanPagesId-${id}`);
@@ -127,33 +133,30 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
         }));
     }
 
-    useLayoutEffect(() => {
+    React.useLayoutEffect(() => {
         if (open) {
             getDataCache()
         }
     }, [open])
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => {
-        setForm((prev: any) => ({
-            ...prev,
-            selectedKeys: [],
-        }));
-        setSearch("");
-        setOpen(false);
-    }
-
     React.useEffect(() => {
         if (!open) return;
-        dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: 1, limit: 100, search: searchDebounce, }));
+        dispatch(getPagingLabel({ page_id: String(id), is_deleted: false, pageIndex: 1, limit: 20, search: searchDebounce }))
     }, [id, searchDebounce, dispatch, open]);
+
+    const handleOnSelect = (item: any) => {
+        setForm((prev: any) => ({
+            ...prev,
+            landing_id: item.fanpage_id,
+        }));
+    }
 
     const handleScroll = React.useCallback(
         (e: React.UIEvent<HTMLDivElement>) => {
             const target = e.currentTarget;
             const distanceToBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
             if (distanceToBottom < 50 && hasMore && loading !== "pending") {
-                dispatch(getPagingQuickReply({ page_id: String(id), pageIndex: Number(pageIndex) + 1, limit: 100, search: searchDebounce }))
+                dispatch(getPagingLabel({ page_id: String(id), is_deleted: false, pageIndex: Number(pageIndex) + 1, limit: 20, search: searchDebounce }))
             }
         },
         [hasMore, loading]
@@ -167,22 +170,15 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
             width: 70
         },
         {
-            key: "quickReplyCategory",
-            label: "Chủ đề",
-            width: 200
+            key: "name",
+            label: "Tên thẻ"
         },
         {
-            key: "content",
-            label: "Tin nhắn",
+            key: "color",
+            label: "Màu sắc"
         },
-    ];
 
-    const handleOnSelect = (item: any) => {
-        setForm((prev: any) => ({
-            ...prev,
-            landing_id: item.fanpage_id,
-        }));
-    }
+    ];
 
     const onSelectedKeysChange = (newSelectedKeys: React.Key[]) => {
         setForm((prev: any) => ({
@@ -194,7 +190,7 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
     const handleCopy = () => {
 
         if (form.selectedKeys.length === 0) {
-            toast.warning("Vui lòng chọn ít nhất một câu trả lời nhanh để sao chép.");
+            toast.warning("Vui lòng chọn ít nhất một thẻ để sao chép.");
             return;
         }
         if (!form.landing_id) {
@@ -202,7 +198,7 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
             return;
         }
         setLoadingCopy(true);
-        quickReplyAPI.copy(form).then((_res) => {
+        labelAPI.copy(form).then((_res) => {
             toast.success("Sao chép thành công!")
         }).catch((_res) => {
             toast.error(
@@ -216,7 +212,7 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
     return <Fragment>
         <IconActionButton
             icon={<RiFileCopy2Fill size={20} />}
-            tooltip="Sao chép tất cả danh sách QR"
+            tooltip="Sao chép"
             color="info"
             disabled={selectable}
             onClick={handleOpen}
@@ -235,7 +231,7 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
             <Fade in={open}>
                 <Box sx={style} className="flex flex-col ">
                     <div className='flex items-center justify-between p-3 bg-white rounded-tl rounded-tr ' >
-                        <div className='text-lg font-medium text-black ' >Sao chép trả lời nhanh</div>
+                        <div className='text-lg font-medium text-black ' >Đồng bộ thẻ hội thoại</div>
                         <div onClick={handleClose} className='w-8 h-8 flex items-center justify-center hover:bg-gray-300 cursor-pointer rounded' >
                             <IoMdClose size={25} />
                         </div>
@@ -265,7 +261,7 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
 
                         <div className='flex items-center gap-5 shrink-0 ' >
                             <Alert sx={{ width: "100%", padding: "0px 15px", color: "#4a4b4d", fontWeight: 500 }} severity="info" onClose={() => { }} >
-                                Mỗi trang sẽ chỉ có tối đa 1000 câu trả lời nhanh, 200 thẻ hội thoại, nếu quá số lượng, bạn sẽ không thể sao chép được.
+                                Sử dụng nhóm đồng bộ giúp các trang dùng chung danh sách thẻ. Bạn không cần thao tác sao chép mỗi khi thêm thẻ mới.
                             </Alert>
                         </div>
                         <div className='flex flex-col flex-1 min-h-0 bg-white rounded p-3 ' >
@@ -318,27 +314,28 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
                                 renderRow={(item: any, index: number) => (
                                     <>
                                         <TableCell align="center"> {index + 1} </TableCell>
+                                        <TableCell className="max-w-75 cursor-pointer">
+                                            <BootstrapTooltip title={item.content} placement="top">
+                                                <div className="font-medium truncate w-full">
+                                                    {item.name}
+                                                </div>
+                                            </BootstrapTooltip >
+                                        </TableCell>
                                         <TableCell>
-                                            {item?.quickReplyCategory ? (
+                                            {item ? (
                                                 <Chip
-                                                    label={item.quickReplyCategory.name}
+                                                    label={item.color}
                                                     size="small"
                                                     sx={{
-                                                        backgroundColor: item.quickReplyCategory.color,
-                                                        color: getContrastTextColor(item.quickReplyCategory.color),
+                                                        backgroundColor: item.color,
+                                                        color: getContrastTextColor(item.color),
                                                     }}
                                                 />
                                             ) : (
                                                 <span>—</span> // hoặc để trống, tùy UX bạn muốn
                                             )}
                                         </TableCell>
-                                        <TableCell className="max-w-75 cursor-pointer">
-                                            <BootstrapTooltip title={item.content} placement="top">
-                                                <div className="font-medium truncate w-full">
-                                                    {item.content}
-                                                </div>
-                                            </BootstrapTooltip >
-                                        </TableCell>
+
                                     </>
                                 )}
                             />
@@ -377,4 +374,4 @@ const ModalCopyQuickReply: FC<IProps> = (props) => {
     </Fragment>
 }
 
-export default ModalCopyQuickReply
+export default ModalCopyLabel
