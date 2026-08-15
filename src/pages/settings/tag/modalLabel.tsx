@@ -136,7 +136,7 @@ const ModalLabel: FC<IProps> = (props) => {
         if (form.name === "") return toast.warning("Tên thẻ không được bỏ trống!")
         setLoading(true)
         if (item?.id) {
-            labelAPI.update({ id: form?.id, color: form.color, page_id: form.page_id, is_deleted: form.is_deleted, name: form.name }).then((_res: any) => {
+            labelAPI.update({ id: form?.id, color: form.color, page_id: id, is_deleted: form.is_deleted, name: form.name }).then((_res: any) => {
 
                 setLoading(false)
                 dispatch(
