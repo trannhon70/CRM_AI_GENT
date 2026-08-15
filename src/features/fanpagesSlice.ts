@@ -10,8 +10,6 @@ export const fetchPageId = createAsyncThunk(
     async (params: any, thunkAPI) => {
         try {
             const response = await fanPagesAPI.getPagesId(params)
-            console.log(params);
-
             await cacheRepository.set(`getFanPagesId-${params}`, response.data);
             return response.data
         } catch (error) {

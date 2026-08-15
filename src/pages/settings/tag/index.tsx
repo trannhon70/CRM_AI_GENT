@@ -108,7 +108,11 @@ const PageSettingTag: FC = () => {
     );
 
     const onclickDelete = (event: Label) => {
-        labelAPI.isDelete(event.id).then((_res: any) => {
+        const body = {
+            page_id: id,
+            id: event.id
+        }
+        labelAPI.isDelete(body).then((_res: any) => {
             dispatch(removeItem(event.id));
             toast.success("Xóa thẻ hội thoại thành công!")
         }).catch((_res: any) => {

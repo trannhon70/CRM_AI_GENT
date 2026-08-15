@@ -13,12 +13,21 @@ export const getPagingLabel = createAsyncThunk(
     },
 )
 
+export const getAllLabel = createAsyncThunk(
+    'labels/getAllLabel',
+    async (thunkAPI: any) => {
+        const response = await labelAPI.getAll(thunkAPI);
+        return response.data
+    },
+)
+
 
 
 interface LabelsState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
     currentRequestId: string | null,
     data: Label[],
+    dataAll: Label[],
     pageIndex?: number,
     limit?: number,
     hasMore: boolean,
@@ -28,6 +37,7 @@ const initialState = {
     loading: 'idle',
     currentRequestId: null,
     data: [],
+    dataAll: [],
     pageIndex: 1,
     limit: 5,
     hasMore: false,
@@ -94,7 +104,12 @@ const labelSlice = createSlice({
             })
             .addCase(getPagingLabel.rejected, (state) => {
                 state.loading = "failed";
-            });
+            })
+
+            .addCase(getAllLabel.fulfilled, (state, action) => {
+                state.dataAll = action.payload;
+            })
+
 
     },
 })

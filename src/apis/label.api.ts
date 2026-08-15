@@ -11,7 +11,8 @@ export const labelAPI = {
     update,
     restore,
     copy,
-    isDeleteAll
+    isDeleteAll,
+    getAll
 };
 
 async function getPaging(query: GetPagingLabelQuery) {
@@ -35,8 +36,8 @@ async function getPaging(query: GetPagingLabelQuery) {
     return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }
 
-async function isDelete(id: number) {
-    const response = await instance.delete(`/chat-service/labels/${id}`);
+async function isDelete(body: any) {
+    const response = await instance.post(`/chat-service/labels/delete`, body);
     return response.data
 }
 
@@ -63,4 +64,13 @@ async function copy(body: any) {
 async function isDeleteAll(body: any) {
     const respone = await instance.post(`/chat-service/labels/delete-all`, body);
     return respone.data
+}
+
+async function getAll(query: any) {
+    const params: Record<string, any> = {
+        page_id: query.page_id,
+
+    };
+    const response = await instance.get(`/chat-service/labels/get-all`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(response.data, VITE_SECRET_KEY);
 }

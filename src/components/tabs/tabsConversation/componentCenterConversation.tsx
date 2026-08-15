@@ -24,6 +24,7 @@ import VideoMessage from "../../card/cardMessageContent/videoMessage";
 import ComponentEmojiPicker from "../../chat/componentEmojiPicker";
 import ComponentGifPicker from "../../chat/componentGifPicker";
 import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
+import ComponentLabel from "../../chat/componentLabel";
 
 const ComponentCenterConversation: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -273,7 +274,7 @@ const ComponentCenterConversation: FC = () => {
             {messageElements}
             <div ref={bottomRef} />
         </div>
-
+        <ComponentLabel />
         <div className={`${reply} ? "h-[10vh]" : "h-[8vh]"`}>
             <div className="border-t border-gray-200 bg-white p-3">
                 {
