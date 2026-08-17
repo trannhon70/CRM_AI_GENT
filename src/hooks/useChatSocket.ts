@@ -9,6 +9,7 @@ type UseChatSocketProps = {
   onNewConversation?: (message: any) => void;
   onSyncStatus?: (message: any) => void;
   onUnreadCountConversation?: (message: any) => void;
+  onAddLabelToConversation?: (message: any) => void;
 };
 
 export const useChatSocket = ({
@@ -18,6 +19,7 @@ export const useChatSocket = ({
   onNewConversation,
   onSyncStatus,
   onUnreadCountConversation,
+  onAddLabelToConversation
 }: UseChatSocketProps) => {
   const socketRef = useRef<Socket | null>(null);
 
@@ -73,12 +75,17 @@ export const useChatSocket = ({
       onUnreadCountConversation?.(message);
     };
 
+    const handleAddLabelToConversation = (message: any) => {
+      onAddLabelToConversation?.(message);
+    };
+
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('send_message', handleNewMessage);
     socket.on('send_conversation', handleNewConversation);
     socket.on('syncStatus', handleSyncStatus);
     socket.on('send_unread_count', handleUnreadCountConversation);
+    socket.on('label', handleAddLabelToConversation);
 
     // Nếu socket đã connect trước khi hook mount
     if (socket.connected) {
@@ -92,6 +99,7 @@ export const useChatSocket = ({
       socket.on('send_conversation', handleNewConversation);
       socket.off('syncStatus', handleSyncStatus);
       socket.off('send_unread_count', handleUnreadCountConversation);
+      socket.off('label', handleAddLabelToConversation);
     };
   }, [onNewMessage, onSyncStatus, onUnreadCountConversation]);
 

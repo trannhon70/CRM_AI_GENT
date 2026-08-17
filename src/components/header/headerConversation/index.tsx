@@ -86,6 +86,10 @@ const HeaderConversation: FC = () => {
                 unread_count: event.unread_count,
             }
             dispatch(updateConversation(payload))
+        },
+        onAddLabelToConversation(event: any) {
+            console.log(event, 'envetn');
+
         }
     });
     return <div className="w-full h-[7vh] max-lg:h-[10vh] bg-[#0f447d] text-[#b0c1d4] flex items-center justify-between box-border overflow-hidden" >

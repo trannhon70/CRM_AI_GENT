@@ -9,7 +9,8 @@ export const conversationAPI = {
     updateName,
     getPaging,
     updateLabel,
-    updateUnreadCount
+    updateUnreadCount,
+    addLabelToConversation
 };
 
 async function getAll(query: any) {
@@ -55,5 +56,10 @@ async function updateLabel(body: any) {
 
 async function updateUnreadCount(body: any) {
     const response = await instance.post(`/chat-service/conversation/update-unread-count`, body);
+    return response.data
+}
+
+async function addLabelToConversation(body: any) {
+    const response = await instance.post(`/chat-service/conversation/add-label-to-conversation`, body);
     return response.data
 }
