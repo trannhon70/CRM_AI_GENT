@@ -26,6 +26,8 @@ const ComponentLabel: FC<IProps> = (props) => {
         const body = {
             id: conversation.active.id,
             label_id: item.id,
+            name: item.name,
+            color: item.color,
             page_id: id
         }
 

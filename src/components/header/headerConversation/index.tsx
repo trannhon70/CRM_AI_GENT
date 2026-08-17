@@ -1,3 +1,4 @@
+import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -7,20 +8,19 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useContext, useEffect, useState, type FC } from "react";
 import { IoIosLogOut, IoMdNotifications } from "react-icons/io";
+import { RiDashboardFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import logo from "../../../assets/images/logo.png";
 import { AuthContext } from '../../../context/AuthContext';
-import { fetchUserById } from "../../../features/usersSlice";
-import type { AppDispatch, RootState } from "../../../redux/store";
-import Avatar from '@mui/material/Avatar';
-import { RiDashboardFill } from "react-icons/ri";
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { fetchPaging, setNullConversation, updateConversation } from '../../../features/conversationSlice';
 import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
+import { updateMessage } from '../../../features/liveMessageSlice';
+import { fetchUserById } from "../../../features/usersSlice";
 import { useChatSocket } from "../../../hooks/useChatSocket";
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
-import { fetchPaging, setNullConversation, updateConversation } from '../../../features/conversationSlice';
-import { updateMessage } from '../../../features/liveMessageSlice';
 import { useZaloNotificationSound } from '../../../hooks/useZaloNotificationSound';
+import type { AppDispatch, RootState } from "../../../redux/store";
 
 const HeaderConversation: FC = () => {
     const { id } = useParams();
@@ -32,7 +32,6 @@ const HeaderConversation: FC = () => {
     const fanPages = useSelector((state: RootState) => state.fanPages);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const active = location.pathname.split("/")[1];
-    const { value: pageId } = useLocalStorage("pageId", null)
     const { value: conversationId } = useLocalStorage("conversationId", null);
     const { play } = useZaloNotificationSound();
 
@@ -65,7 +64,7 @@ const HeaderConversation: FC = () => {
     }
 
     useChatSocket({
-        pageId: String(pageId),
+        pageId: String(id),
         conversationId: String(conversationId),
         onSyncStatus: (event: any) => {
             dispatch(updateSyncStatus(event));

@@ -16,7 +16,6 @@ import platform_all from "../../assets/images/platform_all.jpg";
 import ModalConnect from "../../components/modal/modalConnect";
 import { getRemainingDaysText } from '../../utils/date';
 import LoadingLayout from '../../components/loadingLayout';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { userPageRepository } from '../../storage';
 import { useDebounce } from '../../hooks/useDebounce';
 import { CircularProgress } from '@mui/material';
@@ -42,7 +41,6 @@ const Dashboard: FC = () => {
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [apiLoading, setApiLoading] = useState(false);
-    const { setStorage } = useLocalStorage("pageId", null);
     const { searchDebounce, loading } = useDebounce(search, 500);
 
     const getPagingUserPage = async () => {
@@ -82,7 +80,6 @@ const Dashboard: FC = () => {
     }
 
     const onClickRouter = (value: any) => {
-        setStorage(value);
         navige(`conversation/${value}`)
     }
 

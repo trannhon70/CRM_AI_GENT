@@ -85,7 +85,7 @@ export const useChatSocket = ({
     socket.on('send_conversation', handleNewConversation);
     socket.on('syncStatus', handleSyncStatus);
     socket.on('send_unread_count', handleUnreadCountConversation);
-    socket.on('label', handleAddLabelToConversation);
+    socket.on('conversation_labels', handleAddLabelToConversation);
 
     // Nếu socket đã connect trước khi hook mount
     if (socket.connected) {
@@ -99,7 +99,7 @@ export const useChatSocket = ({
       socket.on('send_conversation', handleNewConversation);
       socket.off('syncStatus', handleSyncStatus);
       socket.off('send_unread_count', handleUnreadCountConversation);
-      socket.off('label', handleAddLabelToConversation);
+      socket.off('conversation_labels', handleAddLabelToConversation);
     };
   }, [onNewMessage, onSyncStatus, onUnreadCountConversation]);
 
