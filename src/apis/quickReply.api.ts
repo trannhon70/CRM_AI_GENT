@@ -9,7 +9,8 @@ export const quickReplyAPI = {
     isDelete,
     update,
     isDeleteAll,
-    copy
+    copy,
+    getAll
 };
 
 async function create(body: any) {
@@ -52,4 +53,12 @@ async function isDeleteAll(body: any) {
 async function copy(body: any) {
     const response = await instance.post(`/chat-service/quick-reply/copy`, body);
     return response.data.data
+}
+
+async function getAll(query: any) {
+    const params: Record<string, any> = {
+        page_id: query.page_id,
+    };
+    const res = await instance.get(`/chat-service/quick-reply/get-all`, { params, responseType: 'arraybuffer' });
+    return decryptArrayBuffer<any>(res.data, VITE_SECRET_KEY);
 }

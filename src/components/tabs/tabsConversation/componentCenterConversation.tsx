@@ -25,6 +25,7 @@ import ComponentEmojiPicker from "../../chat/componentEmojiPicker";
 import ComponentGifPicker from "../../chat/componentGifPicker";
 import { useCloudinaryUpload } from "../../../hooks/useCloudinaryUpload";
 import ComponentLabel from "../../chat/componentLabel";
+import ComponentQuickReply from "../../chat/conponentQuickReply";
 
 const ComponentCenterConversation: FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -317,7 +318,8 @@ const ComponentCenterConversation: FC = () => {
 
                     {/* nhãn dán */}
                     <ComponentGifPicker />
-
+                    {/* trả lời nhanh */}
+                    <ComponentQuickReply />
                     {/* Send */}
                     <Tooltip title="Gửi tin nhắn">
                         <button

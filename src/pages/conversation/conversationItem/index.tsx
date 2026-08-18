@@ -59,7 +59,7 @@ const ConversationItem: FC<IProps> = (props) => {
         <div className="flex-1 min-w-0 h-full flex flex-col justify-center overflow-hidden">
             <div className="truncate font-medium text-sm"> {item.full_name} </div>
             <div className="truncate text-sm text-gray-500"> {renderType(item.lastMessage?.type)} </div>
-            <div className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap">
+            <div className="flex items-center gap-1.5  whitespace-nowrap overflow-auto">
                 {item.labels?.map((label: any) => (
                     <Chip key={label.id} variant="filled" label={label.name} size="small"
                         sx={{

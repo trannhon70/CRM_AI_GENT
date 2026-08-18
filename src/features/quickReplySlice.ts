@@ -10,11 +10,20 @@ export const getPagingQuickReply = createAsyncThunk(
     },
 )
 
+export const getAllQuickReply = createAsyncThunk(
+    'quick-reply/getAllQuickReply',
+    async (thunkAPI: any) => {
+        const response = await quickReplyAPI.getAll(thunkAPI);
+        return response.data
+    },
+)
+
 
 interface QuickReplyState {
     loading: 'idle' | 'pending' | 'succeeded' | 'failed'
     currentRequestId: string | null,
     data: any[],
+    dataAll: any[],
     pageIndex?: number,
     limit?: number,
     hasMore: boolean,
@@ -24,6 +33,7 @@ const initialState = {
     loading: 'idle',
     currentRequestId: null,
     data: [],
+    dataAll: [],
     pageIndex: 1,
     limit: 5,
     hasMore: false,
@@ -76,6 +86,16 @@ const quickReplySlice = createSlice({
                 state.loading = "succeeded";
             })
             .addCase(getPagingQuickReply.rejected, (state) => {
+                state.loading = "failed";
+            })
+            .addCase(getAllQuickReply.pending, (state, action) => {
+                state.loading = "pending";
+            })
+            .addCase(getAllQuickReply.fulfilled, (state, action) => {
+                state.dataAll = action.payload;
+                state.loading = "succeeded";
+            })
+            .addCase(getAllQuickReply.rejected, (state) => {
                 state.loading = "failed";
             })
 
