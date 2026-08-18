@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import logo from "../../../assets/images/logo.png";
 import { AuthContext } from '../../../context/AuthContext';
-import { fetchPaging, setNullConversation, updateConversation } from '../../../features/conversationSlice';
+import { addLabelToConversation, fetchPaging, setNullConversation, updateConversation } from '../../../features/conversationSlice';
 import { fetchPageId, updateSyncStatus } from "../../../features/fanpagesSlice";
 import { updateMessage } from '../../../features/liveMessageSlice';
 import { fetchUserById } from "../../../features/usersSlice";
@@ -87,7 +87,15 @@ const HeaderConversation: FC = () => {
             dispatch(updateConversation(payload))
         },
         onAddLabelToConversation(event: any) {
-            console.log(event, 'envetn');
+            const payload = {
+                conversationId: event.conversationId,
+                label: {
+                    id: event.id,
+                    color: event.color,
+                    name: event.name,
+                }
+            }
+            dispatch(addLabelToConversation(payload))
 
         }
     });

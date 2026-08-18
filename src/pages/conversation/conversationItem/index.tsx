@@ -11,6 +11,8 @@ import { MessageType } from "../../../utils";
 import { FaImage } from "react-icons/fa";
 import { PiFileAudioLight } from "react-icons/pi";
 import { FcVideoCall } from "react-icons/fc";
+import { Chip } from "@mui/material";
+import { getContrastTextColor } from "../../../utils/color";
 interface IProps {
     item?: any,
 }
@@ -19,6 +21,7 @@ const ConversationItem: FC<IProps> = (props) => {
     const dispatch = useDispatch<AppDispatch>();
     const { setStorage } = useLocalStorage<string | null>("conversationId", null);
     const conversation = useSelector((state: RootState) => state.conversation);
+
 
     const onclickItem = async () => {
         dispatch(setActiveConversation(item))
@@ -44,36 +47,47 @@ const ConversationItem: FC<IProps> = (props) => {
     }
     return <div
         onClick={onclickItem}
-        className={`p-2 hover:bg-gray-300 cursor-pointer flex items-center w-full gap-2 ${Number(conversation.active?.id) === item.id ? "bg-[#D2EBFF]" : ""} `}
-    >
-        <Avatar src={item.avatar || undefined}>
-            {item.full_name?.charAt(0).toUpperCase()}
-        </Avatar>
-        <div className="flex-1 min-w-0">
-            <div className="truncate font-medium">
-                {item.full_name}
-            </div>
+        className={` w-full h-[80px] px-3 flex items-center gap-3 cursor-pointer overflow-hidden transition-colors hover:bg-gray-100
+        ${Number(conversation.active?.id) === item.id ? "bg-[#D2EBFF]" : ""}`}>
+        <div className="flex-shrink-0">
+            <Avatar src={item.avatar || undefined} sx={{ width: 42, height: 42 }} >
+                {item.full_name?.charAt(0).toUpperCase()}
+            </Avatar>
+        </div>
 
-            <div className="truncate text-sm text-gray-500 mt-2 ">
-                {
-                    renderType(item.lastMessage?.type)
-                }
+        {/* Content */}
+        <div className="flex-1 min-w-0 h-full flex flex-col justify-center overflow-hidden">
+            <div className="truncate font-medium text-sm"> {item.full_name} </div>
+            <div className="truncate text-sm text-gray-500"> {renderType(item.lastMessage?.type)} </div>
+            <div className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap">
+                {item.labels?.map((label: any) => (
+                    <Chip key={label.id} variant="filled" label={label.name} size="small"
+                        sx={{
+                            height: 20, maxWidth: 100, flexShrink: 0, color: getContrastTextColor(label.color), bgcolor: label.color,
+                            "& .MuiChip-label": {
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                            },
+                        }}
+                    />
+                ))}
             </div>
         </div>
 
-        <div className="flex flex-col items-end flex-shrink-0">
-            <div className="text-xs text-gray-500">{dayjs.unix(item.last_message_at ? item.last_message_at : item.updated_at).fromNow()}</div>
-            <div className="h-5" >
-                {
-                    item.unread_count > 0 && <div className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+        <div className="w-[55px] h-full flex-shrink-0 flex flex-col items-end justify-between py-1">
+            <div className="text-[11px] text-gray-400 whitespace-nowrap">
+                {dayjs.unix(item.last_message_at || item.updated_at).fromNow()}
+            </div>
+            <div className="h-5 flex items-center">
+                {item.unread_count > 0 && (
+                    <div className="flex h-5 min-w-5 px-1 items-center justify-center rounded-full bg-red-500 text-[11px] text-white">
                         {item.unread_count > 9 ? "9+" : item.unread_count}
                     </div>
-                }
+                )}
             </div>
 
-            <div>
-                <GrMail color="#98A2B3" size={25} />
-            </div>
+            <GrMail color="#98A2B3" size={20} />
         </div>
     </div>
 }

@@ -70,6 +70,31 @@ const conversationSlice = createSlice({
                 state.active.unread_count = action.payload.unread_count;
             }
         },
+
+        addLabelToConversation(state, action) {
+            const { conversationId, label } = action.payload;
+
+            const index = state.data.findIndex(
+                (m: any) => m.id === conversationId
+            );
+
+            if (index !== -1) {
+                const conversation = state.data[index];
+
+                // Kiểm tra label đã tồn tại chưa
+                const alreadyExists = conversation.labels?.some(
+                    (item: any) => item.id === label.id
+                );
+
+                if (!alreadyExists) {
+                    conversation.labels = [
+                        ...(conversation.labels || []),
+                        label,
+                    ];
+                }
+            }
+
+        },
     },
     extraReducers: (builder) => {
 
@@ -99,5 +124,5 @@ const conversationSlice = createSlice({
     },
 })
 
-export const { setActiveConversation, updateConversation, setNullConversation } = conversationSlice.actions;
+export const { setActiveConversation, updateConversation, setNullConversation, addLabelToConversation } = conversationSlice.actions;
 export const conversationReducer = conversationSlice.reducer;
