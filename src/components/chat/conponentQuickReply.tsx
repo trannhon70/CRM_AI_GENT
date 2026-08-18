@@ -10,7 +10,10 @@ import { getContrastTextColor } from "../../utils/color";
 import CommonTable from "../common/CommonTable";
 import IconActionButton from "../icons/iconActionButton";
 import { FilterableHeader } from "../fillter/FilterableHeader";
-
+import { MessageDirection, MessageType } from "../../utils";
+import { sendMessage } from "../../features/liveMessageSlice";
+import { LiveMessageAPI } from "../../apis/liveMessage.api";
+const NULL_CATEGORY_VALUE = "__null__"; // giá trị đại diện cho "không có chủ đề"
 interface IProps {
 
 }
@@ -20,6 +23,7 @@ const ComponentQuickReply: FC<IProps> = (props) => {
     const navige = useNavigate()
     const dispatch = useDispatch<AppDispatch>();
     const { dataAll, loading } = useSelector((state: RootState) => state.quickReply);
+    const conversation = useSelector((state: RootState) => state.conversation);
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
     const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
     const open = Boolean(anchorEl);
@@ -40,8 +44,6 @@ const ComponentQuickReply: FC<IProps> = (props) => {
     };
 
     // Danh sách category để hiện trong menu — lấy từ data hoặc từ API riêng
-    const NULL_CATEGORY_VALUE = "__null__"; // giá trị đại diện cho "không có chủ đề"
-
     const categoryOptions = useMemo(() => {
         const realOptions = Array.from(
             new Map(
@@ -103,8 +105,24 @@ const ComponentQuickReply: FC<IProps> = (props) => {
     }
 
     const handleSend = (item: any) => {
-        console.log(item);
+        const body = {
+            id: Date.now().toString(),
+            page_id: conversation.active.page_id,
+            customer_id: conversation.active.customer_id,
+            conversation_id: conversation.active.id,
+            type: MessageType.TEXT,
+            text: item.content,
+            direction: MessageDirection.STAFF,
+            sent_at: Math.floor(Date.now() / 1000),
+            // reply_to: reply
+        };
 
+        dispatch(sendMessage(body));
+        LiveMessageAPI.sendMessage(body).then(() => { }).catch((error) => {
+            console.error("Error sending message:", error);
+        }).finally(() => {
+            handleClose();
+        });
     }
 
     return <Fragment>
