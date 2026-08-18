@@ -87,7 +87,7 @@ const ComponentQuickReply: FC = () => {
 
     const onclickDelete = (event: any) => {
         setLoadingId(event.id)
-        quickReplyAPI.isDelete(event.id).then((_res: any) => {
+        quickReplyAPI.isDelete({ id: event.id, page_id: id }).then((_res: any) => {
             dispatch(removeItem(event.id));
             toast.success("Xóa chủ đề thành công!")
         }).catch((_res: any) => {

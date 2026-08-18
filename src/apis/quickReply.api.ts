@@ -35,8 +35,8 @@ async function getPaging(query: any) {
     return decryptArrayBuffer<any>(res.data, VITE_SECRET_KEY);
 }
 
-async function isDelete(id: number) {
-    const respone = await instance.delete(`/chat-service/quick-reply/${id}`);
+async function isDelete(body: any) {
+    const respone = await instance.post(`/chat-service/quick-reply/delete`, body);
     return respone.data
 }
 

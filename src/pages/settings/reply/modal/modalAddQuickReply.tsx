@@ -152,7 +152,7 @@ const ModalAddQuickReply: FC<IProps> = (props) => {
         if (form.content === "") return toast.warning("Nội dung không được bỏ trống!")
         setLoading(true)
         if (item?.id) {
-            quickReplyAPI.update({ id: form?.id, quick_reply_category_id: form.quick_reply_category_id, content: form.content })
+            quickReplyAPI.update({ id: form?.id, quick_reply_category_id: form.quick_reply_category_id, content: form.content, page_id: id })
                 .then((_res) => {
                     dispatch(updateItem(_res));
                     toast.success("Cập nhật thành công!");
