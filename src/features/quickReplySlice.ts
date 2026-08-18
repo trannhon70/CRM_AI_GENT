@@ -88,7 +88,7 @@ const quickReplySlice = createSlice({
             .addCase(getPagingQuickReply.rejected, (state) => {
                 state.loading = "failed";
             })
-            .addCase(getAllQuickReply.pending, (state, action) => {
+            .addCase(getAllQuickReply.pending, (state) => {
                 state.loading = "pending";
             })
             .addCase(getAllQuickReply.fulfilled, (state, action) => {

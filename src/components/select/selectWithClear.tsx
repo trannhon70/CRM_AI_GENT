@@ -18,8 +18,8 @@ export interface SelectWithClearOption {
 }
 
 interface SelectWithClearProps {
-    label: string;
-    value: string | number;
+    label?: string;
+    value?: string | number;
     data: SelectWithClearOption[];
     onChange: (value: string | number) => void;
     fullWidth?: boolean;
