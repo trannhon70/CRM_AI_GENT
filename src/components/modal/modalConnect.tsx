@@ -1,19 +1,18 @@
-import * as React from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { useSpring, animated } from '@react-spring/web';
-import { IoMdAddCircle } from 'react-icons/io';
-import { borderRadius } from '@mui/system';
-import { IoMdClose } from "react-icons/io";
-import facebook from "../../assets/images/facebook.png"
-import activate from "../../assets/images/wait-activate.png"
-import instagram from "../../assets/images/instagram.png"
-import TabFlatFormAll from '../tabs/tabsConnectPage/tabPlatformall';
+import Modal from '@mui/material/Modal';
+import { animated, useSpring } from '@react-spring/web';
+import * as React from 'react';
+import { IoMdAddCircle, IoMdClose } from 'react-icons/io';
+import facebook from "../../assets/images/facebook.png";
+import instagram from "../../assets/images/instagram.png";
+import activate from "../../assets/images/wait-activate.png";
+import telegram from "../../assets/images/telegram.png";
 import TabFaceBook from '../tabs/tabsConnectPage/tabFacebook';
+import TabFlatFormAll from '../tabs/tabsConnectPage/tabPlatformall';
 import TabInstagram from '../tabs/tabsConnectPage/tabsInstagram';
+import TabsTelegram from '../tabs/tabsConnectPage/tabsTelegram';
 
 interface FadeProps {
     children: React.ReactElement<any>;
@@ -73,6 +72,7 @@ const dataPages = [
     { id: 1, name: "Chờ kích hoạt", image: activate },
     { id: 2, name: "Facebook", image: facebook },
     { id: 3, name: "Instagram", image: instagram },
+    { id: 4, name: "Telegram", image: telegram },
 
 ]
 
@@ -92,6 +92,8 @@ const ModalConnect: React.FC<IProps> = (props) => {
                 return <TabFaceBook />
             case 3:
                 return <TabInstagram />
+            case 4:
+                return <TabsTelegram />
             default:
                 return <TabFlatFormAll />
         }
