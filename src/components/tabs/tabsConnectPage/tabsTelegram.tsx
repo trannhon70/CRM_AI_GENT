@@ -1,19 +1,88 @@
 
 import { Alert, Box, Button, Link, Typography } from "@mui/material";
 import { QRCodeSVG } from 'qrcode.react';
-import { useState, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import { FaTelegramPlane } from "react-icons/fa";
 import { MdHelpOutline, MdOutlineQrCode2, MdPhoneIphone } from "react-icons/md";
+import { toast } from "react-toastify";
+import { telegramAPI } from "../../../apis/telegram.api";
 import telegram from '../../../assets/images/telegram.png';
 
 const TabsTelegram: FC = () => {
-    const [link, setLink] = useState('');
-    const [connected, setConnected] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [qrUrl, setQrUrl] = useState<string | null>(null);
+    const [sessionId, setSessionId] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [status, setStatus] = useState<string | null>(null);
+    const [expiresAt, setExpiresAt] = useState<number | null>(null);
+
+    // Poll trạng thái mỗi 2s (giảm từ 30s xuống)
+    useEffect(() => {
+        if (!sessionId || status !== 'waiting') return;
+
+        const interval = setInterval(async () => {
+            try {
+                const res: any = await telegramAPI.getQrStatus(sessionId);
+                setStatus(res.status);
+
+                if (res.status === 'success') {
+                    clearInterval(interval);
+                    toast.success('Kết nối Telegram thành công!');
+                }
+
+                if (res.status === 'expired') {
+                    clearInterval(interval);
+                    handleGenerateQr(); // im lặng tạo QR mới, không cần toast warning nữa
+                }
+
+                if (res.status === 'need_password') {
+                    clearInterval(interval);
+                    toast.info('Tài khoản có bật xác thực 2 bước, cần nhập mật khẩu.');
+                }
+
+                if (res.status === 'error' || res.status === 'not_found') {
+                    clearInterval(interval);
+                    toast.error('Đăng nhập Telegram thất bại, vui lòng thử lại.');
+                }
+            } catch (err) {
+                // lỗi mạng tạm thời, cứ để interval thử lại lần sau
+            }
+        }, 20000); // <-- đổi từ 30000 xuống 2000
+
+        return () => clearInterval(interval);
+    }, [sessionId, status]);
+
+    // + MỚI: tự động refresh QR ngay khi tới giờ hết hạn, không đợi polling phát hiện
+    useEffect(() => {
+        if (!expiresAt || status !== 'waiting') return;
+
+        const msLeft = expiresAt - Date.now();
+        if (msLeft <= 0) {
+            handleGenerateQr();
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            handleGenerateQr();
+        }, msLeft);
+
+        return () => clearTimeout(timer);
+    }, [expiresAt, status]);
 
     const handleGenerateQr = async () => {
+        const newSessionId = crypto.randomUUID();
+        setLoading(true);
+        telegramAPI.createQr({ sessionId: newSessionId }).then((res: any) => {
+            setSessionId(res.sessionId);
+            setQrUrl(res.qrUrl);
+            setExpiresAt(res.expiresAt); // + lưu lại để tự set timer refresh
+            setStatus('waiting');
+        }).catch((_res: any) => {
+            toast.error(_res.response?.data?.message || 'Lỗi khi kết nối!');
+        }).finally(() => {
+            setLoading(false);
+        });
+    };
 
-    }
     return <div className="flex flex-col h-[60vh]" >
         <div className="border-b p-3  border-[#F2F4F7] text-black font-medium text-lg shrink-0" >
             Thêm tài khoản Telegram
@@ -34,7 +103,7 @@ const TabsTelegram: FC = () => {
                     ))}
 
                     <Box sx={{ position: "absolute", inset: 24, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", borderRadius: 1, }}  >
-                        {!link && (
+                        {!qrUrl && (
                             <Button
                                 onClick={handleGenerateQr}
                                 disabled={loading}
@@ -45,9 +114,9 @@ const TabsTelegram: FC = () => {
                                 Tạo mã QR
                             </Button>
                         )}
-                        {link && !connected && (
+                        {qrUrl && sessionId && (
                             <div className="relative inline-block">
-                                <QRCodeSVG value={link} size={220} level="H" />
+                                <QRCodeSVG value={qrUrl} size={192} level="H" includeMargin />
                                 <img
                                     src={telegram}
                                     alt="Telegram"

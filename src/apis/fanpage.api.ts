@@ -6,7 +6,7 @@ export const fanPagesAPI = {
     createConnectPageFacebook,
     getPagesId,
     tokenRenewal,
-    syncing
+    syncing,
 };
 
 async function createConnectPageFacebook(body: any) {
