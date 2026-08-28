@@ -13,12 +13,13 @@ import { fanPagesAPI } from '../../apis/fanpage.api';
 import { userPagesAPI } from "../../apis/userPages.api";
 import facebook from "../../assets/images/facebook-logo.png";
 import platform_all from "../../assets/images/platform_all.jpg";
+import telegram from "../../assets/images/telegram.png";
 import ModalConnect from "../../components/modal/modalConnect";
 import { getRemainingDaysText } from '../../utils/date';
 import LoadingLayout from '../../components/loadingLayout';
 import { userPageRepository } from '../../storage';
 import { useDebounce } from '../../hooks/useDebounce';
-import { CircularProgress } from '@mui/material';
+import { Avatar, CircularProgress } from '@mui/material';
 import { cacheRepository } from '../../storage/core/keyValueRepository';
 import { SocialIcon } from '../../components/icons/SocialIcon';
 
@@ -26,6 +27,7 @@ import { SocialIcon } from '../../components/icons/SocialIcon';
 const providerIcons: Record<string, string> = {
     all: platform_all,
     facebook: facebook,
+    telegram: telegram,
 
 };
 
@@ -97,19 +99,19 @@ const Dashboard: FC = () => {
         setSelectedItem(null);
     };
 
-    const handleRenewToken = (item: any) => {
-        setApiLoading(true);
-        fanPagesAPI.tokenRenewal({ access_token: item.page.access_token, fanpage_id: item.fanpage_id }).then((_res: any) => {
-            toast.success('Gia hạn thành công!');
-            handleClose();
-            getPagingUserPage();
-            setApiLoading(false);
-        }).catch((_err: any) => {
-            setApiLoading(false);
-            handleClose();
-            toast.error('Lỗi khi kết nối!')
-        })
-    }
+    // const handleRenewToken = (item: any) => {
+    //     setApiLoading(true);
+    //     fanPagesAPI.tokenRenewal({ access_token: item.page.access_token, fanpage_id: item.fanpage_id }).then((_res: any) => {
+    //         toast.success('Gia hạn thành công!');
+    //         handleClose();
+    //         getPagingUserPage();
+    //         setApiLoading(false);
+    //     }).catch((_err: any) => {
+    //         setApiLoading(false);
+    //         handleClose();
+    //         toast.error('Lỗi khi kết nối!')
+    //     })
+    // }
 
     const handleDelete = (item: any) => {
         setApiLoading(true);
@@ -196,7 +198,6 @@ const Dashboard: FC = () => {
                 <div className="px-4 py-3 bg-white rounded mt-4 flex-1 min-h-0 overflow-y-auto grid grid-cols-3 items-start gap-2.5">
                     {
                         data?.length > 0 && data.map((item: any, _index: number) => {
-                            console.log(item);
 
                             const remainingDays = Number(getRemainingDaysText(item.page.data_access_expires_at))
                             return <div
@@ -205,11 +206,12 @@ const Dashboard: FC = () => {
                                 className="group flex items-center gap-2.5 min-h-24 rounded-xl border border-gray-200 bg-white p-2 cursor-pointer transition-all duration-200 hover:border-blue-500 hover:shadow-lg hover:-translate-y-0.5"
                             >
                                 {/* Avatar */}
-                                <img
+
+                                <Avatar
                                     src={item.page.page_avatar}
-                                    alt={item.page.page_name}
-                                    className="w-14 h-14 rounded-full object-cover border border-gray-200"
-                                />
+                                >
+                                    {item.page.page_name.charAt(0).toUpperCase()}
+                                </Avatar>
 
                                 {/* Content */}
                                 <div className="flex-1 min-w-0">
@@ -228,43 +230,50 @@ const Dashboard: FC = () => {
                                             </span>{" "}
                                             {item.page.page_id}
                                         </span>
-                                        {remainingDays <= 0 ? (
-                                            <div className="mt-1 rounded-md border border-red-300 bg-red-50 p-2">
-                                                <div className="font-medium text-red-700">
-                                                    ❌ Đã hết hạn
-                                                </div>
-                                                <div className="text-xs text-red-600">
-                                                    Token Facebook đã hết hạn. Tin nhắn sẽ không được đồng bộ. Vui lòng kết nối lại Fanpage ngay.
-                                                </div>
-                                            </div>
-                                        ) : remainingDays < 7 ? (
-                                            <div className="mt-1 rounded-md border border-red-300 bg-red-50 p-2">
-                                                <div className="font-medium text-red-700">
-                                                    🚨 Sắp hết hạn
-                                                </div>
-                                                <div className="text-xs text-red-600">
-                                                    Token còn {remainingDays} ngày. Vui lòng gia hạn sớm để tránh gián đoạn nhận tin nhắn.
-                                                </div>
-                                            </div>
-                                        ) : remainingDays < 30 ? (
-                                            <div className="mt-1 rounded-md border border-yellow-300 bg-yellow-50 p-2">
-                                                <div className="font-medium text-yellow-700">
-                                                    ⚠️ Cảnh báo
-                                                </div>
-                                                <div className="text-xs text-yellow-600">
-                                                    Token còn {remainingDays} ngày. Nên gia hạn trước khi hết hạn.
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                                                    Active
-                                                </span>
-                                                <span className="text-xs text-gray-500">
-                                                    Token còn {remainingDays} ngày
-                                                </span>
-                                            </div>
-                                        )}
+                                        <>
+                                            {
+                                                item.page.page_platform === "facebook" &&
+                                                <>
+                                                    {remainingDays <= 0 ? (
+                                                        <div className="mt-1 rounded-md border border-red-300 bg-red-50 p-2">
+                                                            <div className="font-medium text-red-700">
+                                                                ❌ Đã hết hạn
+                                                            </div>
+                                                            <div className="text-xs text-red-600">
+                                                                Token Facebook đã hết hạn. Tin nhắn sẽ không được đồng bộ. Vui lòng kết nối lại Fanpage ngay.
+                                                            </div>
+                                                        </div>
+                                                    ) : remainingDays < 7 ? (
+                                                        <div className="mt-1 rounded-md border border-red-300 bg-red-50 p-2">
+                                                            <div className="font-medium text-red-700">
+                                                                🚨 Sắp hết hạn
+                                                            </div>
+                                                            <div className="text-xs text-red-600">
+                                                                Token còn {remainingDays} ngày. Vui lòng gia hạn sớm để tránh gián đoạn nhận tin nhắn.
+                                                            </div>
+                                                        </div>
+                                                    ) : remainingDays < 30 ? (
+                                                        <div className="mt-1 rounded-md border border-yellow-300 bg-yellow-50 p-2">
+                                                            <div className="font-medium text-yellow-700">
+                                                                ⚠️ Cảnh báo
+                                                            </div>
+                                                            <div className="text-xs text-yellow-600">
+                                                                Token còn {remainingDays} ngày. Nên gia hạn trước khi hết hạn.
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                                                                Active
+                                                            </span>
+                                                            <span className="text-xs text-gray-500">
+                                                                Token còn {remainingDays} ngày
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            }
+                                        </>
                                     </div>
                                 </div>
 
@@ -284,7 +293,7 @@ const Dashboard: FC = () => {
                             horizontal: "right",
                         }}
                     >
-                        <MenuItem
+                        {/* <MenuItem
                             onClick={() => {
                                 handleRenewToken(selectedItem);
                             }}
@@ -292,7 +301,7 @@ const Dashboard: FC = () => {
                         >
                             <LiaMoneyCheckAltSolid className='text-green-700' size={20} />
                             Gia hạn token
-                        </MenuItem>
+                        </MenuItem> */}
                         <MenuItem
                             onClick={() => {
                                 handleDelete(selectedItem);
