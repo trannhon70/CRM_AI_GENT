@@ -103,7 +103,7 @@ const ComponentCenterConversation: FC = () => {
     }, [messages]);
 
     const messageElements = useMemo(() => {
-        return messages.map((msg: any, index: number) => {
+        return messages?.map((msg: any, index: number) => {
             const prev = messages[index - 1];
             const showDate = !prev || !dayjs.unix(prev.sent_at).isSame(dayjs.unix(msg.sent_at), "day");
 

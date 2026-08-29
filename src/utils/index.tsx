@@ -21,6 +21,7 @@ export const ProviderEnum = {
   FACEBOOK: 'facebook',
   GITHUB: 'github',
   APPLE: 'apple',
+  TELEGRAM: 'telegram',
 } as const;
 
 export const ProviderEnumData = [

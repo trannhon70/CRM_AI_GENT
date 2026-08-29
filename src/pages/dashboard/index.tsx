@@ -1,3 +1,4 @@
+import { Avatar, CircularProgress } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
@@ -5,23 +6,21 @@ import Popover from '@mui/material/Popover';
 import TextField from "@mui/material/TextField";
 import { useEffect, useState, type FC } from "react";
 import { IoSearch, IoSettings } from "react-icons/io5";
-import { LiaMoneyCheckAltSolid } from "react-icons/lia";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { fanPagesAPI } from '../../apis/fanpage.api';
 import { userPagesAPI } from "../../apis/userPages.api";
 import facebook from "../../assets/images/facebook-logo.png";
 import platform_all from "../../assets/images/platform_all.jpg";
 import telegram from "../../assets/images/telegram.png";
-import ModalConnect from "../../components/modal/modalConnect";
-import { getRemainingDaysText } from '../../utils/date';
-import LoadingLayout from '../../components/loadingLayout';
-import { userPageRepository } from '../../storage';
-import { useDebounce } from '../../hooks/useDebounce';
-import { Avatar, CircularProgress } from '@mui/material';
-import { cacheRepository } from '../../storage/core/keyValueRepository';
 import { SocialIcon } from '../../components/icons/SocialIcon';
+import LoadingLayout from '../../components/loadingLayout';
+import ModalConnect from "../../components/modal/modalConnect";
+import { useDebounce } from '../../hooks/useDebounce';
+import { userPageRepository } from '../../storage';
+import { cacheRepository } from '../../storage/core/keyValueRepository';
+import { getRemainingDaysText } from '../../utils/date';
+import { ProviderEnum } from '../../utils';
 
 
 const providerIcons: Record<string, string> = {
@@ -232,7 +231,7 @@ const Dashboard: FC = () => {
                                         </span>
                                         <>
                                             {
-                                                item.page.page_platform === "facebook" &&
+                                                item.page.page_platform === ProviderEnum.FACEBOOK &&
                                                 <>
                                                     {remainingDays <= 0 ? (
                                                         <div className="mt-1 rounded-md border border-red-300 bg-red-50 p-2">
