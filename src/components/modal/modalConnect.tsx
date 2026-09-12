@@ -9,10 +9,12 @@ import facebook from "../../assets/images/facebook.png";
 import instagram from "../../assets/images/instagram.png";
 import activate from "../../assets/images/wait-activate.png";
 import telegram from "../../assets/images/telegram.png";
+import chatPlugin from "../../assets/images/chat-plugin.png";
 import TabFaceBook from '../tabs/tabsConnectPage/tabFacebook';
 import TabFlatFormAll from '../tabs/tabsConnectPage/tabPlatformall';
 import TabInstagram from '../tabs/tabsConnectPage/tabsInstagram';
 import TabsTelegram from '../tabs/tabsConnectPage/tabsTelegram';
+import TabChatPlugin from '../tabs/tabsConnectPage/tabChatPlugin';
 
 interface FadeProps {
     children: React.ReactElement<any>;
@@ -73,6 +75,7 @@ const dataPages = [
     { id: 2, name: "Facebook", image: facebook },
     { id: 3, name: "Instagram", image: instagram },
     { id: 4, name: "Telegram", image: telegram },
+    { id: 5, name: "Chat Plugin", image: chatPlugin },
 
 ]
 
@@ -94,6 +97,8 @@ const ModalConnect: React.FC<IProps> = (props) => {
                 return <TabInstagram />
             case 4:
                 return <TabsTelegram />
+            case 5:
+                return <TabChatPlugin />
             default:
                 return <TabFlatFormAll />
         }
