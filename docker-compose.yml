@@ -1,0 +1,26 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL_API: ${VITE_API_URL_API}
+        VITE_API_URL_SOCKET: ${VITE_API_URL_SOCKET}
+        VITE_FB_APP_ID: ${VITE_FB_APP_ID}
+        VITE_FB_APP_CONNECT: ${VITE_FB_APP_CONNECT}
+        VITE_CLOUDINARY_CLOUD_NAME: ${VITE_CLOUDINARY_CLOUD_NAME}
+        VITE_CLOUDINARY_UPLOAD_PRESET: ${VITE_CLOUDINARY_UPLOAD_PRESET}
+        VITE_SECRET_KEY: ${VITE_SECRET_KEY}
+
+    container_name: frontend
+    restart: unless-stopped
+
+    ports:
+      - "5173:80"
+
+    networks:
+      - frontend-network
+
+networks:
+  frontend-network:
+    driver: bridge

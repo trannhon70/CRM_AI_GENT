@@ -18,7 +18,6 @@ import { setAccessToken } from './features/usersSlice';
 
 
 const CreateUser = React.lazy(() => import('./pages/user/create'));
-const ManageUser = React.lazy(() => import('./pages/user/manager'));
 const Profile = React.lazy(() => import('./pages/profile'));
 const Dashboard = React.lazy(() => import('./pages/dashboard'));
 const Conversation = React.lazy(() => import('./pages/conversation'));
@@ -83,7 +82,6 @@ function App() {
       {/* 🛠️ ADMIN ROUTES */}
       <Route element={<ProtectedRoute allowedRoles={[CheckRole.OWNER.toString(), CheckRole.ADMIN_MANAGE.toString()]} />}>
         <Route path="/admin" element={<LayoutComponentAdmin />}>
-          <Route path="quan-ly-nguoi-dung" element={<Suspense fallback={<LoadingLayout />}><ManageUser /></Suspense>} />
           <Route path="quan-ly-nguoi-dung/them-moi" element={<Suspense fallback={<LoadingLayout />}> <CreateUser /> </Suspense>} />
           <Route path="quan-ly-nguoi-dung/cap-nhat/:id" element={<Suspense fallback={<LoadingLayout />}> <CreateUser /></Suspense>} />
 
